@@ -370,6 +370,8 @@ public class coap
             // provide an instance of a Hello-World resource
                 addResource(new provResource());
                 addResource(new vaarinpain());
+                addResource(new jsonresource());
+                //jsonresource()
             }
           //  catch (SocketException e)
             catch (Exception e)
@@ -443,6 +445,8 @@ public class coap
                     request.respond(CodeRegistry.RESP_CONTENT, paluu, MediaTypeRegistry.TEXT_PLAIN);
             }
         }
+        
+        
 
 
     }

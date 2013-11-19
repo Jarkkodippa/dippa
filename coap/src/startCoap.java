@@ -14,6 +14,7 @@ public class startCoap
      //jee
    public static void main(String[] args) 
    {
+       /*
         args = new String[3];
         String url = "jee";
         String viesti = "testi";
@@ -35,9 +36,10 @@ public class startCoap
    //     args[2] = "provResource";
     //    args[2] = "kaannettava";
   //      args[2] = "";
-  //      coap coap = new coap();
+               */
+        coap coap = new coap();
        
-        
+        /*
         System.out.println("url " + ": " + args[1]);
         url = args[1];
   //      System.out.println("viesti " + ": " + args[2]);
@@ -52,7 +54,7 @@ public class startCoap
         {
             System.err.println("virhe");
         }
-      
+      */
 
    }
 }

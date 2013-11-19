@@ -14,7 +14,7 @@ public class starthttp
    public static void main(String[] args) 
    {
       HTTP http = new HTTP();
-      http.suoritaPaasilmukkaa();
+   //   http.suoritaPaasilmukkaa();
       
   //    GBA gba = new GBA();
   //    gba.suoritaPaasilmukkaa();

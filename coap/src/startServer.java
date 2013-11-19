@@ -13,13 +13,15 @@ public class startServer
      //jee
     public static void main(String[] args) 
     {
+        /*
      args = new String[3];
      String url = "jee";
      String viesti = "testi";
+                */
      coap servu = new coap();
 
 
-
+/*
 
 
      try
@@ -31,5 +33,6 @@ public class startServer
      {
          System.err.println("virhe");
      }
+        */
    }
 }

@@ -1,0 +1,102 @@
+2013-11-19 12:18:23 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-19 12:18:23 [coap.TokenManager] INFO - Token value: 112
+2013-11-19 12:18:23 [layers.TokenLayer] INFO - Requesting response for /vaarinpain: 127.0.0.1:5683#70
+2013-11-19 12:18:23 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#70
+2013-11-19 12:18:23 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#70
+2013-11-19 12:18:23 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|27176|CON
+2013-11-19 12:18:23 [layers.TokenLayer] INFO - Incoming request: 127.0.0.1:5683#70
+2013-11-19 12:18:23 [endpoint.LocalEndpoint] INFO - Dispatching execution: /vaarinpain
+2013-11-19 12:18:23 [coap.Request] FINEST - Responding with Content-Type 0: 11 bytes
+2013-11-19 12:18:23 [layers.TokenLayer] INFO - Responding request: 127.0.0.1:5683#70
+2013-11-19 12:18:23 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|27176|CON
+2013-11-19 12:18:23 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#70
+2013-11-19 12:18:23 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#70
+2013-11-19 12:18:23 [coap.TokenManager] WARNING - Token to release is not acquired: 70
+
+2013-11-19 12:18:23 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#70
+2013-11-19 12:18:23 [layers.TokenLayer] INFO - Incoming response from /vaarinpain: 127.0.0.1:5683#70 // RTT: 13,283760ms
+2013-11-19 12:25:41 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-19 12:25:41 [coap.TokenManager] INFO - Token value: 18
+2013-11-19 12:25:41 [layers.TokenLayer] INFO - Requesting response for /vaarinpain: 127.0.0.1:5683#12
+2013-11-19 12:25:41 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#12
+2013-11-19 12:25:41 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#12
+2013-11-19 12:25:41 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|35123|CON
+2013-11-19 12:25:41 [layers.TokenLayer] INFO - Incoming request: 127.0.0.1:5683#12
+2013-11-19 12:25:41 [endpoint.LocalEndpoint] INFO - Dispatching execution: /vaarinpain
+2013-11-19 12:25:41 [coap.Request] FINEST - Responding with Content-Type 0: 11 bytes
+2013-11-19 12:25:41 [layers.TokenLayer] INFO - Responding request: 127.0.0.1:5683#12
+2013-11-19 12:25:41 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|35123|CON
+2013-11-19 12:25:41 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#12
+2013-11-19 12:25:41 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#12
+2013-11-19 12:25:41 [coap.TokenManager] WARNING - Token to release is not acquired: 12
+
+2013-11-19 12:25:41 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#12
+2013-11-19 12:25:41 [layers.TokenLayer] INFO - Incoming response from /vaarinpain: 127.0.0.1:5683#12 // RTT: 8,335320ms
+2013-11-19 13:53:02 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-19 13:53:02 [coap.TokenManager] INFO - Token value: 74
+2013-11-19 13:53:02 [layers.TokenLayer] INFO - Requesting response for /vaarinpain: 127.0.0.1:5683#4A
+2013-11-19 13:53:02 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#4A
+2013-11-19 13:53:02 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#4A
+2013-11-19 13:53:02 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|15282|CON
+2013-11-19 13:53:02 [layers.TokenLayer] INFO - Incoming request: 127.0.0.1:5683#4A
+2013-11-19 13:53:02 [endpoint.LocalEndpoint] INFO - Dispatching execution: /vaarinpain
+2013-11-19 13:53:02 [coap.Request] FINEST - Responding with Content-Type 0: 11 bytes
+2013-11-19 13:53:02 [layers.TokenLayer] INFO - Responding request: 127.0.0.1:5683#4A
+2013-11-19 13:53:02 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|15282|CON
+2013-11-19 13:53:02 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#4A
+2013-11-19 13:53:02 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#4A
+2013-11-19 13:53:02 [coap.TokenManager] WARNING - Token to release is not acquired: 4A
+
+2013-11-19 13:53:02 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#4A
+2013-11-19 13:53:02 [layers.TokenLayer] INFO - Incoming response from /vaarinpain: 127.0.0.1:5683#4A // RTT: 10,423680ms
+2013-11-19 13:57:41 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-19 13:57:41 [coap.TokenManager] INFO - Token value: 103
+2013-11-19 13:57:41 [layers.TokenLayer] INFO - Requesting response for /vaarinpain: 127.0.0.1:5683#67
+2013-11-19 13:57:41 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#67
+2013-11-19 13:57:41 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#67
+2013-11-19 13:57:41 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|58746|CON
+2013-11-19 13:57:41 [layers.TokenLayer] INFO - Incoming request: 127.0.0.1:5683#67
+2013-11-19 13:57:41 [endpoint.LocalEndpoint] INFO - Dispatching execution: /vaarinpain
+2013-11-19 13:57:41 [coap.Request] FINEST - Responding with Content-Type 0: 11 bytes
+2013-11-19 13:57:41 [layers.TokenLayer] INFO - Responding request: 127.0.0.1:5683#67
+2013-11-19 13:57:41 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|58746|CON
+2013-11-19 13:57:41 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#67
+2013-11-19 13:57:41 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#67
+2013-11-19 13:57:41 [coap.TokenManager] WARNING - Token to release is not acquired: 67
+
+2013-11-19 13:57:41 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#67
+2013-11-19 13:57:41 [layers.TokenLayer] INFO - Incoming response from /vaarinpain: 127.0.0.1:5683#67 // RTT: 12,906480ms
+2013-11-19 14:06:00 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-19 14:06:00 [coap.TokenManager] INFO - Token value: 16
+2013-11-19 14:06:00 [layers.TokenLayer] INFO - Requesting response for /vaarinpain: 127.0.0.1:5683#10
+2013-11-19 14:06:00 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#10
+2013-11-19 14:06:00 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#10
+2013-11-19 14:06:00 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|21091|CON
+2013-11-19 14:06:00 [layers.TokenLayer] INFO - Incoming request: 127.0.0.1:5683#10
+2013-11-19 14:06:00 [endpoint.LocalEndpoint] INFO - Dispatching execution: /vaarinpain
+2013-11-19 14:06:00 [coap.Request] FINEST - Responding with Content-Type 0: 11 bytes
+2013-11-19 14:06:00 [layers.TokenLayer] INFO - Responding request: 127.0.0.1:5683#10
+2013-11-19 14:06:00 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|21091|CON
+2013-11-19 14:06:00 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#10
+2013-11-19 14:06:00 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#10
+2013-11-19 14:06:00 [coap.TokenManager] WARNING - Token to release is not acquired: 10
+
+2013-11-19 14:06:00 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#10
+2013-11-19 14:06:00 [layers.TokenLayer] INFO - Incoming response from /vaarinpain: 127.0.0.1:5683#10 // RTT: 20,057880ms
+2013-11-19 14:06:31 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-19 14:06:31 [coap.TokenManager] INFO - Token value: 84
+2013-11-19 14:06:31 [layers.TokenLayer] INFO - Requesting response for /vaarinpain: 127.0.0.1:5683#54
+2013-11-19 14:06:31 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#54
+2013-11-19 14:06:31 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#54
+2013-11-19 14:06:31 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|389|CON
+2013-11-19 14:06:31 [layers.TokenLayer] INFO - Incoming request: 127.0.0.1:5683#54
+2013-11-19 14:06:31 [endpoint.LocalEndpoint] INFO - Dispatching execution: /vaarinpain
+2013-11-19 14:06:31 [coap.Request] FINEST - Responding with Content-Type 0: 11 bytes
+2013-11-19 14:06:31 [layers.TokenLayer] INFO - Responding request: 127.0.0.1:5683#54
+2013-11-19 14:06:31 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|389|CON
+2013-11-19 14:06:31 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#54
+2013-11-19 14:06:31 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#54
+2013-11-19 14:06:31 [coap.TokenManager] WARNING - Token to release is not acquired: 54
+
+2013-11-19 14:06:31 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#54
+2013-11-19 14:06:31 [layers.TokenLayer] INFO - Incoming response from /vaarinpain: 127.0.0.1:5683#54 // RTT: 13,202040ms

@@ -14,6 +14,16 @@ import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 
+import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jwt.EncryptedJWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+
+import com.nimbusds.jose.crypto.RSADecrypter;
+import com.nimbusds.jose.crypto.RSAEncrypter;
+
 import net.minidev.json.JSONAware;
 import javax.mail.internet.ParameterList;
 import org.apache.commons.codec.binary.Base64;
@@ -28,6 +38,15 @@ import java.io.Writer;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Date;
+import java.util.UUID;
+
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -156,6 +175,240 @@ public class json
         System.out.println("Recovered payload message: " + jwsObject.getPayload());
         return vali;
     }
+   
+   
+   //Cryptaa Stringin JVS 
+    //Palauttaa cryptatun JVS:n.
+   public String cryptJVE(String message, 
+           RSAPublicKey publicKey, RSAPrivateKey privateKey) 
+   {
+
+       // Compose the JWT claims set
+
+        JWTClaimsSet jwtClaims = new JWTClaimsSet();
+
+        String iss = "https://openid.net";
+
+        jwtClaims.setIssuer(iss);
+
+        String sub = "alice";
+
+        jwtClaims.setSubject(sub);
+
+        List<String> aud = new ArrayList<String>();
+
+        aud.add("https://app-one.com");
+
+        aud.add("https://app-two.com");
+
+        jwtClaims.setAudience(aud);
+
+        // Set expiration in 10 minutes
+
+        Date exp = new Date(new Date().getTime() + 1000*60*10);
+
+        jwtClaims.setExpirationTime(exp);
+
+
+        Date nbf = new Date();
+
+        jwtClaims.setNotBeforeTime(nbf);
+
+
+        Date iat = new Date();
+
+        jwtClaims.setIssueTime(iat);
+
+        String jti = UUID.randomUUID().toString();
+
+        jwtClaims.setJWTID(jti);
+
+
+        // Request JWT encrypted with RSA-OAEP and 128-bit AES/GCM
+
+        JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM);
+
+        // Create the encrypted JWT object
+
+        EncryptedJWT jwt = new EncryptedJWT(header, jwtClaims);
+
+        // Create an encrypter with the specified public RSA key
+
+      	try 
+        {
+            RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+
+        // Do the actual encryption
+
+            jwt.encrypt(encrypter);
+        }
+        catch (JOSEException e) 
+        {
+        
+                System.err.println("Couldn't verify signature: " + e.getMessage());
+        }
+        // Serialise to JWT compact form
+
+        String jwtString = jwt.serialize();
+        return jwtString;
+        
+    }
+	
+   //purkaa JVS.
+   //Palauttaa puretun viestin Stringinä.
+   public String uncryptJVE(String message, 
+           RSAPublicKey publicKey, RSAPrivateKey privateKey) 
+   {
+       JWTClaimsSet jwtClaims = new JWTClaimsSet();
+
+       JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM);
+
+        // Create the encrypted JWT object
+
+        EncryptedJWT jwt = new EncryptedJWT(header, jwtClaims);
+        String vali = "";
+       // Parse back
+
+        try 
+        {
+            jwt = EncryptedJWT.parse(message);
+
+            // Create an decrypter with the specified private RSA key
+
+            RSADecrypter decrypter = new RSADecrypter(privateKey);
+
+            // Decrypt
+
+            jwt.decrypt(decrypter);
+            
+            jwt.getJWTClaimsSet().getIssuer();
+
+            jwt.getJWTClaimsSet().getSubject();
+
+            jwt.getJWTClaimsSet().getAudience().size();
+
+            jwt.getJWTClaimsSet().getExpirationTime();
+
+            jwt.getJWTClaimsSet().getNotBeforeTime();
+
+            jwt.getJWTClaimsSet().getIssueTime();
+
+            jwt.getJWTClaimsSet().getJWTID();
+            vali = jwt.getJWTClaimsSet().getSubject().toString();
+        }
+        catch (Exception e) 
+        {
+        
+                System.err.println("purku epäonnistu");
+        }
+        
+
+
+        // Retrieve JWT claims
+
+        
+        
+        return vali;
+    }
+   
+   public void testEncryptAndDecrypt(RSAPublicKey publicKey, RSAPrivateKey privateKey)
+
+	throws Exception 
+   {
+
+        // Compose the JWT claims set
+
+        JWTClaimsSet jwtClaims = new JWTClaimsSet();
+
+        String iss = "https://openid.net";
+
+        jwtClaims.setIssuer(iss);
+
+        String sub = "alice";
+
+        jwtClaims.setSubject(sub);
+
+        List<String> aud = new ArrayList<String>();
+
+        aud.add("https://app-one.com");
+
+        aud.add("https://app-two.com");
+
+        jwtClaims.setAudience(aud);
+
+        // Set expiration in 10 minutes
+
+        Date exp = new Date(new Date().getTime() + 1000*60*10);
+
+        jwtClaims.setExpirationTime(exp);
+
+
+        Date nbf = new Date();
+
+        jwtClaims.setNotBeforeTime(nbf);
+
+
+        Date iat = new Date();
+
+        jwtClaims.setIssueTime(iat);
+
+        String jti = UUID.randomUUID().toString();
+
+        jwtClaims.setJWTID(jti);
+
+
+        // Request JWT encrypted with RSA-OAEP and 128-bit AES/GCM
+
+        JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM);
+
+        // Create the encrypted JWT object
+
+        EncryptedJWT jwt = new EncryptedJWT(header, jwtClaims);
+
+        // Create an encrypter with the specified public RSA key
+
+        RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+
+        // Do the actual encryption
+
+        jwt.encrypt(encrypter);
+
+        // Serialise to JWT compact form
+
+        String jwtString = jwt.serialize();
+
+        // Parse back
+
+        jwt = EncryptedJWT.parse(jwtString);
+
+        // Create an decrypter with the specified private RSA key
+
+        RSADecrypter decrypter = new RSADecrypter(privateKey);
+
+        // Decrypt
+
+        jwt.decrypt(decrypter);
+
+
+        // Retrieve JWT claims
+
+        jwt.getJWTClaimsSet().getIssuer();
+
+        jwt.getJWTClaimsSet().getSubject();
+
+        jwt.getJWTClaimsSet().getAudience().size();
+
+        jwt.getJWTClaimsSet().getExpirationTime();
+
+        jwt.getJWTClaimsSet().getNotBeforeTime();
+
+        jwt.getJWTClaimsSet().getIssueTime();
+
+        jwt.getJWTClaimsSet().getJWTID();
+
+    }
+
+
         
               /*
    }
@@ -222,7 +475,7 @@ public class json
 
  //Lukee json tiedoston mappiin.
  //palauttaa mapin.
-   private Map readJSON(String data) 
+   public Map readJSON(String data) 
    {
   //      JSONObject valiaikainen = new JSONObject(data);
         Map<String, Object> map = new HashMap<String,Object>();
@@ -250,7 +503,7 @@ public class json
    
    //Kirjoittaa server responcen jsoniin.
    //Palauttaa json stringin.
-   private String writeJSONauthentication(String type, String challenges, 
+   public static String writeJSONauthentication(String type, String challenges, 
                                                 String realm, String qop, 
                                                 String nonce, String opaque) 
                                                 throws IOException
@@ -294,7 +547,7 @@ public class json
    
    //Kirjoittaa client reguestin jsoniks.
    //Palautta json stringin.
-   private String writeJSONauthorization(String type,  
+   public static String writeJSONauthorization(String type,  
                                             String username, String realm,
                                             String uri, String nc, String cnonce,
                                             String response, String qop, 
@@ -345,7 +598,7 @@ public class json
    }
    
    
-   private String writeJSONauthorization(Map data) 
+   public static String writeJSONauthorization(Map data) 
    {
       
       try 
@@ -372,7 +625,7 @@ public class json
    }
    
 
-   private String writeJSONauthentication(Map data) 
+   public static String writeJSONauthentication(Map data) 
                                                 throws IOException
    {
       
@@ -410,6 +663,7 @@ public class json
                                                  "nonce",  "opaque");
           System.out.println( json );
           System.out.println( json1 );
+          
          // writeJSONauthorization(readJSON(json));
           System.out.println( readJSON(json1));
           System.out.println( readJSON(json));
