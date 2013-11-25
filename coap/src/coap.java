@@ -371,6 +371,7 @@ public class coap
                 addResource(new provResource());
                 addResource(new vaarinpain());
                 addResource(new jsonresource());
+                addResource(new Yhteys());
                 //jsonresource()
             }
           //  catch (SocketException e)

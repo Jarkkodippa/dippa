@@ -38,16 +38,16 @@ public class HTTP
     final String VIESTI_KEHOTE = "Kirjoita komento:";
     final String VIESTI_JAAHYVAISET = "Ohjelma lopetettu.";
 
-    private static String urlStr = "http://example.com:8080/abc/";
-    private static String host = "example.com";
-    private static String realm = "ExampleRealm";
-    private static String userName = "admin";
-    private static String password = "jeeee";
-    private static int port = 8080;
-    private static HttpClient client;
-    private static int status;
-    private static GetMethod getMethod;
-    private static String responseBody;
+    private String urlStr = "http://example.com:8080/abc/";
+    private String host = "example.com";
+    private String realm = "ExampleRealm";
+    private String userName = "admin";
+    private String password = "jeeee";
+    private int port = 8080;
+    private HttpClient client;
+    private int status;
+    private GetMethod getMethod;
+    private String responseBody;
 
    /** Herja
      */
@@ -110,7 +110,7 @@ public class HTTP
     
     //HTTP client luo http pyynnön
     //Ottaa vastaa WWW-autenticate headerin ja palauttaa sen Mappina.
-    static Map httpClientReq(String osoite) throws Exception
+    public Map httpClientReq(String osoite) throws Exception
     {
         HashMap<String, String> map = new HashMap<String, String>();
 
@@ -119,10 +119,15 @@ public class HTTP
    //         Map<String, String> tietoja = tiedot;
      //       String
             client = new HttpClient();
+     //       HttpClient client2 = new HttpClient();
             urlStr = osoite;
             System.out.println("osoite: " + osoite);
+            System.out.println("osoite: " + urlStr);
 
+     //       GetMethod getMethod2 = new GetMethod(urlStr);
             getMethod = new GetMethod(urlStr);
+            
+            System.out.println("getMethod luotu");
 
             status = client.executeMethod(getMethod);
             System.out.println("status: " + status);
@@ -145,7 +150,7 @@ public class HTTP
     
     //Lähettää http Authorizationin.
     //Palauttaa palvelimelta saadun vastauksen.
-    static String httpClientAut(Map tiedot) throws Exception
+    public String httpClientAut(Map tiedot) throws Exception
     {
  //       HashMap<String, String> map = new HashMap<String, String>();
         try 
@@ -196,9 +201,10 @@ public class HTTP
 
         //            Map<String, Object> tietoja;
             Map<String, Object> tietoja = new HashMap<String, Object>();
-            httpClientReq("http://192.168.0.1");
+      //      httpClientReq("http://192.168.0.1");
+            httpClientReq("http://www.iltalehti.fi");
             System.out.println("jee" + urlStr);
-            httpClientAut(tietoja);
+    //        httpClientAut(tietoja);
         //           httpClientReq();
         //          httpClientAut();
 

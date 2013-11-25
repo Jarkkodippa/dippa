@@ -21,7 +21,7 @@ public class startServer
      coap servu = new coap();
 
 
-/*
+
 
 
      try
@@ -33,6 +33,6 @@ public class startServer
      {
          System.err.println("virhe");
      }
-        */
+        
    }
 }
