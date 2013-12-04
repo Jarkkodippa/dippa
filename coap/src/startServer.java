@@ -18,7 +18,7 @@ public class startServer
      String url = "jee";
      String viesti = "testi";
                 */
-     coap servu = new coap();
+     coaptoteutus servu = new coaptoteutus();
 
 
 

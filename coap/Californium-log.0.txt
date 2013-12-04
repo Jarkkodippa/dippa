@@ -1472,3 +1472,130 @@
 
 2013-11-25 18:49:50 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#09
 2013-11-25 18:49:50 [layers.TokenLayer] INFO - Incoming response from /Yhteys: 127.0.0.1:5683#09 // RTT: 1876,718200ms
+2013-11-26 18:24:57 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-26 18:24:58 [coap.TokenManager] INFO - Token value: 248
+2013-11-26 18:24:58 [layers.CoapStack] INFO - CoapStack started
+2013-11-26 18:24:58 [layers.TokenLayer] INFO - Requesting response for /Yhteys: 127.0.0.1:5683#F8
+2013-11-26 18:24:58 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#F8
+2013-11-26 18:24:58 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#F8
+2013-11-26 18:24:58 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|984|CON
+2013-11-26 18:25:00 [layers.TransactionLayer] INFO - Retransmitting 127.0.0.1:5683|984|CON (1 of 4)
+2013-11-26 18:25:00 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|984|CON
+2013-11-26 18:25:00 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#F8
+2013-11-26 18:25:00 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#F8
+2013-11-26 18:25:00 [coap.TokenManager] WARNING - Token to release is not acquired: F8
+
+2013-11-26 18:25:00 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#F8
+2013-11-26 18:25:00 [layers.TokenLayer] INFO - Incoming response from /Yhteys: 127.0.0.1:5683#F8 // RTT: 2674,245200ms
+2013-11-26 19:05:49 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-26 19:05:49 [coap.TokenManager] INFO - Token value: 38
+2013-11-26 19:05:49 [layers.CoapStack] INFO - CoapStack started
+2013-11-26 19:05:49 [layers.TokenLayer] INFO - Requesting response for /Yhteys: 127.0.0.1:5683#26
+2013-11-26 19:05:49 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#26
+2013-11-26 19:05:49 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#26
+2013-11-26 19:05:49 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|49388|CON
+2013-11-26 19:05:52 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|49388|CON
+2013-11-26 19:05:52 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#26
+2013-11-26 19:05:52 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#26
+2013-11-26 19:05:52 [coap.TokenManager] WARNING - Token to release is not acquired: 26
+
+2013-11-26 19:05:52 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#26
+2013-11-26 19:05:52 [layers.TokenLayer] INFO - Incoming response from /Yhteys: 127.0.0.1:5683#26 // RTT: 2130,948680ms
+2013-11-26 19:09:13 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-26 19:09:13 [coap.TokenManager] INFO - Token value: 5
+2013-11-26 19:09:13 [layers.CoapStack] INFO - CoapStack started
+2013-11-26 19:09:13 [layers.TokenLayer] INFO - Requesting response for /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#05
+2013-11-26 19:09:13 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#05
+2013-11-26 19:09:13 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#05
+2013-11-26 19:09:13 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|17929|CON
+2013-11-26 19:09:13 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|17929|CON
+2013-11-26 19:09:13 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#05
+2013-11-26 19:09:13 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#05
+2013-11-26 19:09:13 [coap.TokenManager] WARNING - Token to release is not acquired: 05
+
+2013-11-26 19:09:13 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#05
+2013-11-26 19:09:13 [layers.TokenLayer] INFO - Incoming response from /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#05 // RTT: 5,787840ms
+2013-11-26 19:12:05 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-26 19:12:05 [coap.TokenManager] INFO - Token value: 221
+2013-11-26 19:12:05 [layers.CoapStack] INFO - CoapStack started
+2013-11-26 19:12:05 [layers.TokenLayer] INFO - Requesting response for /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#DD
+2013-11-26 19:12:05 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#DD
+2013-11-26 19:12:05 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#DD
+2013-11-26 19:12:05 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|64705|CON
+2013-11-26 19:12:05 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|64705|CON
+2013-11-26 19:12:05 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#DD
+2013-11-26 19:12:05 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#DD
+2013-11-26 19:12:05 [coap.TokenManager] WARNING - Token to release is not acquired: DD
+
+2013-11-26 19:12:05 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#DD
+2013-11-26 19:12:05 [layers.TokenLayer] INFO - Incoming response from /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#DD // RTT: 24,505640ms
+2013-11-26 19:19:52 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-26 19:19:52 [coap.TokenManager] INFO - Token value: 196
+2013-11-26 19:19:52 [layers.CoapStack] INFO - CoapStack started
+2013-11-26 19:19:52 [layers.TokenLayer] INFO - Requesting response for /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#C4
+2013-11-26 19:19:52 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#C4
+2013-11-26 19:19:52 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#C4
+2013-11-26 19:19:52 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|6258|CON
+2013-11-26 19:19:52 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|6258|CON
+2013-11-26 19:19:52 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#C4
+2013-11-26 19:19:52 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#C4
+2013-11-26 19:19:52 [coap.TokenManager] WARNING - Token to release is not acquired: C4
+
+2013-11-26 19:19:52 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#C4
+2013-11-26 19:19:52 [layers.TokenLayer] INFO - Incoming response from /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#C4 // RTT: 18,222640ms
+2013-11-26 19:26:59 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-26 19:26:59 [coap.TokenManager] INFO - Token value: 231
+2013-11-26 19:26:59 [layers.CoapStack] INFO - CoapStack started
+2013-11-26 19:26:59 [layers.TokenLayer] INFO - Requesting response for /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#E7
+2013-11-26 19:26:59 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#E7
+2013-11-26 19:26:59 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#E7
+2013-11-26 19:26:59 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|3756|CON
+2013-11-26 19:26:59 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|3756|CON
+2013-11-26 19:26:59 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#E7
+2013-11-26 19:26:59 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#E7
+2013-11-26 19:26:59 [coap.TokenManager] WARNING - Token to release is not acquired: E7
+
+2013-11-26 19:26:59 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#E7
+2013-11-26 19:26:59 [layers.TokenLayer] INFO - Incoming response from /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#E7 // RTT: 25,700600ms
+2013-11-26 19:34:22 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-26 19:34:22 [coap.TokenManager] INFO - Token value: 231
+2013-11-26 19:34:22 [layers.CoapStack] INFO - CoapStack started
+2013-11-26 19:34:22 [layers.TokenLayer] INFO - Requesting response for /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#E7
+2013-11-26 19:34:22 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#E7
+2013-11-26 19:34:22 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#E7
+2013-11-26 19:34:22 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|63990|CON
+2013-11-26 19:34:22 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|63990|CON
+2013-11-26 19:34:22 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#E7
+2013-11-26 19:34:22 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#E7
+2013-11-26 19:34:22 [coap.TokenManager] WARNING - Token to release is not acquired: E7
+
+2013-11-26 19:34:22 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#E7
+2013-11-26 19:34:22 [layers.TokenLayer] INFO - Incoming response from /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#E7 // RTT: 24,006960ms
+2013-11-26 20:16:06 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-26 20:16:06 [coap.TokenManager] INFO - Token value: 251
+2013-11-26 20:16:06 [layers.CoapStack] INFO - CoapStack started
+2013-11-26 20:16:06 [layers.TokenLayer] INFO - Requesting response for /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#FB
+2013-11-26 20:16:06 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#FB
+2013-11-26 20:16:06 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#FB
+2013-11-26 20:16:06 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|43269|CON
+2013-11-26 20:16:09 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|43269|CON
+2013-11-26 20:16:09 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#FB
+2013-11-26 20:16:09 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#FB
+2013-11-26 20:16:09 [coap.TokenManager] WARNING - Token to release is not acquired: FB
+
+2013-11-26 20:16:09 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#FB
+2013-11-26 20:16:09 [layers.TokenLayer] INFO - Incoming response from /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#FB // RTT: 2319,767360ms
+2013-11-26 20:21:01 [util.Log] INFO - ==[ START-UP ]========================================================
+2013-11-26 20:21:01 [coap.TokenManager] INFO - Token value: 246
+2013-11-26 20:21:01 [layers.CoapStack] INFO - CoapStack started
+2013-11-26 20:21:01 [layers.TokenLayer] INFO - Requesting response for /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#F6
+2013-11-26 20:21:01 [layers.TokenLayer] FINE - Stored new exchange: 127.0.0.1:5683#F6
+2013-11-26 20:21:01 [layers.MatchingLayer] FINER - Storing open request: 127.0.0.1:5683#F6
+2013-11-26 20:21:01 [layers.TransactionLayer] FINEST - Stored new transaction for 127.0.0.1:5683|21561|CON
+2013-11-26 20:21:03 [layers.TransactionLayer] FINEST - Cleared transaction for 127.0.0.1:5683|21561|CON
+2013-11-26 20:21:03 [layers.MatchingLayer] FINER - Matched open request: 127.0.0.1:5683#F6
+2013-11-26 20:21:03 [layers.MatchingLayer] FINER - Cleared open request: 127.0.0.1:5683#F6
+2013-11-26 20:21:03 [coap.TokenManager] WARNING - Token to release is not acquired: F6
+
+2013-11-26 20:21:03 [layers.TokenLayer] FINER - Cleared exchange: 127.0.0.1:5683#F6
+2013-11-26 20:21:03 [layers.TokenLayer] INFO - Incoming response from /Yhteys/http://www.mtv.fi: 127.0.0.1:5683#F6 // RTT: 2186,304800ms

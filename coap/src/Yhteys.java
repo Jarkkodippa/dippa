@@ -31,20 +31,33 @@
 
 import java.util.logging.Logger;
 
-import ch.ethz.inf.vs.californium.coap.DELETERequest;
-import ch.ethz.inf.vs.californium.coap.GETRequest;
+//import ch.ethz.inf.vs.californium.coap.DELETERequest;
+//import ch.ethz.inf.vs.californium.coap.GETRequest;
 import ch.ethz.inf.vs.californium.coap.LinkFormat;
 import ch.ethz.inf.vs.californium.coap.Option;
-import ch.ethz.inf.vs.californium.coap.POSTRequest;
-import ch.ethz.inf.vs.californium.coap.PUTRequest;
+//import ch.ethz.inf.vs.californium.coap.POSTRequest;
+//import ch.ethz.inf.vs.californium.coap.PUTRequest;
 import ch.ethz.inf.vs.californium.coap.Request;
 import ch.ethz.inf.vs.californium.coap.Response;
-import ch.ethz.inf.vs.californium.coap.registries.CodeRegistry;
-import ch.ethz.inf.vs.californium.coap.registries.MediaTypeRegistry;
-import ch.ethz.inf.vs.californium.coap.registries.OptionNumberRegistry;
-import ch.ethz.inf.vs.californium.endpoint.resources.LocalResource;
+import ch.ethz.inf.vs.californium.coap.CoAP.ResponseCode;
+import ch.ethz.inf.vs.californium.coap.MediaTypeRegistry;
+//import ch.ethz.inf.vs.californium.coap.registries.CodeRegistry;
+//import ch.ethz.inf.vs.californium.coap.registries.MediaTypeRegistry;
+//import ch.ethz.inf.vs.californium.coap.registries.OptionNumberRegistry;
+//import ch.ethz.inf.vs.californium.endpoint.resources.LocalResource;
+import ch.ethz.inf.vs.californium.network.Exchange;
+import ch.ethz.inf.vs.californium.server.resources.ResourceBase;
+import ch.ethz.inf.vs.californium.server.resources.Resource;
+
+
 import java.util.HashMap;
 import java.util.Map;
+import java.net.URLDecoder;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+
+import ch.ethz.inf.vs.californium.coap.CoAP.ResponseCode;
 
 /*
  * Yhteys luokka. 
@@ -53,11 +66,12 @@ Ottaa yhteyden palauttaa yhteyden otosta saatavan datan.
 Putilla voidaan vastata annettuun viestiin.
  * 
  */
-public class Yhteys extends LocalResource 
+public class Yhteys extends ResourceBase// extends LocalResource 
 {
 
     private HTTP yhteys;
     private byte[] data; 
+    private String content;
     // Constructors ////////////////////////////////////////////////////////////
 
     /*
@@ -74,9 +88,11 @@ public class Yhteys extends LocalResource
     public Yhteys(String resourceIdentifier) 
     {
         super(resourceIdentifier);
-        setTitle("PUT your data here or POST new resources!");
-        setResourceType("Storage");
-        isObservable(true);
+        getAttributes().setTitle("Luodaan HTTP yhteys!");
+     //   setTitle("PUT your data here or POST new resources!");
+     //   getAttributes().setResourceType("Storage");
+        getAttributes().addResourceType("Storage");
+       // isObservable(true);
         yhteys = new HTTP();
   //      json json = new json();
     }
@@ -90,54 +106,43 @@ public class Yhteys extends LocalResource
      * are returned in link format.
      */
     @Override
-    public void performGET(GETRequest request) 
+    public void handleGET(Exchange request) 
     {
 
-            // create response
-            Response response = new Response(CodeRegistry.RESP_CONTENT);
-
-            // check if link format requested
-            if (request.getContentType()==MediaTypeRegistry.APPLICATION_LINK_FORMAT || 
-                    data == null) 
-            {
-
-                    // respond with list of sub-resources in link format
-                    response.setPayload(LinkFormat.serialize(this, 
-                            request.getOptions(OptionNumberRegistry.URI_QUERY), 
-                            true), MediaTypeRegistry.APPLICATION_LINK_FORMAT);
-
-            } 
-            else 
-            {
-
-                    // load data into payload
-                    response.setPayload(data);
-
-                    // set content type
-                    if (getContentTypeCode().size()>0) 
-                    {
-                            response.setContentType(getContentTypeCode().get(0));
-                    }
-            }
-
-            // complete the request
-            request.respond(response);
+        if (content != null) 
+        {
+		request.respond(content);
+	} 
+        else 
+        {
+                String subtree = LinkFormat.serializeTree(this);
+                Response response = new Response(ResponseCode.CONTENT);
+                response.setPayload(subtree);
+                response.getOptions().setContentFormat(MediaTypeRegistry.APPLICATION_LINK_FORMAT);
+                request.respond(response);
+        }
     }
 
     /*
      * PUTs content to this resource.
      */
     @Override
-    public void performPUT(PUTRequest request) 
+    public void handlePUT(Exchange exchange) 
     {
 
             // store payload
   //          storeData(request);
-        String paluu = storeAnswer(request);
+  //      content = request.getRequest().getPayloadString();
+        String paluu = storeAnswer(exchange);
 
+        Response response = new Response(ResponseCode.CHANGED);
+        response.setPayload(paluu);
+        respond(exchange, response);
             // complete the request
     //    request.respond(CodeRegistry.RESP_CHANGED);
-        request.respond(CodeRegistry.RESP_CONTENT, paluu, MediaTypeRegistry.TEXT_PLAIN);
+  //      request.respond(CodeRegistry.RESP_CONTENT, paluu, 
+    //            MediaTypeRegistry.TEXT_PLAIN);
+ //       request.respond();
     }
 
     /*
@@ -146,13 +151,31 @@ public class Yhteys extends LocalResource
      * payload.
      */
     @Override
-    public void performPOST(POSTRequest request) 
+    public void handlePOST(Exchange exchange) 
     {
-
+        /*
+        String osoite1 = request.getLocationPath();
+        System.out.println("osoiteloc " + ": " + osoite1);
+        osoite1 = request.getLocationQuery();
+        System.out.println("osoitelque " + ": " + osoite1);
+        osoite1 = request.getUriHost();
+        System.out.println("osoitehost " + ": " + osoite1);
+        osoite1 = request.getUriPath();
+        System.out.println("osoitepath " + ": " + osoite1);
+        osoite1 = request.getUriQuery();
+        System.out.println("osoiteuriquer " + ": " + osoite1);
+*/
+        Request request = exchange.getRequest();
         Map<String, String> arvot = new HashMap<String, String>();
         // get request payload as a string
         String payload = request.getPayloadString();
 
+        System.out.println("payload " + ": " + payload);
+/*        String[] parts = payload.split("\\?");
+            System.out.println("payload eka splitti" + ": " + parts);
+            String[] path = parts[0].split("/");
+            System.out.println("payload toka splitti " + ": " + path);
+        */
         // check if valid Uri-Path specified
         if (payload != null && !payload.isEmpty()) 
         {
@@ -161,11 +184,13 @@ public class Yhteys extends LocalResource
             json json = new json();
             try
             {
-                String osoite = "http://"+payload;
+                String osoite = URLDecoder.decode(payload, "UTF-8");
+                osoite = "http://"+payload;
                 arvot = yhteys.httpClientReq(osoite);
 
                 String jsonstring = json.createJsonString(arvot);
             // set payload and content type
+                content = jsonstring;
                 data = jsonstring.getBytes("UTF-8");
                 // signal that resource state changed
                 changed();
@@ -175,8 +200,14 @@ public class Yhteys extends LocalResource
                 e.printStackTrace();
             }
             
-            createSubResource(request, payload);
+   //         Resource resource = create(new LinkedList<String>(Arrays.asList(path)));
+    //        Resource resource = create(new LinkedList<String>(Arrays.asList(payload)));
+  //          Resource resource = create1(payload);
+   //         createSubResource(request, payload);
 
+            Response response = new Response(ResponseCode.CREATED);
+  //          response.getOptions().setLocationPath(resource.getURI());
+            exchange.respond(response);
 
 
         } 
@@ -184,17 +215,24 @@ public class Yhteys extends LocalResource
         {
 
                 // complete the request
-                request.respond(CodeRegistry.RESP_BAD_REQUEST,
-                        "Payload must contain Uri-Path for new sub-resource.");
+            Response response = new Response(ResponseCode.NOT_ACCEPTABLE);
+   //         response.getOptions().setLocationPath(resource.getURI());
+            
+            response.setPayload("Payload must contain Uri-Path for http address.");
+            exchange.respond(response);
+      //      request.respond(CodeRegistry.RESP_BAD_REQUEST,
+        //                "Payload must contain Uri-Path for http address.");
         }
     }
 
+    
     /*
      * Creates a new sub-resource with the given identifier in this resource.
      * Added checks for resource creation.
      */
+    /*
     @Override
-    public void createSubResource(Request request, String newIdentifier) 
+    public void createSubResource(Exchange request, String newIdentifier) 
     {
 
             if (request instanceof PUTRequest) 
@@ -204,7 +242,17 @@ public class Yhteys extends LocalResource
                     return;
             }
 
-
+            String osoite = request.getLocationPath();
+            System.out.println("osoiteloc " + ": " + osoite);
+            osoite = request.getLocationQuery();
+            System.out.println("osoitelque " + ": " + osoite);
+            osoite = request.getUriHost();
+            System.out.println("osoitehost " + ": " + osoite);
+            osoite = request.getUriPath();
+            System.out.println("osoitepath " + ": " + osoite);
+            osoite = request.getUriQuery();
+            System.out.println("osoiteuriquer " + ": " + osoite);
+*/
 
             // omit leading and trailing slashes
             /*
@@ -245,6 +293,7 @@ public class Yhteys extends LocalResource
                     newIdentifier = newIdentifier.substring(0,newIdentifier.indexOf("\n"));
             }
             */
+    /*
             // special restriction
             if (newIdentifier.length()>32) 
             {
@@ -315,38 +364,28 @@ public class Yhteys extends LocalResource
                             this.getPath(), newIdentifier));
             }
     }
-
+*/
     /*
      * DELETEs this storage resource, if it is not root.
      */
     @Override
-    public void performDELETE(DELETERequest request) 
+    public void handleDELETE(Exchange request) 
     {
 
-            // disallow to remove the root "storage" resource
-            if (parent instanceof Yhteys) 
-            {
-
-                    // remove this resource
-                    remove();
-
-                    request.respond(CodeRegistry.RESP_DELETED);
-            } 
-            else 
-            {
-                    request.respond(CodeRegistry.RESP_FORBIDDEN,
-                            "Root storage resource cannot be deleted");
-            }
+        this.delete();
+	request.respond(new Response(ResponseCode.DELETED));
     }
 
     // Internal ////////////////////////////////////////////////////////////////
 
+    
     /*
      * Convenience function to store data contained in a 
      * PUT/POST-Request. Notifies observing endpoints about
      * the change of its contents.
      */
-    private void storeData(Request request) 
+    /*
+    private void storeData(Exchange request) 
     {
 
             // set payload and content type
@@ -358,21 +397,24 @@ public class Yhteys extends LocalResource
             // signal that resource state changed
             changed();
     }
-
-    private String storeAnswer(Request request) 
+*/
+    private String storeAnswer(Exchange request) 
     {
 
+       // osoite = "http://"+payload;
         Map<String, Object> arvot = new HashMap<String,Object>();
 //         HTTP http = new HTTP();
         json json = new json();
         // set payload and content type
-        data = request.getPayload();
-        String str = "";
+        content = request.getRequest().getPayloadString();
+     //   data = request.getPayload();
+     //   String str = "";
         String paluu = "";
         try
         {
-            str = new String(data, "UTF-8");
-            arvot = json.readJSON(str);
+   //         str = new String(data, "UTF-8");
+        //    arvot = json.readJSON(str);
+            arvot = json.readJSON(content);
             paluu = yhteys.httpClientAut(arvot);
         }
         catch (Exception e) 
@@ -380,13 +422,73 @@ public class Yhteys extends LocalResource
             e.printStackTrace();
         }
         
-        clearAttribute(LinkFormat.CONTENT_TYPE);
-        setContentTypeCode(request.getContentType());
+  //      clearAttribute(LinkFormat.CONTENT_TYPE);
+  //      setContentTypeCode(request.getContentType());
 
         // signal that resource state changed
         changed();
         return paluu;
     }
 
+    	/**
+	 * Find the requested child. If the child does not exist yet, create it.
+	 */
+	@Override
+	public Resource getChild(String name) 
+        {
+            System.out.println("lapsen nimi: " + name);
+            Resource resource = super.getChild(name);
+            if (resource == null) {
+                    resource = new Yhteys(name);
+                    add(resource);
+            }
+            return resource;
+	}
+	
+	/**
+	 * Create a resource hierarchy with according to the specified path.
+	 * @param path the path
+	 * @return the lowest resource from the hierarchy
+	 */
+	private Resource create(LinkedList<String> path) 
+        {
+		String segment;
+		do {
+			if (path.size() == 0)
+				return this;
+		
+			segment = path.removeFirst();
+		} while (segment.isEmpty() || segment.equals("/"));
+		
+		Yhteys resource = new Yhteys(segment);
+   //             Yhteys resource = new Yhteys(segment);
+		add(resource);
+		return resource.create(path);
+	}
+        
+        /**
+	 * Create a resource hierarchy with according to the specified path.
+	 * @param path the path
+	 * @return the lowest resource from the hierarchy
+	 */
+	private Resource create1(String segment) 
+        {
+//		String segment;
+  //              segment = path.;
+	/*	do {
+			if (path.size() == 0)
+				return this;
+		
+			segment = path.removeFirst();
+		} while (segment.isEmpty() || segment.equals("/"));
+		*/
+		Yhteys resource = new Yhteys(segment);
+   //             Yhteys resource = new Yhteys(segment);
+		add(resource);
+      //          new LinkedList<String>(Arrays.asList(segment));
+        //        resource.
+                return resource;
+//		return resource.create(new LinkedList<String>(Arrays.asList(segment)));
+	}
 	
 }
