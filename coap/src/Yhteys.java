@@ -72,6 +72,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
     private HTTP yhteys;
     private byte[] data; 
     private String content;
+    private String osoite;
     // Constructors ////////////////////////////////////////////////////////////
 
     /*
@@ -94,6 +95,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
         getAttributes().addResourceType("Storage");
        // isObservable(true);
         yhteys = new HTTP();
+        osoite = "";
   //      json json = new json();
     }
 
@@ -144,6 +146,52 @@ public class Yhteys extends ResourceBase// extends LocalResource
     //            MediaTypeRegistry.TEXT_PLAIN);
  //       request.respond();
     }
+    
+    private String storeAnswer(Exchange exchange) 
+    {
+
+        Request request = exchange.getRequest();
+       // osoite = "http://"+payload;
+        Map<String, Object> arvot = new HashMap<String,Object>();
+//         HTTP http = new HTTP();
+        json json = new json();
+        // set payload and content type
+        content = exchange.getRequest().getPayloadString();
+     //   data = request.getPayload();
+     //   String str = "";
+        String paluu = "";
+        String kokouri = request.toString();
+        uriShortener(kokouri);
+        try
+        {
+   //         str = new String(data, "UTF-8");
+        //    arvot = json.readJSON(str);
+            arvot = json.readJSON(content);
+            paluu = yhteys.httpClientAut2(arvot, osoite);
+        }
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+        
+  //      clearAttribute(LinkFormat.CONTENT_TYPE);
+  //      setContentTypeCode(request.getContentType());
+
+        // signal that resource state changed
+        changed();
+        return paluu;
+    }
+    
+     private String uriShortener(String kokouri) 
+    {
+
+       if(kokouri.contains("coap://localhost:TODO/Yhteys/")) 
+        {
+            osoite = kokouri.replaceAll("coap://localhost:TODO/Yhteys/", "");
+        }
+        
+        return osoite;
+    }
 
     /*
      * POSTs a new sub-resource to this resource.
@@ -153,42 +201,44 @@ public class Yhteys extends ResourceBase// extends LocalResource
     @Override
     public void handlePOST(Exchange exchange) 
     {
-        /*
-        String osoite1 = request.getLocationPath();
-        System.out.println("osoiteloc " + ": " + osoite1);
-        osoite1 = request.getLocationQuery();
-        System.out.println("osoitelque " + ": " + osoite1);
-        osoite1 = request.getUriHost();
-        System.out.println("osoitehost " + ": " + osoite1);
-        osoite1 = request.getUriPath();
-        System.out.println("osoitepath " + ": " + osoite1);
-        osoite1 = request.getUriQuery();
-        System.out.println("osoiteuriquer " + ": " + osoite1);
-*/
-        Request request = exchange.getRequest();
+        
+        String osoite1 = exchange.toString();
+        System.out.println("osoite1 :" +osoite1);
+
         Map<String, String> arvot = new HashMap<String, String>();
+        Request request = exchange.getRequest();
+        
         // get request payload as a string
         String payload = request.getPayloadString();
+        
+        System.out.println("osoite4 :" + request.getURI());
+        String kokouri = request.getURI();
+        uriShortener(kokouri);
 
+        System.out.println("osoite :" +osoite);
         System.out.println("payload " + ": " + payload);
+        
+        
 /*        String[] parts = payload.split("\\?");
             System.out.println("payload eka splitti" + ": " + parts);
             String[] path = parts[0].split("/");
             System.out.println("payload toka splitti " + ": " + path);
         */
         // check if valid Uri-Path specified
-        if (payload != null && !payload.isEmpty()) 
-        {
+    //    if (payload != null && !payload.isEmpty()) 
+    //    {
   //          HTTP http = new HTTP();
             
             json json = new json();
             try
             {
-                String osoite = URLDecoder.decode(payload, "UTF-8");
-                osoite = "http://"+payload;
+  //              String osoite = URLDecoder.decode(payload, "UTF-8");
+                System.out.println("osoite " + ": " + osoite);
+                osoite = "http://"+osoite;
                 arvot = yhteys.httpClientReq(osoite);
 
-                String jsonstring = json.createJsonString(arvot);
+     //           String jsonstring = json.createJsonString(arvot);
+                String jsonstring = json.writeJSONauthorization(arvot);
             // set payload and content type
                 content = jsonstring;
                 data = jsonstring.getBytes("UTF-8");
@@ -206,11 +256,13 @@ public class Yhteys extends ResourceBase// extends LocalResource
    //         createSubResource(request, payload);
 
             Response response = new Response(ResponseCode.CREATED);
+            response.setPayload(content);
   //          response.getOptions().setLocationPath(resource.getURI());
             exchange.respond(response);
 
 
-        } 
+   //     } 
+            /*
         else 
         {
 
@@ -223,6 +275,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
       //      request.respond(CodeRegistry.RESP_BAD_REQUEST,
         //                "Payload must contain Uri-Path for http address.");
         }
+            */
     }
 
     
@@ -398,37 +451,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
             changed();
     }
 */
-    private String storeAnswer(Exchange request) 
-    {
-
-       // osoite = "http://"+payload;
-        Map<String, Object> arvot = new HashMap<String,Object>();
-//         HTTP http = new HTTP();
-        json json = new json();
-        // set payload and content type
-        content = request.getRequest().getPayloadString();
-     //   data = request.getPayload();
-     //   String str = "";
-        String paluu = "";
-        try
-        {
-   //         str = new String(data, "UTF-8");
-        //    arvot = json.readJSON(str);
-            arvot = json.readJSON(content);
-            paluu = yhteys.httpClientAut(arvot);
-        }
-        catch (Exception e) 
-        {
-            e.printStackTrace();
-        }
-        
-  //      clearAttribute(LinkFormat.CONTENT_TYPE);
-  //      setContentTypeCode(request.getContentType());
-
-        // signal that resource state changed
-        changed();
-        return paluu;
-    }
+    
 
     	/**
 	 * Find the requested child. If the child does not exist yet, create it.
@@ -437,6 +460,8 @@ public class Yhteys extends ResourceBase// extends LocalResource
 	public Resource getChild(String name) 
         {
             System.out.println("lapsen nimi: " + name);
+   //         osoite = osoite + "/" + name;
+   //         System.out.println("tallennettu osoite: " + osoite);
             Resource resource = super.getChild(name);
             if (resource == null) {
                     resource = new Yhteys(name);

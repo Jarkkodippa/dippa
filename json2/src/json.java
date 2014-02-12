@@ -475,7 +475,7 @@ public class json
 
  //Lukee json tiedoston mappiin.
  //palauttaa mapin.
-   public Map readJSON(String data) 
+   public static Map readJSON(String data) 
    {
   //      JSONObject valiaikainen = new JSONObject(data);
         Map<String, Object> map = new HashMap<String,Object>();
@@ -559,7 +559,7 @@ public class json
 
           JSONObject valiaikainen = new JSONObject();
           JSONObject valiaikainen2 = new JSONObject();
-            Map<String, String> digestresponse = new HashMap<String, String>();
+            Map<String, Object> digestresponse = new HashMap<String, Object>();
 
             digestresponse.put( "username", username );  
             digestresponse.put( "realm", realm );  
@@ -576,12 +576,12 @@ public class json
             valiaikainen.put("digest-response", digestresponse);
   //          String jsoneka = createJsonString(digestresponse);
 
-            HashMap<String, String> authorization = new HashMap<String, String>();
+            HashMap<String, Object> authorization = new HashMap<String, Object>();
      //       authorization.put( "type", "digest" );  
             valiaikainen.put("type", "digest");
 
             
-            HashMap<String, String> authorization2 = new HashMap<String, String>();
+            HashMap<String, Object> authorization2 = new HashMap<String, Object>();
 
             valiaikainen2.put("authorization", valiaikainen);
             String palautus = createJsonString(valiaikainen2);
@@ -611,9 +611,23 @@ public class json
 
 
           */
-            String palautus = createJsonString(data);
+  //          String palautus = createJsonString(data);
     //        System.out.println( palautus );
+            
+            HashMap<String, Object> wwwauthenticate = new HashMap<String, Object>();
+
+            wwwauthenticate.put( "type", "digest" );  
+
+            wwwauthenticate.put( "challenge", data );
+  //          wwwauthenticate.put( "challenge", jsoneka );
+//            String jsontoka = createJsonString(wwwauthenticate);
+            
+            HashMap<String, Object> authorization2 = new HashMap<String, Object>();
+            authorization2.put( "www-authenticate", wwwauthenticate );
+            
+            String palautus = createJsonString(authorization2);
   
+            System.out.println( palautus );
             return palautus;
         
       }
@@ -633,7 +647,25 @@ public class json
       {
 
    
-            String palautus = createJsonString(data);
+   //         String palautus = createJsonString(data);
+            
+            JSONObject valiaikainen = new JSONObject();
+            JSONObject valiaikainen2 = new JSONObject();
+
+      //          String palautus = createJsonString(data);
+
+            valiaikainen.put("digest-response", data);
+
+
+            HashMap<String, Object> authorization = new HashMap<String, Object>();
+
+            valiaikainen.put("type", "digest");
+
+
+            HashMap<String, Object> authorization2 = new HashMap<String, Object>();
+
+            valiaikainen2.put("authorization", valiaikainen);
+            String palautus = createJsonString(valiaikainen2);
 
             return palautus;
       }

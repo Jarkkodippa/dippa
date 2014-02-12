@@ -122,7 +122,7 @@ public class coaptoteutus
         return true;
     }
     
-     static boolean runCoap(String[] args) throws Exception
+     static String runCoap(String[] args) throws Exception
    {
        // initialize parameters
 	String method = null;
@@ -134,7 +134,8 @@ public class coaptoteutus
         if (args.length == 0) 
         {
                 printInfo();
-                return false;
+                return "";
+             //   return false;
         }
 
      //   Log.setLevel(Level.ALL);
@@ -273,14 +274,16 @@ public class coaptoteutus
                         System.exit(ERR_RESPONSE_FAILED);
                 }
 
+                System.out.println("seuraavaReceiving response...");
                 // output response
 
                 if (response != null) 
                 {
 
-           //         response.prettyPrint();
+     //               response.prettyPrint();
                     System.out.println(Utils.prettyPrint(response));
                     System.out.println("Time elapsed (ms): " + response.getRTT());
+                    
                     
                     // check of response contains resources
                     if (response.getOptions().hasContentFormat(
@@ -289,10 +292,12 @@ public class coaptoteutus
 
                             String linkFormat = response.getPayloadString();
 
+                            System.out.println("payloadReceiving response...");
                             // output discovered resources
                             System.out.println("\nDiscovered resources:");
                             System.out.println(linkFormat);
 
+                //            return linkFormat;
                     } 
                     else 
                     {
@@ -303,39 +308,7 @@ public class coaptoteutus
                                     System.out.println("Server error: Link format not specified");
                             }
                     }
-/*
-                    // check of response contains resources
-                    if (response.getContentType()==MediaTypeRegistry.APPLICATION_LINK_FORMAT) 
-                    {
 
-                        String linkFormat = response.getPayloadString();
-
-                        // create resource three from link format
-                        Resource root = RemoteResource.newRoot(linkFormat);
-                        if (root != null) 
-                        {
-
-                                // output discovered resources
-                                System.out.println("\nDiscovered resources:");
-                                root.prettyPrint();
-
-                        } 
-                        else 
-                        {
-                                System.err.println("Failed to parse link format");
-                                System.exit(ERR_BAD_LINK_FORMAT);
-                        }
-                    } 
-                    else 
-                    {
-
-                        // check if link format was expected by client
-                        if (method.equals("DISCOVER")) 
-                        {
-                            System.out.println("Server error: Link format not specified");
-                        }
-                    }
-                    */
 
                 } 
                 else 
@@ -346,21 +319,13 @@ public class coaptoteutus
                     break;
                 }
 
+       //         Utils.Payload
+                return Utils.prettyPrintPayload(response);
             } 
             while (loop);
 
         } 
-        /*
-        catch (UnknownHostException e) 
-        {
-                System.err.println("Unknown host: " + e.getMessage());
-                System.exit(ERR_REQUEST_FAILED);
-        } 
-        catch (IOException e) 
-        {
-                System.err.println("Failed to execute request: " + e.getMessage());
-                System.exit(ERR_REQUEST_FAILED);
-        }*/
+
         catch (Exception e) 
         {
                 System.err.println("Failed to execute request: " + e.getMessage());
@@ -368,7 +333,7 @@ public class coaptoteutus
         }
 
 	System.out.println();
-        return true;
+        return "";
     }
      
      /*
