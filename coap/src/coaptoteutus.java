@@ -122,6 +122,7 @@ public class coaptoteutus
         return true;
     }
     
+    /*
      static String runCoap(String[] args) throws Exception
    {
        // initialize parameters
@@ -224,7 +225,7 @@ public class coaptoteutus
                 System.exit(ERR_BAD_URI);
             }
         }
-        System.out.println("jeeeee");
+        System.out.println("jeeeee uri :" + uri);
         request.setURI(uri);
         System.out.println("jeergg");
         request.setPayload(payload);
@@ -335,7 +336,7 @@ public class coaptoteutus
 	System.out.println();
         return "";
     }
-     
+     */
      /*
 	 * Outputs user guide of this program.
 	 */
@@ -400,6 +401,7 @@ public class coaptoteutus
 	 * 
 	 * @return A new request object, or null if method not recognized
 	 */
+        /*
 	private static Request newRequest(String method) 
         {
 		if (method.equals("GET")) 
@@ -438,7 +440,7 @@ public class coaptoteutus
 			return null;
 		}
 	}
-     
+     */
      //Coapin serveri luokka. Ottaa pyynnöt vastaan ja käsittelee ne.
    static class coapHandler// extends ServerEndpoint
    {

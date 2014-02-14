@@ -102,6 +102,93 @@ public class startCoap
 
             return header;
         }
+     
+     private static Map setAuthorizationHeaderMap(Map tiedot, String uri, 
+             String username, String password)
+        {
+    //        HashMap<String, String> map = new HashMap<String, String>();
+            String header = "";
+            
+   //         String username1 = "";
+            String realm1 = "";
+
+            String nonce = "";
+   //         String uri = "";
+            String qop = "";
+            String nc = "";
+ //           String cnonce = "";
+  //          String response = "";
+            String opaque = "";
+            String algorithm = "";
+
+   //         Map<String, Object> challenge = new HashMap<String, Object>();
+            Map<String, Object> tietoja = new HashMap<String, Object>();
+            Map<String, Object> tietoja2 = new HashMap<String, Object>();
+            Map<String, Object> tietoja3 = new HashMap<String, Object>();
+            Map<String, Object> lopullinen = new HashMap<String, Object>();
+            tietoja = tiedot;
+            System.out.println("tietoja mapin sisälto" + ": " + tietoja);
+            tietoja2 = (HashMap<String,Object>)tietoja.get("www-authenticate");
+            System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
+            tietoja3 = (HashMap<String,Object>)tietoja2.get("challenge");
+            System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
+            if(!tietoja3.isEmpty())
+            {
+    //            username1 = (String) tietoja.get("username");
+                realm1 = (String) tietoja3.get("realm");
+                nonce = (String) tietoja3.get("nonce");
+ //               uri = (String) tietoja3.get("uri");
+         //       if((String) tietoja3.get("qop") != null)
+           //     {
+                qop = (String) tietoja3.get("qop");
+            //    }
+            //    else
+                    
+     //           nc = (String) tietoja3.get("nc");
+       //         cnonce = (String) tietoja.get("cnonce");
+    //            response = (String) tietoja.get("response");
+                opaque = (String) tietoja3.get("opaque");
+                algorithm = (String) tietoja3.get("algorithm");
+                
+            }
+    //        qop = "";
+            nc = "00000001";
+            String A1 = DigestUtils.md5Hex(username + ":" + realm1 + ":" + password);
+            String A2 = DigestUtils.md5Hex("GET" + ":" + uri);
+            
+            String nonce2 = calculateNonce();
+     //       String cnonce = Integer.toString(Math.abs(new Random().nextInt()));
+            String cnonce = nonce2;
+            String ncvalue = "00000001";
+            
+        //    String responseSeed = A1 + ":" + nonce + ":" + ncvalue + ":" + cnonce + ":" + qop + ":" + A2;
+            String responseSeed = A1 + ":" + nonce + ":" + A2;
+            String response = DigestUtils.md5Hex(responseSeed);
+            
+            lopullinen.put("Digest username", username);
+            lopullinen.put("realm", realm1);
+            lopullinen.put("nonce", nonce);
+            lopullinen.put("uri", uri);       
+            lopullinen.put("cnonce", cnonce);
+            lopullinen.put("nc", nc);
+            lopullinen.put("response", response);
+            if(tietoja3.get("qop") != null && tietoja3.get("qop") != "")
+            {
+                lopullinen.put("qop", qop);
+            }
+            if(tietoja3.get("opaque") != null && tietoja3.get("opaque") != "")
+            {
+                lopullinen.put("opaque", opaque);
+            }
+            if(tietoja3.get("algorithm") != null && tietoja3.get("algorithm") != "")
+            {
+                lopullinen.put("algorithm", algorithm);
+            }
+            
+     //       lopullinen.put("type", "digest");
+
+            return lopullinen;
+        }
      //jee
    public static void main(String[] args) 
    {
@@ -114,7 +201,8 @@ public class startCoap
   //      String osoite = "coap://localhost";
    //     String osoite = "coap://localhost/vaarinpain";
   //      String osoite = "coap://localhost/Yhteys/foo.bar.com/httpresurssi/";
-        String osoiten = "coap://localhost/Yhteys/";
+ //       String osoiten = "coap://localhost/Yhteys/";
+        String osoiten = "coap://192.168.0.70/Yhteys/";
   //      String osoite1 = "localhost/helloWorld";
   //      int osoite1 = osoite.length();
         String kaannettava = "jee";
@@ -129,10 +217,12 @@ public class startCoap
   //      System.out.println("viesti " + ": " + args[2]);
   //      viesti = args[2];
         coaptoteutus coap = new coaptoteutus();
+        osoiten = osoiten + tarkenne;
+        
         try
         {
             tarkenne = URLEncoder.encode(tarkenne, "UTF-8");
-            osoiten = osoiten + tarkenne;
+            
     //    String tarkenne = "/kokeilu/";
         //ExampleClient POST coap://vs0.inf.ethz.ch:5683/storage my data"
             args[0] = "POST";
@@ -159,9 +249,30 @@ public class startCoap
             System.err.println("virhe1");
         }
         
-        String authheader = setAuthorizationHeader(authmap, "http://192.168.0.112/priv/index.html", "testi", "a");
+        Map authheader = setAuthorizationHeaderMap(authmap, "/priv/index.html", "testi", "a");
         
         System.out.println("authheader " + ": " + authheader);
+        
+        
+       
+        try
+        {
+            args = new String[3];
+        
+            args[0] = "PUT";
+
+            args[1] = osoiten;
+            String palautus2 = json.writeJSONauthentication(authheader);
+   //         String palautus2 = "testi";
+            args[2] = palautus2;
+  //          servu.runCoapserver();
+            String Servuvastaus = coap.runCoap(args);
+            System.out.println("vastaus " + ": " + Servuvastaus);
+        }
+        catch (Exception e)
+        {
+            System.err.println("virhe2");
+        }
         
         args = new String[2];
         
@@ -183,7 +294,7 @@ public class startCoap
         }
         catch (Exception e)
         {
-            System.err.println("virhe2");
+            System.err.println("virhe3");
         }
    /*     
         args = new String[3];

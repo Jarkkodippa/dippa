@@ -139,8 +139,15 @@ public class HTTP
             {
                 for (HeaderElement element : wwAuthHeader.getElements()) 
                 {
-                        System.out.println(element.getName() + ": " + element.getValue());
-                        map.put( element.getName(), element.getValue() ); 
+                    if(element.getName().contains("Digest")) 
+                    {
+                        String elementname = element.getName();
+                        
+                        elementname = elementname.replaceAll("Digest ", "");
+                        element.setName(elementname);
+                    }
+                    System.out.println(element.getName() + ": " + element.getValue());
+                    map.put( element.getName(), element.getValue() ); 
                 }
             }
             if(responseBody != null || responseBody != "")
@@ -233,6 +240,7 @@ public class HTTP
             */
    //         Header wwAuthHeader;
             getMethod.setRequestHeader("Authorization", otsikkotieto);
+            System.out.println("getmethod sisältää" + ": " + getMethod.getQueryString());
             
        //     UsernamePasswordCredentials upc = new UsernamePasswordCredentials(userName, password);
         //    AuthScope as = new AuthScope(host, port, realm);
@@ -266,38 +274,81 @@ public class HTTP
             String uri = "";
             String qop = "";
             String nc = "";
+     //       int nc = 0;
             String cnonce = "";
             String response = "";
             String opaque = "";
+            String algorithm = "";
 
-            Map<String, Object> tietoja = tiedot;
-            if(!tiedot.isEmpty())
+  //          Map<String, Object> tietoja = tiedot;
+            Map<String, Object> tietoja = new HashMap<String, Object>();
+            Map<String, Object> tietoja2 = new HashMap<String, Object>();
+            Map<String, Object> tietoja3 = new HashMap<String, Object>();
+            tietoja = tiedot;
+            System.out.println("tietoja mapin sisälto" + ": " + tietoja);
+            tietoja2 = (HashMap<String,Object>)tietoja.get("authorization");
+            System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
+            tietoja3 = (HashMap<String,Object>)tietoja2.get("digest-response");
+            System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
+            if(!tietoja3.isEmpty())
             {
-                username1 = (String) tietoja.get("username");
-                realm1 = (String) tietoja.get("realm");
-                nonce = (String) tietoja.get("nonce");
-                uri = (String) tietoja.get("uri");
-                qop = (String) tietoja.get("qop");
-                nc = (String) tietoja.get("nc");
-                cnonce = (String) tietoja.get("cnonce");
-                response = (String) tietoja.get("response");
-                opaque = (String) tietoja.get("opaque");
-                
+                username1 = (String) tietoja3.get("Digest username");
+                realm1 = (String) tietoja3.get("realm");
+                nonce = (String) tietoja3.get("nonce");
+                uri = (String) tietoja3.get("uri");
+                qop = (String) tietoja3.get("qop");
+             //   nc = (int) tietoja3.get("nc");
+                nc = (String) tietoja3.get("nc");
+                cnonce = (String) tietoja3.get("cnonce");
+                response = (String) tietoja3.get("response");
+                opaque = (String) tietoja3.get("opaque");
+                algorithm = (String) tietoja3.get("algorithm");
                 
             }
-            header += "Digest username=\"" + username1 + "\",";
-            header += "realm=\"" + realm1 + "\",";
+            header += "Digest username=\"" + username1 + "\", ";
+            header += "realm=\"" + realm1 + "\", ";
 
-            header += "nonce=\"" + nonce + "\",";
-            header += "uri=\"" + uri + "\",";
-            header += "qop=\"" + qop + "\",";
-            header += "nc=\"" + nc + "\",";
-            header += "cnonce=\"" + cnonce + "\",";
-            header += "response=\"" + response + "\",";
-            header += "opaque=\"" + opaque + "\"";
+            header += "nonce=\"" + nonce + "\", ";
+            header += "uri=\"" + uri + "\", ";
+            
+            if(qop != null && qop != "")
+            {
+                header += "qop=" + qop + ", ";
+            }
+            header += "nc=" + nc + ", ";
+            header += "cnonce=\"" + cnonce + "\", ";
+            header += "response=\"" + response + "\", ";
+            
+            
+      
+            if(opaque != null && opaque != "")
+            {
+                header += "opaque=\"" + opaque + "\", ";
+            }
+            if(algorithm != null && algorithm != "")
+            {
+                header += "algorithm=" + algorithm + ", ";
+            }
+            
+            header = removeLastChar(header);
+            header = removeLastChar(header);
+           // header = header - ",";
+            
+            System.out.println("header tiedosto" + ": " + header);
 
             return header;
         }
+        
+        
+
+public String removeLastChar(String s) {
+    if (s == null || s.length() == 0) {
+        return s;
+    }
+    return s.substring(0, s.length()-1);
+}
+
+
     
     //Pääsilmukka metodien testaamiseen ja ajamiseen jossain järjestyksessä.
     public void suoritaPaasilmukkaa() 

@@ -92,7 +92,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
         getAttributes().setTitle("Luodaan HTTP yhteys!");
      //   setTitle("PUT your data here or POST new resources!");
      //   getAttributes().setResourceType("Storage");
-        getAttributes().addResourceType("Storage");
+        getAttributes().addResourceType("reverse proxy");
        // isObservable(true);
         yhteys = new HTTP();
         osoite = "";
@@ -132,6 +132,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
     public void handlePUT(Exchange exchange) 
     {
 
+        System.out.println("tultiin put funktioon");
             // store payload
   //          storeData(request);
   //      content = request.getRequest().getPayloadString();
@@ -167,6 +168,10 @@ public class Yhteys extends ResourceBase// extends LocalResource
    //         str = new String(data, "UTF-8");
         //    arvot = json.readJSON(str);
             arvot = json.readJSON(content);
+            
+            System.out.println("arvot mapin sisältä " + ": " + arvot);
+            System.out.println("osoite " + ": " + osoite);
+            
             paluu = yhteys.httpClientAut2(arvot, osoite);
         }
         catch (Exception e) 

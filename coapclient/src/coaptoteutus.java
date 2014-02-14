@@ -217,7 +217,7 @@ public class coaptoteutus
                 System.exit(ERR_BAD_URI);
             }
         }
-        System.out.println("jeeeee");
+        System.out.println("jeeeeeuri :" + uri);
         request.setURI(uri);
         System.out.println("jeergg");
         request.setPayload(payload);
