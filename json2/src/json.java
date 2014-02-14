@@ -14,7 +14,7 @@ import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 
-import com.nimbusds.jose.Algorithm;
+//import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
@@ -24,12 +24,12 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
 
-import net.minidev.json.JSONAware;
-import javax.mail.internet.ParameterList;
-import org.apache.commons.codec.binary.Base64;
+//import net.minidev.json.JSONAware;
+//import javax.mail.internet.ParameterList;
+//import org.apache.commons.codec.binary.Base64;
 
 import org.json.JSONObject;
-import org.json.JSONArray;
+//import org.json.JSONArray;
 
 
 import java.io.IOException;
@@ -45,8 +45,8 @@ import java.util.UUID;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAPrivateKeySpec;
-import java.security.spec.RSAPublicKeySpec;
+//import java.security.spec.RSAPrivateKeySpec;
+//import java.security.spec.RSAPublicKeySpec;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -74,8 +74,7 @@ public class json
    public static String cryptJVS(String message, String sharedKey) 
    {
 
-        // Create payload
-     //   String message = "Hello world!";
+
         
         Payload payload = new Payload(message);
         
@@ -86,16 +85,14 @@ public class json
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
         System.out.println("Jeee");
         header.setContentType("text/plain");
- //       String vali = header.toJSONObject();
+
         System.out.println("JWS header: ");
         
         
         // Create JWS object
         JWSObject jwsObject = new JWSObject(header, payload);
         
-        
-        // Create HMAC signer
-  //      String sharedKey = "a0a2abd8-6162-41c3-83d6-1cf559b46afc";
+
         
         System.out.println("HMAC key: " + sharedKey);
         
@@ -477,7 +474,7 @@ public class json
  //palauttaa mapin.
    public static Map readJSON(String data) 
    {
-  //      JSONObject valiaikainen = new JSONObject(data);
+
         Map<String, Object> map = new HashMap<String,Object>();
         ObjectMapper mapper = new ObjectMapper();
  
@@ -485,12 +482,9 @@ public class json
         {
  
 		//convert JSON string to Map
-            JSONObject valiaikainen = new JSONObject(data);
- //           map = valiaikainen.
-  //          valiaikainen.
+
             map = mapper.readValue(data, new TypeReference<HashMap<String,Object>>(){});
-    //        System.out.println("jee");
-  //          System.out.println(map);
+
             return map;
  
 	} 
@@ -574,14 +568,8 @@ public class json
          
 //            addMapJsonArray("testi",digestresponse);
             valiaikainen.put("digest-response", digestresponse);
-  //          String jsoneka = createJsonString(digestresponse);
 
-            HashMap<String, Object> authorization = new HashMap<String, Object>();
-     //       authorization.put( "type", "digest" );  
             valiaikainen.put("type", "digest");
-
-            
-            HashMap<String, Object> authorization2 = new HashMap<String, Object>();
 
             valiaikainen2.put("authorization", valiaikainen);
             String palautus = createJsonString(valiaikainen2);
@@ -603,25 +591,14 @@ public class json
       
       try 
       {
-          /*
-          HashMap<String, Object> authorizationn = new HashMap<String, Object>();
-          authorizationn.put("authorization", data.get("authorization"));
-          HashMap<String, Object> digestresponsen = new HashMap<String, Object>();
-          digestresponsen.put("digest-response", data.get("digest-response"));
 
-
-          */
-  //          String palautus = createJsonString(data);
-    //        System.out.println( palautus );
             
             HashMap<String, Object> wwwauthenticate = new HashMap<String, Object>();
 
             wwwauthenticate.put( "type", "digest" );  
 
             wwwauthenticate.put( "challenge", data );
-  //          wwwauthenticate.put( "challenge", jsoneka );
-//            String jsontoka = createJsonString(wwwauthenticate);
-            
+
             HashMap<String, Object> authorization2 = new HashMap<String, Object>();
             authorization2.put( "www-authenticate", wwwauthenticate );
             
@@ -646,23 +623,13 @@ public class json
       try 
       {
 
-   
-   //         String palautus = createJsonString(data);
-            
+
             JSONObject valiaikainen = new JSONObject();
             JSONObject valiaikainen2 = new JSONObject();
 
-      //          String palautus = createJsonString(data);
-
             valiaikainen.put("digest-response", data);
 
-
-            HashMap<String, Object> authorization = new HashMap<String, Object>();
-
             valiaikainen.put("type", "digest");
-
-
-            HashMap<String, Object> authorization2 = new HashMap<String, Object>();
 
             valiaikainen2.put("authorization", valiaikainen);
             String palautus = createJsonString(valiaikainen2);

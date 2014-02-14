@@ -1,23 +1,10 @@
 
-//import ch.ethz.inf.vs.californium.coap.GETRequest;
+
 import ch.ethz.inf.vs.californium.coap.Request;
-//import ch.ethz.inf.vs.californium.coap.Response;
+
 import ch.ethz.inf.vs.californium.coap.CoAP;
 import ch.ethz.inf.vs.californium.coap.MediaTypeRegistry;
-//import ch.ethz.inf.vs.californium.coap.CoAP.ResponseCode;
-//import ch.ethz.inf.vs.californium.coap.registries.CodeRegistry;
-//import ch.ethz.inf.vs.californium.coap.registries.MediaTypeRegistry;
-//import ch.ethz.inf.vs.californium.coap.registries.OptionNumberRegistry;
-//import ch.ethz.inf.vs.californium.coap.Option;
-//import ch.ethz.inf.vs.californium.coap.TokenManager;
-//import ch.ethz.inf.vs.californium.coap.POSTRequest;
-//import ch.ethz.inf.vs.californium.coap.PUTRequest;
-//import ch.ethz.inf.vs.californium.coap.DELETERequest;
 
-//import ch.ethz.inf.vs.californium.endpoint.ServerEndpoint;
-//import ch.ethz.inf.vs.californium.endpoint.resources.Resource;
-//import ch.ethz.inf.vs.californium.endpoint.resources.LocalResource;
-//import ch.ethz.inf.vs.californium.endpoint.resources.RemoteResource;
 
 import ch.ethz.inf.vs.californium.coap.Response;
 import ch.ethz.inf.vs.californium.network.CoAPEndpoint;
@@ -27,24 +14,13 @@ import ch.ethz.inf.vs.californium.network.EndpointManager.ClientMessageDeliverer
 import ch.ethz.inf.vs.californium.network.config.NetworkConfig;
 import ch.ethz.inf.vs.scandium.DTLSConnector;
 
-//import ch.ethz.inf.vs.californium.util.Log;
-
-//import ch.ethz.inf.vs.californium.network.Exchange;
-//import ch.ethz.inf.vs.californium.server.resources.Resource;
-//import ch.ethz.inf.vs.californium.server.resources.ResourceBase;
-
-//import ch.ethz.inf.vs.californium.server.Server;
 
 import ch.ethz.inf.vs.californium.Utils;
 
-//import java.io.IOException;
-//import java.net.SocketException;
+
 import java.net.URI;
 import java.net.URISyntaxException;
-//import java.net.URLEncoder;
-//import java.util.logging.Level;
-//import java.util.concurrent.Executors;
-//import java.net.UnknownHostException;
+
 import java.net.InetSocketAddress;
 
 /*
@@ -72,46 +48,6 @@ public class coaptoteutus
     private static final int ERR_BAD_URI         = 4;
     private static final int ERR_REQUEST_FAILED  = 5;
     private static final int ERR_RESPONSE_FAILED = 6;
-    private static final int ERR_BAD_LINK_FORMAT = 7;
-    
-    /*
-    // initialize parameters
-    String method = null;
-    URI uri = null;
-    String payload = "";
-    boolean loop = false;
-        */
-    /** Tulostetaan otsikko annetulla merkill� kehystettyn�.
-     * @param teksti kehystett�v� otsikkotesti.
-     */
-   private void tulostaOtsikko(String teksti) 
-   {
-      // Kehysmerkki.
-      final char MERKKI_KEHYS = '*';
-
-      // Reunan ja tekstin v�li vakiona.
-      final String VALI = " ";
-
-      // Selvitet��n merkkijonon pituus.
-      int pituus = teksti.length();
-
-      // Jos pituus oli OK, niin tulostetaan.
-      if (pituus > 0) {
-         // Tehd��n yl�- ja alarivi.
-         String ylaala = "";
-         for (int i = 0; i < pituus + 2 * (VALI.length() + 1); i++)
-            ylaala += MERKKI_KEHYS;
-
-         // Yl�rivi.
-         System.out.println(ylaala);
-
-         // Keskimm�inen rivi.
-         System.out.println(MERKKI_KEHYS + VALI + teksti + VALI + MERKKI_KEHYS);
-
-         // Alarivi.
-         System.out.println(ylaala);
-      }
-   }
    
 
     
@@ -217,25 +153,16 @@ public class coaptoteutus
                 System.exit(ERR_BAD_URI);
             }
         }
-        System.out.println("jeeeeeuri :" + uri);
+  //      System.out.println("jeeeeeuri :" + uri);
         request.setURI(uri);
-        System.out.println("jeergg");
+
         request.setPayload(payload);
-        System.out.println("jeettttt");
+
         request.getOptions().setContentFormat(MediaTypeRegistry.TEXT_PLAIN);
- //       request.setToken( TokenManager.getInstance().acquireToken() );
-  //      request.setContentType(MediaTypeRegistry.TEXT_PLAIN);
 
-        // enable response queue in order to use blocking I/O
-   //     request.enableResponseQueue(true);
-
-        System.out.println("jeeeeegfggf");
-        //
-     //   request.prettyPrint();
         System.out.println( request.getDestination().toString() );
         System.out.println( request.getDestinationPort() );
 
-        System.out.println("jfgsjgkd");
         if (request.getScheme().equals(CoAP.COAP_SECURE_URI_SCHEME)) {
                 Endpoint dtlsEndpoint = new CoAPEndpoint(new DTLSConnector(new InetSocketAddress(0)), NetworkConfig.getStandard());
                 dtlsEndpoint.setMessageDeliverer(new ClientMessageDeliverer());
@@ -246,7 +173,7 @@ public class coaptoteutus
         try 
         {
             request.send();
-            //request.execute();
+
 
             // loop for receiving multiple responses
             do 
@@ -267,8 +194,6 @@ public class coaptoteutus
                         System.exit(ERR_RESPONSE_FAILED);
                 }
 
-                System.out.println("seuraavaReceiving response...");
-                // output response
 
                 if (response != null) 
                 {
@@ -350,44 +275,7 @@ public class coaptoteutus
 		System.out.println("  ExampleClient POST coap://vs0.inf.ethz.ch:5683/storage my data");
 	}
 
-	/*
-	 * Instantiates a new request based on a string describing a method.
-	 * 
-	 * @return A new request object, or null if method not recognized
-	 */
-        /*
-	private static Request newRequest(String method) 
-        {
-		if (method.equals("GET")) 
-                {
-			return new GETRequest();
-		} 
-                else if (method.equals("POST")) 
-                {
-			return new POSTRequest();
-		} 
-                else if (method.equals("PUT")) 
-                {
-			return new PUTRequest();
-		} 
-                else if (method.equals("DELETE")) 
-                {
-			return new DELETERequest();
-		} 
-                else if (method.equals("DISCOVER")) 
-                {
-			return new GETRequest();
-		} 
-                else if (method.equals("OBSERVE")) 
-                {
-			return new GETRequest();
-		} 
-                else 
-                {
-			return null;
-		}
-	}
-        */
+
         /*
 	 * Instantiates a new request based on a string describing a method.
 	 * 
