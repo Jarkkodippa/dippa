@@ -1,14 +1,14 @@
 
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 
 
-import ch.ethz.inf.vs.californium.coap.LinkFormat;
+//import ch.ethz.inf.vs.californium.coap.LinkFormat;
 //import ch.ethz.inf.vs.californium.coap.Option;
 
 import ch.ethz.inf.vs.californium.coap.Request;
 import ch.ethz.inf.vs.californium.coap.Response;
 //import ch.ethz.inf.vs.californium.coap.CoAP.ResponseCode;
-import ch.ethz.inf.vs.californium.coap.MediaTypeRegistry;
+//import ch.ethz.inf.vs.californium.coap.MediaTypeRegistry;
 
 import ch.ethz.inf.vs.californium.network.Exchange;
 import ch.ethz.inf.vs.californium.server.resources.ResourceBase;
@@ -20,7 +20,7 @@ import java.util.Map;
 //import java.net.URLDecoder;
 
 //import java.util.Arrays;
-import java.util.LinkedList;
+//import java.util.LinkedList;
 
 import ch.ethz.inf.vs.californium.coap.CoAP.ResponseCode;
 
@@ -71,11 +71,11 @@ public class Yhteys extends ResourceBase// extends LocalResource
      * or if the resource does not store any data, the contained sub-resources
      * are returned in link format.
      */
-    /*
+    
     @Override
-    public void handleGET(Exchange request) 
+    public void handleGET(Exchange exchange) 
     {
-
+/*
         if (content != null) 
         {
 		request.respond(content);
@@ -88,8 +88,54 @@ public class Yhteys extends ResourceBase// extends LocalResource
                 response.getOptions().setContentFormat(MediaTypeRegistry.APPLICATION_LINK_FORMAT);
                 request.respond(response);
         }
+    */
+        String osoite1 = exchange.toString();
+        System.out.println("osoite1 :" +osoite1);
+
+        Map<String, String> arvot = new HashMap<String, String>();
+        Request request = exchange.getRequest();
+        
+        // get request payload as a string
+  //      String payload = request.getPayloadString();
+        
+        System.out.println("osoite4 :" + request.getURI());
+        String kokouri = request.getURI();
+        uriShortener(kokouri);
+
+        System.out.println("osoite :" +osoite);
+  //      System.out.println("payload " + ": " + payload);
+        
+        
+
+            
+        json json = new json();
+        try
+        {
+
+            System.out.println("osoite " + ": " + osoite);
+            osoite = "http://"+osoite;
+            arvot = yhteys.httpClientReq(osoite);
+
+
+            String jsonstring = json.writeJSONauthorization(arvot);
+
+            content = jsonstring;
+
+            changed();
+        }
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+
+
+        Response response = new Response(ResponseCode.CREATED);
+        response.setPayload(content);
+        exchange.respond(response);
+
+
     }
-*/
+
     /*
      * PUTs content to http server.
      */

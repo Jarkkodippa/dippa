@@ -87,12 +87,13 @@ public class startCoap
         String A2 = DigestUtils.md5Hex("GET" + ":" + uri);
 
         String nonce2 = calculateNonce();
+   //     nonce2 = "1150561b6d9e8864";
 
         String cnonce = nonce2;
         String ncvalue = "00000001";
 
-    //    String responseSeed = A1 + ":" + nonce + ":" + ncvalue + ":" + cnonce + ":" + qop + ":" + A2;
-        String responseSeed = A1 + ":" + nonce + ":" + A2;
+        String responseSeed = A1 + ":" + nonce + ":" + ncvalue + ":" + cnonce + ":" + qop + ":" + A2;
+    //    String responseSeed = A1 + ":" + nonce + ":" + A2;
         String response = DigestUtils.md5Hex(responseSeed);
 
         lopullinen.put("Digest username", username);
@@ -124,8 +125,8 @@ public class startCoap
        
        Map<String, Object> authmap = new HashMap<String,Object>();
 
-  //      String osoiten = "coap://192.168.0.70/Yhteys/";
-        String osoiten = "coap://localhost/Yhteys/";
+        String osoiten = "coap://192.168.0.70/Yhteys/";
+   //     String osoiten = "coap://localhost/Yhteys/";
 
   //      String tarkenne = "192.168.0.112/priv/index.html";
         String tarkenne = "94.237.64.168:804/priv/index.html";
@@ -140,10 +141,10 @@ public class startCoap
             tarkenne = URLEncoder.encode(tarkenne, "UTF-8");
             
 
-            args[0] = "POST";
+     //       args[0] = "POST";
       //      args[0] = "DISCOVER";
       //      args[0] = "OBSERVE";
-      //      args[0] = "GET";
+            args[0] = "GET";
       //      args[0] = "PUT";
             args[1] = osoiten; //"coap://localhost";
 

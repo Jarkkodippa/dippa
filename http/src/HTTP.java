@@ -5,7 +5,7 @@ import org.apache.commons.httpclient.HttpClient;
 //import org.apache.commons.httpclient.UsernamePasswordCredentials;
 //import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
-
+import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.util.HashMap;
 //import java.util.Locale;
@@ -37,6 +37,7 @@ public class HTTP
     private HttpClient client;
     private int status;
     private GetMethod getMethod;
+    private PostMethod postMethod;
     private String responseBody;
 
    /** Herja
@@ -49,7 +50,58 @@ public class HTTP
 
    }
     
+//HTTP post client luo http pyynnön.
+    public String httpPostClient(String osoite, Map tiedot) throws Exception
+    {
+ //       HashMap<String, String> map = new HashMap<String, String>();
 
+        Map<String, Object> tietoja = new HashMap<String, Object>();
+            
+        tietoja = tiedot;
+        
+        try 
+        {
+
+            client = new HttpClient();
+
+            urlStr = osoite;
+            System.out.println("osoite: " + osoite);
+            System.out.println("osoite2: " + urlStr);
+
+
+            //getMethod = new GetMethod(urlStr);
+            postMethod = new PostMethod(urlStr);
+            if(!tiedot.isEmpty())
+            {
+                for (Map.Entry<String, Object> entry : tietoja.entrySet())
+                {
+      //              System.out.println(entry.getKey() + "/" + entry.getValue());
+                   
+          //           header += entry.getKey() +"=" + entry.getValue() + "\", ";
+                  
+                     postMethod.addParameter(entry.getKey(), (String)entry.getValue());
+                    
+                }
+            }
+            
+
+            
+            System.out.println("getMethod luotu");
+
+            status = client.executeMethod(getMethod);
+            System.out.println("status: " + status);
+            responseBody = getMethod.getResponseBodyAsString();
+            System.out.println("responseBody: " + responseBody);
+
+           
+            
+        }
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+        return responseBody;
+    }
     
     //HTTP client luo http pyynnön
     //Ottaa vastaa WWW-autenticate headerin ja palauttaa sen Mappina.
@@ -224,6 +276,8 @@ public class HTTP
             String response = "";
             String opaque = "";
             String algorithm = "";
+            String digest = "";
+            String integrityprotected = "";
 
   //          Map<String, Object> tietoja = tiedot;
             Map<String, Object> tietoja = new HashMap<String, Object>();
@@ -235,8 +289,27 @@ public class HTTP
             System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
             tietoja3 = (HashMap<String,Object>)tietoja2.get("digest-response");
             System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
+            
+
             if(!tietoja3.isEmpty())
             {
+                /*
+                for (Map.Entry<String, Object> entry : tietoja3.entrySet())
+                {
+      //              System.out.println(entry.getKey() + "/" + entry.getValue());
+                    if(entry.getKey().equals("nc") || entry.getKey().equals("qop") ||
+                         entry.getKey().equals("algorithm") )
+                    {
+                        header += entry.getKey() +"=" + entry.getValue() + ", ";
+                    }
+                    else
+                    {
+                        header += entry.getKey() +"=\"" + entry.getValue() + "\", ";
+                    }
+                    
+                }
+                */
+                
                 username1 = (String) tietoja3.get("Digest username");
                 realm1 = (String) tietoja3.get("realm");
                 nonce = (String) tietoja3.get("nonce");
@@ -248,35 +321,51 @@ public class HTTP
                 response = (String) tietoja3.get("response");
                 opaque = (String) tietoja3.get("opaque");
                 algorithm = (String) tietoja3.get("algorithm");
-                
+                digest = (String) tietoja3.get("digest");
+                integrityprotected = (String) tietoja3.get("integrity-protected");
             }
+            
             header += "Digest username=\"" + username1 + "\", ";
             header += "realm=\"" + realm1 + "\", ";
 
             header += "nonce=\"" + nonce + "\", ";
             header += "uri=\"" + uri + "\", ";
-            
-            if(qop != null && qop != "")
+       
+            if(digest != null && !digest.equals(""))
             {
-                header += "qop=" + qop + ", ";
+                header += "digest=" + algorithm + ", ";
             }
-            header += "nc=" + nc + ", ";
-            header += "cnonce=\"" + cnonce + "\", ";
-            header += "response=\"" + response + "\", ";
-            
-            
-      
-            if(opaque != null && opaque != "")
-            {
-                header += "opaque=\"" + opaque + "\", ";
-            }
-            if(algorithm != null && algorithm != "")
+            if(algorithm != null && !algorithm.equals(""))
             {
                 header += "algorithm=" + algorithm + ", ";
             }
+            header += "response=\"" + response + "\", ";
+            if(integrityprotected != null && !qop.equals(""))
+            {
+                header += "integrity-protected=\"" + integrityprotected + "\", ";
+            }
+            if(qop != null && !qop.equals(""))
+            {
+                header += "qop=" + qop + ", ";
+            }
+            if(nc != null && !nc.equals(""))
+            {
+                header += "nc=" + nc + ", ";
+            }
+            if(cnonce != null && !cnonce.equals(""))
+            {
+                header += "cnonce=\"" + cnonce + "\", ";
+            }
+
+            if(opaque != null && !opaque.equals(""))
+            {
+                header += "opaque=\"" + opaque + "\", ";
+            }
+            
             
             header = removeLastChar(header);
             header = removeLastChar(header);
+     //       header = removeLastChar(header);
            // header = header - ",";
             
             System.out.println("header tiedosto" + ": " + header);
