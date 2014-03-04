@@ -13,16 +13,22 @@ import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jose.util.Base64URL;
 
 //import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
+
+
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
+import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jwt.SignedJWT;
+//import com.nimbusds.jwt;
 
 //import net.minidev.json.JSONAware;
 //import javax.mail.internet.ParameterList;
@@ -42,7 +48,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 import java.util.UUID;
+import java.net.URL;
 
+//import java.security.interfaces.RSAPrivateKey;
+//import java.security.interfaces.RSAPublicKey;
+
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 //import java.security.spec.RSAPrivateKeySpec;
@@ -68,10 +80,143 @@ public class json
        JSONObject lopullinen = new JSONObject(); 
    }
    
+    //Make signed JSON Web Token.
+   // Return serialized token.
+   public static String signJWT(String message, String sharedKey) 
+   {
+
+
+       
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
+
+        String s = cryptJVS(message, sharedKey, header);
+        
+        System.out.println("crypted: "+ s);
+        String serialized = "";
+
+
+        try
+         {
+            SignedJWT  t = SignedJWT.parse(s);
+      //      t.getSignature();
+            //      String signature = s.
+            Base64URL firstPart = header.toBase64URL();
+            System.out.println("eka osa: "+ firstPart);
+            Base64URL secondPart = Base64URL.encode(s);
+            System.out.println("toka osa: "+ secondPart);
+            System.out.println("toka osa takaisin: "+ secondPart.toJSONString());
+            System.out.println("toka osa takaisin2: "+ secondPart.decodeToString());
+            Base64URL thirdPart = t.getSignature();
+            System.out.println("kolmas osa: "+ thirdPart);
+
+            SignedJWT signedJWT = new SignedJWT(firstPart, secondPart, thirdPart);
+            
+            serialized = signedJWT.serialize();
+            signedJWT = SignedJWT.parse(serialized);
+            System.out.println("signed jwt: "+ signedJWT.getParsedString());
+            /*
+            Base64URL sigInput = Base64URL.encode(signedJWT.getSigningInput());
+
+            JWSSigner signer = new MACSigner(sharedKey);
+
+            signedJWT.sign(signer);
+*/
+         } 
+        catch (ParseException e)
+         {
+
+                 System.err.println("Couldn't parse JWS object2: ");
+                 return "";
+         }
+        /*
+        catch (JOSEException e)
+         {
+
+                 System.err.println("Couldn't sign JWS object: ");
+                 return "";
+         }
+*/
+
+        return serialized;
+        
+    }
+   
+    //Make signed JSON Web Token.
+   // Return serialized token.
+   public static String openSignJWT(String message, String sharedKey) 
+   {
+
+
+       
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
+
+   //     String s = cryptJVS(message, sharedKey, header);
+   //     String oo = "oo";
+ //       Base64URL Part = oo.
+        
+     //   String serialized = "";
+        
+
+
+        System.out.println("viesti : "+ message);
+//        SignedJWT te = new SignedJWT();
+        try
+         {
+             SignedJWT signedJWT = new SignedJWT(header.toBase64URL(), 
+                Base64URL.encode("secondPart"), Base64URL.encode("thirdPart"));
+      //      String serialized = signedJWT.serialize();
+     //       serialized = signedJWT.serialize();
+    //        signedJWT = SignedJWT.parse(serialized);
+             
+             
+            signedJWT = SignedJWT.parse(message);
+      //      t.getSignature();
+            //      String signature = s.
+            
+            Base64URL[] Parts = signedJWT.getParsedParts();
+            Base64URL firstPart = Parts[0];
+            Base64URL secondPart = Parts[1];
+            Base64URL thirdPart = Parts[2];
+            
+            message = secondPart.decodeToString();
+            
+            return uncryptJVS(message, sharedKey);
+
+            /*
+            SignedJWT signedJWT = new SignedJWT(firstPart, secondPart, thirdPart);
+            
+            serialized = signedJWT.serialize();
+            */
+            /*
+            Base64URL sigInput = Base64URL.encode(signedJWT.getSigningInput());
+
+            JWSSigner signer = new MACSigner(sharedKey);
+
+            signedJWT.sign(signer);
+*/
+         } 
+        catch (ParseException e)
+         {
+
+                 System.err.println("Couldn't parse JWS object: ");
+                 return "";
+         }
+        /*
+        catch (JOSEException e)
+         {
+
+                 System.err.println("Couldn't sign JWS object: ");
+                 return "";
+         }
+*/
+
+    //    return "";
+        
+    }
    
     //Cryptaa Stringin JVS 
     //Palauttaa cryptatun JVS:n.
-   public static String cryptJVS(String message, String sharedKey) 
+   public static String cryptJVS(String message, String sharedKey, JWSHeader header) 
    {
 
 
@@ -82,7 +227,7 @@ public class json
         
         
         // Create JWS header with HS256 algorithm
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
+  //      JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
         System.out.println("Jeee");
         header.setContentType("text/plain");
 
@@ -119,6 +264,8 @@ public class json
         return s;
         
     }
+   
+ 
 	
    //purkaa JVS.
    //Palauttaa puretun viestin Stringinä.
@@ -130,10 +277,12 @@ public class json
         JWSObject jwsObject;
         // Parse back and check signature
         
-        try {
+        try 
+        {
                 jwsObject = JWSObject.parse(message);
                 
-        } catch (ParseException e) 
+        } 
+        catch (ParseException e) 
         {
         
                 System.err.println("Couldn't parse JWS object: " + e.getMessage());
@@ -650,8 +799,12 @@ public class json
  
    
      // String s = cryptJVS("testataam", "sharedKey2");
-      uncryptJVS(cryptJVS("testataam", "sharedKey2"), "sharedKey2");
-      
+   //   uncryptJVS(cryptJVS("testataam", "sharedKey2"), "sharedKey2");
+       String jwts = signJWT("testiä", "sharedKey");
+       System.out.println("eka: "+ jwts);
+       System.out.println("toka: "+  openSignJWT(jwts, "sharedKey"));
+       
+     /* 
        try
        {
            String json = writeJSONauthorization("type1", "username1", "realm1", "uri1", 
@@ -672,7 +825,7 @@ public class json
 
             System.err.println("error");
     }
-      
+      */
 
    }
    
