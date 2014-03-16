@@ -86,6 +86,7 @@ public class coaptoteutus
       //      server.add(new vaarinpain());
       //      server.add(new jsonresource());
             server.add(new Yhteys());
+            server.add(new Btyhteys());
    //         server.add(new MirrorResource("mirror"));
     //        server.add(new LargeResource("large"));
 

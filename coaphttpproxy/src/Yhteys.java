@@ -165,11 +165,12 @@ public class Yhteys extends ResourceBase// extends LocalResource
         content = exchange.getRequest().getPayloadString();
 
         String paluu = "";
-        String kokouri = request.toString();
+        String kokouri = request.getURI();
         uriShortener(kokouri);
         try
         {
  
+            osoite = "http://"+osoite;
             //Json content to map
             arvot = json.readJSON(content);
             

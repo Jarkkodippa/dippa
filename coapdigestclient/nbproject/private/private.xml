@@ -3,7 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/src/src/org/snmp4j/Snmp.java</file>
+            <file>jar:file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/lib/snmp4j-1.9.1f-sources.jar!/LICENSE-2_0.txt</file>
+            <file>jar:file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/lib/snmp4j-1.9.1f-sources.jar!/NOTICE</file>
+            <file>file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/src/coaptoteutus.java</file>
+            <file>jar:file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/lib/snmp4j-1.9.1f-sources.jar!/LICENSE.log4j</file>
             <file>file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/src/startCoap.java</file>
+            <file>jar:file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/lib/snmp4j-1.9.1f-sources.jar!/src/org/snmp4j/log/Log4jLogFactory.java</file>
+            <file>jar:file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/lib/snmp4j-1.9.1f-sources.jar!/CHANGES.txt</file>
+            <file>jar:file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/lib/snmp4j-1.9.1f-sources.jar!/src/org/snmp4j/smi/OctetString.java</file>
+            <file>file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/src/src/org/snmp4j/log/Log4jLogAdapter.java</file>
+            <file>jar:file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/lib/snmp4j-1.9.1f-sources.jar!/build.xml</file>
+            <file>file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/src/src/org/snmp4j/event/AuthenticationFailureListener.java</file>
+            <file>file:/G:/kirjat/omattiedostot/ohjelmat/javaa/dippa/coapdigestclient/src/ch/ethz/inf/vs/californium/CaliforniumFormatter.java</file>
         </group>
     </open-files>
 </project-private>
