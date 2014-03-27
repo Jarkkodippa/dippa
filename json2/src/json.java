@@ -141,8 +141,8 @@ public class json
         
     }
    
-    //Make signed JSON Web Token.
-   // Return serialized token.
+    //Open signed JSON Web Token.
+   // Return open string.
    public static String openSignJWT(String message, String sharedKey) 
    {
 
@@ -765,6 +765,8 @@ public class json
    }
    
 
+   
+
    public static String writeJSONauthentication(Map data) 
                                                 throws IOException
    {
@@ -792,6 +794,32 @@ public class json
       }
    }
    
+   public static String writeJSONbtauthentication(Map data) 
+                                                throws IOException
+   {
+      
+      try 
+      {
+
+
+            JSONObject valiaikainen = new JSONObject();
+            JSONObject valiaikainen2 = new JSONObject();
+
+            valiaikainen.put("digest-response", data);
+
+            valiaikainen.put("type", "akadigest");
+
+            valiaikainen2.put("authorization", valiaikainen);
+            String palautus = createJsonString(valiaikainen2);
+
+            return palautus;
+      }
+      catch(Exception e) 
+      {
+
+          return "";
+      }
+   }
     /** Suoritetaan p��silmukkaa niin kauan kuin k�ytt�j� haluaa.
      */
    public void suoritaPaasilmukkaa() 

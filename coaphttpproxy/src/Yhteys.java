@@ -117,7 +117,17 @@ public class Yhteys extends ResourceBase// extends LocalResource
             arvot = yhteys.httpClientReq(osoite);
 
 
-            String jsonstring = json.writeJSONauthorization(arvot);
+            String jsonstring = "";
+            if(arvot.containsKey("body"))
+            {
+                //createJsonString(
+                jsonstring = arvot.get("body");
+        //        jsonstring = json.createJsonString(arvot);
+            }
+            else
+            {
+                jsonstring = json.writeJSONauthorization(arvot);
+            }
 
             content = jsonstring;
 
@@ -174,10 +184,45 @@ public class Yhteys extends ResourceBase// extends LocalResource
             //Json content to map
             arvot = json.readJSON(content);
             
+            if(content.contains("akadigest"))
+            {
+      //          arvot = json.readJSON(content);
+                arvot = yhteys.httpbtClientAut(arvot, osoite);
+                if(arvot.containsKey("body"))
+                {
+                    paluu = (String) arvot.get("body");
+                }
+                else
+                {
+                    String jsonstring = json.writeJSONauthorization(arvot);
+                    paluu = jsonstring;
+                }
+            }
+            else if(content.contains("digest"))
+            {
+        //        arvot = json.readJSON(content);
+                paluu = yhteys.httpClientAut2(arvot, osoite);
+            }
+            else
+            {
+                yhteys.httpPostClient(osoite, arvot);
+            }
+            //httpPostClient(String osoite, Map tiedot)
    //         System.out.println("arvot mapin sisältä " + ": " + arvot);
    //         System.out.println("osoite " + ": " + osoite);
             //Content to http client
-            paluu = yhteys.httpClientAut2(arvot, osoite);
+    //        paluu = yhteys.httpClientAut2(arvot, osoite);
+            /*
+            if(arvot.containsKey("body"))
+            {
+                content = (String) arvot.get("body");
+            }
+            else
+            {
+                String jsonstring = json.writeJSONauthorization(arvot);
+                content = jsonstring;
+            }
+            */
         }
         catch (Exception e) 
         {
@@ -225,8 +270,10 @@ public class Yhteys extends ResourceBase// extends LocalResource
         System.out.println("osoite :" +osoite);
         System.out.println("payload " + ": " + payload);
         
-        
+        String paluu = "";
+        content = "";
 
+        content = exchange.getRequest().getPayloadString();
             
         json json = new json();
         try
@@ -234,12 +281,63 @@ public class Yhteys extends ResourceBase// extends LocalResource
 
             System.out.println("osoite " + ": " + osoite);
             osoite = "http://"+osoite;
-            arvot = yhteys.httpClientReq(osoite);
+            if(content.contains("akadigest"))
+            {
+      //          arvot = json.readJSON(content);
+                arvot = yhteys.httpbtClientAut(arvot, osoite);
+                if(arvot.containsKey("body"))
+                {
+                    paluu = (String) arvot.get("body");
+                }
+                else
+                {
+                    String jsonstring = json.writeJSONauthorization(arvot);
+                    paluu = jsonstring;
+                }
+            }
+            else if(content.contains("digest"))
+            {
+        //        arvot = json.readJSON(content);
+                paluu = yhteys.httpClientAut2(arvot, osoite);
+            }
+            //!digest.equals("")
+            else if(!content.equals(""))
+            {
+                paluu = yhteys.httpPostClient(osoite, arvot);
+            }
+            else
+            {
+                arvot = yhteys.httpClientReq(osoite);
+                if(arvot.containsKey("body"))
+                {
+                    //createJsonString(
+                    paluu = arvot.get("body");
+            //        jsonstring = json.createJsonString(arvot);
+                }
+                else
+                {
 
+                    paluu = json.writeJSONauthorization(arvot);
+                }
+            }
 
-            String jsonstring = json.writeJSONauthorization(arvot);
+            content = paluu;
 
-            content = jsonstring;
+     //       String jsonstring = "";
+/*
+            if(arvot.containsKey("body"))
+            {
+                //createJsonString(
+                jsonstring = arvot.get("body");
+        //        jsonstring = json.createJsonString(arvot);
+            }
+            else
+            {
+                
+                jsonstring = json.writeJSONauthorization(arvot);
+            }
+*/
+   //         content = jsonstring;
 
             changed();
         }

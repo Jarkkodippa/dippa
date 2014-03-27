@@ -144,11 +144,20 @@ public class HTTP
                     map.put( element.getName(), element.getValue() ); 
                 }
             }
+            
+            else
+            {
+                if(responseBody != null || responseBody != "")
+                {
+                    map.put( "body", responseBody );
+                }
+            }
+            /*
             if(responseBody != null || responseBody != "")
             {
-    //            map.put( "body", responseBody );
+                map.put( "body", responseBody );
             }
-            
+            */
         }
         catch (Exception e) 
         {
@@ -217,6 +226,8 @@ public class HTTP
             System.out.println("status: " + status);
             responseBody = getMethod.getResponseBodyAsString();
             System.out.println("responseBody: " + responseBody);
+            
+            
 
             getMethod.releaseConnection();
 
@@ -226,6 +237,66 @@ public class HTTP
             e.printStackTrace();
         }
         return responseBody;
+
+    }
+    
+    //Lähettää http Authorizationin.
+    //Palauttaa palvelimelta saadun vastauksen.
+    public Map httpbtClientAut(Map tiedot, String osoite) throws Exception
+    {
+        HashMap<String, String> map = new HashMap<String, String>();
+        client = new HttpClient();
+     //       HttpClient client2 = new HttpClient();
+        urlStr = osoite;
+        
+        getMethod = new GetMethod(urlStr);
+        String otsikkotieto = setReguestHeaderf(tiedot);
+
+        try 
+        {
+     
+            getMethod.setRequestHeader("Authorization", otsikkotieto);
+            System.out.println("getmethod sisältää" + ": " + getMethod.getQueryString());
+            
+
+            status = client.executeMethod(getMethod);
+            System.out.println("status: " + status);
+            responseBody = getMethod.getResponseBodyAsString();
+            System.out.println("responseBody: " + responseBody);
+            
+            Header wwAuthHeader = getMethod.getResponseHeader("WWW-Authenticate");
+            if(wwAuthHeader != null)
+            {
+                for (HeaderElement element : wwAuthHeader.getElements()) 
+                {
+                    if(element.getName().contains("Digest")) 
+                    {
+                        String elementname = element.getName();
+                        
+                        elementname = elementname.replaceAll("Digest ", "");
+                        element.setName(elementname);
+                    }
+                    System.out.println(element.getName() + ": " + element.getValue());
+                    map.put( element.getName(), element.getValue() ); 
+                }
+            }
+            else
+            {
+                if(responseBody != null || responseBody != "")
+                {
+                    map.put( "body", responseBody );
+                }
+            }
+            
+
+            getMethod.releaseConnection();
+
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+        return map;
 
     }
     
@@ -278,6 +349,7 @@ public class HTTP
             String algorithm = "";
             String digest = "";
             String integrityprotected = "";
+            String auts = "";
 
   //          Map<String, Object> tietoja = tiedot;
             Map<String, Object> tietoja = new HashMap<String, Object>();
@@ -323,6 +395,7 @@ public class HTTP
                 algorithm = (String) tietoja3.get("algorithm");
                 digest = (String) tietoja3.get("digest");
                 integrityprotected = (String) tietoja3.get("integrity-protected");
+                auts = (String) tietoja3.get("auts");
             }
             
             header += "Digest username=\"" + username1 + "\", ";
@@ -360,6 +433,10 @@ public class HTTP
             if(opaque != null && !opaque.equals(""))
             {
                 header += "opaque=\"" + opaque + "\", ";
+            }
+            if(auts != null && !auts.equals(""))
+            {
+                header += "auts=\"" + auts + "\", ";
             }
             
             

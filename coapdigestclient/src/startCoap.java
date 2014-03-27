@@ -5,7 +5,6 @@
  */
 import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.binary.Hex;
 
 import java.text.SimpleDateFormat;
 
@@ -13,10 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
-import java.io.*;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 import net.java.sip.communicator.sip.security.Milenage;
 
@@ -25,20 +20,17 @@ import net.java.sip.communicator.sip.security.Milenage;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import net.ericsson.labs.gba.client.GbaClient;
 // The GBA client API itself
 
 import org.apache.commons.codec.binary.Base64;
 
 // Application specific API. HTTP Digest in this case
 import net.ericsson.labs.gba.client.GbaHttpDigestMD5;
-import static net.ericsson.labs.gba.client.GbaHttpDigestMD5.A1;
-import static net.ericsson.labs.gba.client.GbaHttpDigestMD5.A2;
-import static net.ericsson.labs.gba.client.GbaHttpDigestMD5.KD;
 import static net.java.sip.communicator.sip.security.Milenage.computeOpC;
 //säätöpäättyy
 
 //import org.snmp4j.smi.OctetString;
-import org.snmp4j.smi.OctetString;
 /**
  *
  * @author Jarkko
@@ -292,10 +284,10 @@ public class startCoap
         nc = "00000001";
         
 
-        String nonce2 = calculateNonce();
+   //     String nonce2 = calculateNonce();
    //     nonce2 = "1150561b6d9e8864";
 
-        String cnonce = nonce2;
+        String cnonce = calculateNonce();
         String ncvalue = "00000001";
         
         if(algorithm.equals("AKAv1-MD5"))
@@ -345,6 +337,8 @@ public class startCoap
                 byte[] OPc = computeOpC(passwordbyte, OPbyte);
                 
                 byte[] RESadamen =  muuttaja.f2(passwordbyte, arraysrand, OPc);
+                byte[] CKadamen =  muuttaja.f3(passwordbyte, arraysrand, OPc);
+                byte[] IKSadamen =  muuttaja.f4(passwordbyte, arraysrand, OPc);
                 
       //          byte[] A1n = A1(username, realm1, passwordbyte); 
 
@@ -352,14 +346,15 @@ public class startCoap
       //          byte[] A2n = A2(uri); 
 
       //          byte[] KDn = KD( A1n, noncebyte, A2n);
-                
+                System.out.println("OP arvo: "+ new String(OPbyte, "UTF-8") );
                 System.out.println("OPc arvo: "+ new String(OPc, "UTF-8") );
                 System.out.println("RESadamen arvo: "+ new String(RESadamen, "UTF-8") );
    //             System.out.println("A1n arvo: "+ new String(A1n, "UTF-8") );
     //            System.out.println("A2n arvo: "+ new String(A2n, "UTF-8") );
     //            System.out.println("KDn: "+ new String(KDn, "UTF-8") );
                 //A2       = Method ":" digest-uri-value ":" H(entity-body)
-                String A2 = DigestUtils.md5Hex("GET" + ":" + uri);
+   //             DigestUtils.md5(OP)
+                String A2 = DigestUtils.md5Hex("GET" + ":" + uri + ":"+ DigestUtils.md5(""));
                 String A1 = DigestUtils.md5Hex(username + ":" + realm1 + ":" + new String(RESadamen, "UTF-8"));
                 String responseSeed = A1 + ":" + nonce + ":" + ncvalue + ":" + cnonce + ":" + qop + ":" + A2;
                 response = DigestUtils.md5Hex(responseSeed);
@@ -485,9 +480,10 @@ key: 41434443524f58594f5552534f583031
        */
  //       String osoiten = "coap://192.168.0.70/Yhteys/";
 //        String akaosoiten = "coap://192.168.0.70/Btyhteys/";
-        String akaosoiten = "coap://localhost/Btyhteys/";
+//        String akaosoiten = "coap://localhost/Btyhteys/";
+       String akaosoiten = "coap://localhost/Yhteys/";
   //      String osoiten = "http://p133.piuha.net:8080/bsf/bootstrap";
-   //     String osoiten = "coap://localhost/Yhteys/";
+        String osoiten = "coap://localhost/Yhteys/";
 
         String tarkenne = "192.168.0.112/priv/index.html";
 //        String tarkenne = "94.237.64.168:804/priv/index.html";
@@ -496,12 +492,12 @@ key: 41434443524f58594f5552534f583031
         args = new String[2];
 
         coaptoteutus coap = new coaptoteutus();
-    //    osoiten = osoiten + tarkenne;
+        osoiten = osoiten + tarkenne;
         akaosoiten = akaosoiten + tarkenne1;
-        /*
+        
         try
         {
-            tarkenne = URLEncoder.encode(tarkenne, "UTF-8");
+ //           tarkenne = URLEncoder.encode(tarkenne, "UTF-8");
             
 
      //       args[0] = "POST";
@@ -522,7 +518,7 @@ key: 41434443524f58594f5552534f583031
             System.err.println("virhe1");
         }
         
-        Map authheader = setAuthorizationHeaderMap(authmap, "/priv/index.html", "testi", "a");
+        authheader = setAuthorizationHeaderMap(authmap, "/priv/index.html", "testi", "a");
         
           System.out.println("authheader " + ": " + authheader);
         
@@ -546,10 +542,13 @@ key: 41434443524f58594f5552534f583031
         {
             System.err.println("virhe2");
         }
-        */
+        
+        
+        ///////////tästä AKA digest
         
  //       Map authheader = setAuthorizationHeaderMap(authmap, "/bsf/bootstrap", "tut.test1@p133.piuha.net", "41434443524f58594f5552534f583031");
-        authheader = setbtAuthorizationHeaderMap("/bsf/bootstrap", "tut.test1@p133.piuha.net", "ims.ericsson.com");
+  //      authheader = setbtAuthorizationHeaderMap("/bsf/bootstrap", "tut.test1@p133.piuha.net", "ims.ericsson.com");
+        authheader = setbtAuthorizationHeaderMap("/bsf/bootstrap", "tut.test1@p133.piuha.net", "p133.piuha.net");
        //String uri, String username, String realm)
         
         System.out.println("authheader " + ": " + authheader);
@@ -563,7 +562,7 @@ key: 41434443524f58594f5552534f583031
             args[0] = "PUT";
 
             args[1] = akaosoiten;
-            String palautus2 = json.writeJSONauthentication(authheader);
+            String palautus2 = json.writeJSONbtauthentication(authheader);
 
             args[2] = palautus2;
 
@@ -598,7 +597,7 @@ key: 41434443524f58594f5552534f583031
             args[0] = "PUT";
 
             args[1] = akaosoiten;
-            String palautus2 = json.writeJSONauthentication(authheader);
+            String palautus2 = json.writeJSONbtauthentication(authheader);
 
             args[2] = palautus2;
 
@@ -671,7 +670,7 @@ BSF palvelu: http://p133.piuha.net:8080/bsf/bootstrap
         } catch (Exception e) {
             e.printStackTrace();
         }
-               */ 
+           */    
         ////////säätöpäättyy
         /*
         args = new String[2];
