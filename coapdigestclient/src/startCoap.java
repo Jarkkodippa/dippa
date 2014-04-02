@@ -20,7 +20,6 @@ import net.java.sip.communicator.sip.security.Milenage;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
-import net.ericsson.labs.gba.client.GbaClient;
 // The GBA client API itself
 
 import org.apache.commons.codec.binary.Base64;
@@ -28,6 +27,7 @@ import org.apache.commons.codec.binary.Base64;
 // Application specific API. HTTP Digest in this case
 import net.ericsson.labs.gba.client.GbaHttpDigestMD5;
 import static net.java.sip.communicator.sip.security.Milenage.computeOpC;
+import org.apache.commons.codec.binary.Hex;
 //säätöpäättyy
 
 //import org.snmp4j.smi.OctetString;
@@ -47,6 +47,16 @@ public class startCoap
         Random rand = new Random(100000);
         Integer randomInt = rand.nextInt();
         return DigestUtils.md5Hex(fmtDate + randomInt.toString());
+    }
+    
+    private static byte[] xorWithKey(byte[] a, byte[] key) 
+    {
+        byte[] out = new byte[a.length];
+        for (int i = 0; i < a.length; i++) 
+        {
+            out[i] = (byte) (a[i] ^ key[i%key.length]);
+        }
+        return out;
     }
     
 
@@ -293,53 +303,76 @@ public class startCoap
         if(algorithm.equals("AKAv1-MD5"))
         {
             
-            byte[] opennonce = Base64.decodeBase64(nonce);
-            int arraylength = opennonce.length;
-            System.out.println("opennonce arvo: "+ arraylength );
-            byte[] arraysrand = Arrays.copyOfRange(opennonce, 0, 16);
-            System.out.println("rand lengt: "+ arraysrand.length );
-            byte[] arraysautn = Arrays.copyOfRange(opennonce, 17, 33);
-            System.out.println("autn lengt: "+ arraysautn.length );
- //           byte[] arraysserver = Arrays.copyOfRange(opennonce, 63, 100);
-            
-            String arraysnonce = Arrays.toString(opennonce);
-            
-            String nonceavattu = new String(arraysnonce);
-            try
-            {
-                System.out.println("nonce arvo: "+ nonce );
-                System.out.println("opennonce arrays: "+ arraysnonce );
-                System.out.println("opennonce arvo: "+ new String(opennonce, "UTF-8") );
-                System.out.println("opennonce arvo: "+ new String(arraysrand, "UTF-8") );
-                System.out.println("opennonce arvo: "+ new String(arraysautn, "UTF-8") );
-  //              System.out.println("opennonce arvo: "+ new String(arraysserver, "UTF-8") );
-                
-            }
-            catch(Exception e)
-            {
-                System.out.println("openvirhe ");
-            }
-   //         String opennonce = Base64.;
-   //         response = kdfEncode1("gba-digest", "41434443524f58594f5552534f583031", 
-    //                nonce, "tut.test1@p133.piuha.net", "naf.labs.ericsson.net");
+   //         byte[] arraysrand;
+            //    System.out.println("rand lengt: "+ arraysrand.length );
+   //         byte[] arraysautn;
+    //        opennonce = hexStringToByteArray(nonce);
             
             Milenage muuttaja = new Milenage();
 
             //byte[] secretKey, byte[] rand, byte[] op_c) 
             String OP = "00000000000000000000000000000000";
-
+            
             try
             {
+                byte[] opennonce = Base64.decodeBase64(nonce);
+                String hexnonce = Hex.encodeHexString( opennonce );
+                opennonce = hexnonce.getBytes("UTF-8");
+   //             byte[] opennonce = Base64.
+    //                    codeBase64(nonce.getBytes("UTF-8"));
+                    
+                int arraylength = opennonce.length;
+                System.out.println("opennonce arvo: "+ arraylength );
+                /*
+                byte[] arraysrand = Arrays.copyOfRange(opennonce, 0, 16);
+                System.out.println("rand lengt: "+ arraysrand.length );
+                byte[] arraysautn = Arrays.copyOfRange(opennonce, 17, 33);
+                System.out.println("autn lengt: "+ arraysautn.length );
+                */
+                byte[] arraysrand = Arrays.copyOfRange(opennonce, 0, 16);
+                System.out.println("rand lengt: "+ arraysrand.length );
+                byte[] arraysautn = Arrays.copyOfRange(opennonce, 16, 32);
+                System.out.println("autn lengt: "+ arraysautn.length );
+     //           byte[] arraysserver = Arrays.copyOfRange(opennonce, 63, 100);
+                
+                //SQN on 48bit
+                byte[] sqn = Arrays.copyOfRange(arraysautn, 0, 6);
+                //amf on 16bit
+                byte[] amf = Arrays.copyOfRange(arraysautn, 6, 8);
+
+                String arraysnonce = Arrays.toString(opennonce);
+
+                String nonceavattu = new String(arraysnonce);
+            
+                System.out.println("nonce arvo: "+ nonce );
+                System.out.println("opennonce arrays: "+ arraysnonce );
+                System.out.println("opennonce arvo: "+ new String(opennonce, "UTF-8") );
+                System.out.println("arraysrand arvo: "+ new String(arraysrand, "UTF-8") );
+                System.out.println("arraysautn arvo: "+ new String(arraysautn, "UTF-8") );
+  //              System.out.println("opennonce arvo: "+ new String(arraysserver, "UTF-8") );
+                
+            
                 byte[] passwordbyte = password.getBytes("UTF-8");
                 byte[] noncebyte = nonce.getBytes("UTF-8");
                 byte[] OPbyte = OP.getBytes("UTF-8");
                 
                 byte[] OPc = computeOpC(passwordbyte, OPbyte);
                 
+         //       byte[] RESadamen =  "testi".getBytes("UTF-8");;
+           
                 byte[] RESadamen =  muuttaja.f2(passwordbyte, arraysrand, OPc);
                 byte[] CKadamen =  muuttaja.f3(passwordbyte, arraysrand, OPc);
                 byte[] IKSadamen =  muuttaja.f4(passwordbyte, arraysrand, OPc);
+                byte[] AKSadamen =  muuttaja.f5(passwordbyte, arraysrand, OPc);
                 
+                sqn = xorWithKey(sqn, AKSadamen);
+                byte[] f1adamen =  muuttaja.f1(passwordbyte, arraysrand, OPc, sqn, amf);
+                
+              /*
+                byte[] RESadamen =  muuttaja.f2(passwordbyte, opennonce, OPc);
+                byte[] CKadamen =  muuttaja.f3(passwordbyte, opennonce, OPc);
+                byte[] IKSadamen =  muuttaja.f4(passwordbyte, opennonce, OPc);
+                */
       //          byte[] A1n = A1(username, realm1, passwordbyte); 
 
 
@@ -349,12 +382,16 @@ public class startCoap
                 System.out.println("OP arvo: "+ new String(OPbyte, "UTF-8") );
                 System.out.println("OPc arvo: "+ new String(OPc, "UTF-8") );
                 System.out.println("RESadamen arvo: "+ new String(RESadamen, "UTF-8") );
+                System.out.println("sqn arvo: "+ new String(sqn, "UTF-8") );
+                System.out.println("AKSadamen arvo: "+ new String(AKSadamen, "UTF-8") );
+                System.out.println("f1adamen arvo: "+ new String(f1adamen, "UTF-8") );
+                        
    //             System.out.println("A1n arvo: "+ new String(A1n, "UTF-8") );
     //            System.out.println("A2n arvo: "+ new String(A2n, "UTF-8") );
     //            System.out.println("KDn: "+ new String(KDn, "UTF-8") );
                 //A2       = Method ":" digest-uri-value ":" H(entity-body)
    //             DigestUtils.md5(OP)
-                String A2 = DigestUtils.md5Hex("GET" + ":" + uri + ":"+ DigestUtils.md5(""));
+                String A2 = DigestUtils.md5Hex("GET" + ":" + uri + ":"+ DigestUtils.md5Hex(""));
                 String A1 = DigestUtils.md5Hex(username + ":" + realm1 + ":" + new String(RESadamen, "UTF-8"));
                 String responseSeed = A1 + ":" + nonce + ":" + ncvalue + ":" + cnonce + ":" + qop + ":" + A2;
                 response = DigestUtils.md5Hex(responseSeed);
@@ -647,9 +684,10 @@ BSF palvelu: http://p133.piuha.net:8080/bsf/bootstrap
         String myNafFqdn = "naf.labs.ericsson.net";
         String nafUrl = "http://p133.piuha.net:8080/bsf/bootstrap";
         try {
+   //         Sim sim = new (myImpi, myKey);
             // Create an GbaClient instance
             GbaClient gbaclient = new GbaClient(myImpi, myKey);
-//            GbaClient gbaclient1 = new GbaClient();
+  //          GbaClient gbaclient1 = new GbaClient(sim);
        //     gbaclient.
 
             System.out.println("asiakas luotu ");
@@ -670,7 +708,7 @@ BSF palvelu: http://p133.piuha.net:8080/bsf/bootstrap
         } catch (Exception e) {
             e.printStackTrace();
         }
-           */    
+         */     
         ////////säätöpäättyy
         /*
         args = new String[2];

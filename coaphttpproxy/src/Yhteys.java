@@ -274,6 +274,8 @@ public class Yhteys extends ResourceBase// extends LocalResource
         content = "";
 
         content = exchange.getRequest().getPayloadString();
+        
+        arvot = json.readJSON(content);
             
         json json = new json();
         try
