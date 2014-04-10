@@ -75,14 +75,19 @@ public class startCoap
 
             byte[] OPbyte = Hex.decodeHex(OP.toCharArray());               
             byte[] OPc = computeOpC(passwordbyte, OPbyte);
+            
             byte[] RESadamen =  muuttaja.f2(passwordbyte, arraysrand, OPc);
+            
             byte[] CKadamen =  muuttaja.f3(passwordbyte, arraysrand, OPc);
             byte[] IKSadamen =  muuttaja.f4(passwordbyte, arraysrand, OPc);
             byte[] AKSadamen =  muuttaja.f5(passwordbyte, arraysrand, OPc);
 
             sqn = xorWithKey(sqn, AKSadamen);
             byte[] f1adamen =  muuttaja.f1(passwordbyte, arraysrand, OPc, sqn, amf);
-
+// TODO: Poista tarpeettomat
+        
+            String resstring = Hex.encodeHexString(RESadamen); 
+            
             byte[] f1adamen2 = Hex.encodeHexString( f1adamen ).getBytes("UTF-8");
             byte[] RESadamen2 =  Hex.encodeHexString( RESadamen ).getBytes("UTF-8");
             byte[] CKadamen2 = Hex.encodeHexString( CKadamen ).getBytes("UTF-8");    
@@ -95,6 +100,7 @@ public class startCoap
             byte[] opennonce2 = Hex.encodeHexString( opennonce ).getBytes("UTF-8");
             byte[] amf2 = Hex.encodeHexString( amf ).getBytes("UTF-8");
 
+            
 
             System.out.println("opennonce arvo: "+ arraylength );
             System.out.println("rand lengt: "+ arraysrand.length );
@@ -107,12 +113,13 @@ public class startCoap
             System.out.println("OP arvo: "+ new String(OPbyte, "UTF-8") );
             System.out.println("OPc arvo: "+ new String(OPc2, "UTF-8") );
             System.out.println("RESadamen arvo: "+ new String(RESadamen2, "UTF-8") );
+            System.out.println("RESadamen arvo: "+ resstring );
             System.out.println("sqn arvo: "+ new String(sqn2, "UTF-8") );
             System.out.println("AKSadamen arvo: "+ new String(AKSadamen2, "UTF-8") );
             System.out.println("f1adamen arvo: "+ new String(f1adamen2, "UTF-8") );
             System.out.println("amf arvo: "+ new String(amf2, "UTF-8") );
-            
-            return new String(RESadamen2, "UTF-8");
+            return resstring;
+     //       return new String(RESadamen2, "UTF-8");
         }
         catch(Exception e)
         {
@@ -175,11 +182,12 @@ public class startCoap
             {
 
                 String res = calculateAKARES(nonce, password);
-                String A2 = DigestUtils.md5Hex("GET" + ":" + uri + ":"+ DigestUtils.md5Hex(""));
                 String A1 = DigestUtils.md5Hex(username + ":" + realm1 + ":" + res);
+                String A2 = DigestUtils.md5Hex("GET" + ":" + uri + ":"+ DigestUtils.md5Hex(""));
+                
                 String responseSeed = A1 + ":" + nonce + ":" + nc + ":" + cnonce + ":" + qop + ":" + A2;
                 response = DigestUtils.md5Hex(responseSeed);
-                
+    //            response = res;
                 
             }
             catch(Exception e)
