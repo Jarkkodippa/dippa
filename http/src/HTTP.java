@@ -410,28 +410,133 @@ public class HTTP
             System.out.println("tietoja mapin sisälto" + ": " + tietoja);
             tietoja2 = (HashMap<String,Object>)tietoja.get("authorization");
             System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
+            
+            
+            
+            if(tietoja2.get("type").equals("akadigest") )
+            {
+                System.out.println("jee");
+                header = setReguestHeaderbt(tietoja);
+            }
+            else
+            {
+                tietoja3 = (HashMap<String,Object>)tietoja2.get("digest-response");
+                System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
+
+
+                if(tietoja3 != null  && !tietoja3.isEmpty())
+                {
+
+
+                    username1 = (String) tietoja3.get("Digest username");
+                    realm1 = (String) tietoja3.get("realm");
+                    nonce = (String) tietoja3.get("nonce");
+                    uri = (String) tietoja3.get("uri");
+                    qop = (String) tietoja3.get("qop");
+                 //   nc = (int) tietoja3.get("nc");
+                    nc = (String) tietoja3.get("nc");
+                    cnonce = (String) tietoja3.get("cnonce");
+                    response = (String) tietoja3.get("response");
+                    opaque = (String) tietoja3.get("opaque");
+                    algorithm = (String) tietoja3.get("algorithm");
+                    digest = (String) tietoja3.get("digest");
+                    integrityprotected = (String) tietoja3.get("integrity-protected");
+                    auts = (String) tietoja3.get("auts");
+                }
+
+
+                header += "Digest username=\"" + username1 + "\", ";
+                header += "realm=\"" + realm1 + "\", ";
+
+                header += "nonce=\"" + nonce + "\", ";
+                header += "uri=\"" + uri + "\", ";
+
+                if(digest != null && !digest.equals(""))
+                {
+                    header += "digest=" + algorithm + ", ";
+                }
+                if(algorithm != null && !algorithm.equals(""))
+                {
+                    header += "algorithm=" + algorithm + ", ";
+                }
+                header += "response=\"" + response + "\", ";
+                if(integrityprotected != null && !integrityprotected.equals(""))
+                {
+                    header += "integrity-protected=\"" + integrityprotected + "\", ";
+                }
+                if(qop != null && !qop.equals(""))
+                {
+                    header += "qop=" + qop + ", ";
+                }
+                if(nc != null && !nc.equals(""))
+                {
+                    header += "nc=" + nc + ", ";
+                }
+                if(cnonce != null && !cnonce.equals(""))
+                {
+                    header += "cnonce=\"" + cnonce + "\", ";
+                }
+
+                if(opaque != null && !opaque.equals(""))
+                {
+                    header += "opaque=\"" + opaque + "\", ";
+                }
+                if(auts != null && !auts.equals(""))
+                {
+                    header += "auts=\"" + auts + "\", ";
+                }
+
+
+                header = removeLastChar(header);
+                header = removeLastChar(header);
+            }
+            
+            
+     //       header = removeLastChar(header);
+           // header = header - ",";
+            
+            System.out.println("header tiedosto" + ": " + header);
+
+            return header;
+        }
+        
+         //Luodaan header tiedosto digest arvoista.
+        private String setReguestHeaderbt(Map tiedot)
+        {
+    //        HashMap<String, String> map = new HashMap<String, String>();
+            String header = "";
+            
+            String username1 = "";
+            String realm1 = "";
+
+            String nonce = "";
+            String uri = "";
+            String qop = "";
+            String nc = "";
+     //       int nc = 0;
+            String cnonce = "";
+            String response = "";
+            String opaque = "";
+            String algorithm = "";
+            String digest = "";
+            String integrityprotected = "";
+            String auts = "";
+
+  //          Map<String, Object> tietoja = tiedot;
+            Map<String, Object> tietoja = new HashMap<String, Object>();
+            Map<String, Object> tietoja2 = new HashMap<String, Object>();
+            Map<String, Object> tietoja3 = new HashMap<String, Object>();
+            tietoja = tiedot;
+            System.out.println("tietoja mapin sisälto" + ": " + tietoja);
+            tietoja2 = (HashMap<String,Object>)tietoja.get("authorization");
+            System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
             tietoja3 = (HashMap<String,Object>)tietoja2.get("digest-response");
             System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
             
 
-            if(tietoja2 != null  && !tietoja3.isEmpty())
+            if(tietoja3 != null  && !tietoja3.isEmpty())
             {
-                /*
-                for (Map.Entry<String, Object> entry : tietoja3.entrySet())
-                {
-      //              System.out.println(entry.getKey() + "/" + entry.getValue());
-                    if(entry.getKey().equals("nc") || entry.getKey().equals("qop") ||
-                         entry.getKey().equals("algorithm") )
-                    {
-                        header += entry.getKey() +"=" + entry.getValue() + ", ";
-                    }
-                    else
-                    {
-                        header += entry.getKey() +"=\"" + entry.getValue() + "\", ";
-                    }
-                    
-                }
-                */
+ 
                 
                 username1 = (String) tietoja3.get("Digest username");
                 realm1 = (String) tietoja3.get("realm");
@@ -449,49 +554,58 @@ public class HTTP
                 auts = (String) tietoja3.get("auts");
             }
             
-            header += "Digest username=\"" + username1 + "\", ";
-            header += "realm=\"" + realm1 + "\", ";
+            //Authorization: Digest username="test.user@labs.ericsson.net",
+            //realm="labs.ericsson.net",
+            //nonce="V4bv1hjNaWj56Ws0KJya7DDj4A5fbQAAOB+jfZeL5Yg=",
+            //uri="/bsfv2/bsf",qop="auth-int",nc=00000001,
+            //cnonce="uUjaavLHTOO43WAGPxEt3w==",
+            //response="50ce8c64f30559acf1c4422188263b2e",algorithm="AKAv1-MD5"
+            
+            header += "Digest username=\"" + username1 + "\",";
+            header += "realm=\"" + realm1 + "\",";
 
-            header += "nonce=\"" + nonce + "\", ";
-            header += "uri=\"" + uri + "\", ";
+            header += "nonce=\"" + nonce + "\",";
+            header += "uri=\"" + uri + "\",";
        
             if(digest != null && !digest.equals(""))
             {
-                header += "digest=" + algorithm + ", ";
-            }
-            if(algorithm != null && !algorithm.equals(""))
-            {
-                header += "algorithm=" + algorithm + ", ";
-            }
-            header += "response=\"" + response + "\", ";
-            if(integrityprotected != null && !qop.equals(""))
-            {
-                header += "integrity-protected=\"" + integrityprotected + "\", ";
+                header += "digest=" + algorithm + ",";
             }
             if(qop != null && !qop.equals(""))
             {
-                header += "qop=" + qop + ", ";
+                header += "qop=\"" + qop + "\",";
+            }
+            
+            
+            if(integrityprotected != null && !integrityprotected.equals(""))
+            {
+                header += "integrity-protected=\"" + integrityprotected + "\",";
             }
             if(nc != null && !nc.equals(""))
             {
-                header += "nc=" + nc + ", ";
+                header += "nc=" + nc + ",";
             }
             if(cnonce != null && !cnonce.equals(""))
             {
-                header += "cnonce=\"" + cnonce + "\", ";
+                header += "cnonce=\"" + cnonce + "\",";
             }
+            header += "response=\"" + response + "\",";
 
             if(opaque != null && !opaque.equals(""))
             {
-                header += "opaque=\"" + opaque + "\", ";
+                header += "opaque=\"" + opaque + "\",";
+            }
+            if(algorithm != null && !algorithm.equals(""))
+            {
+                header += "algorithm=\"" + algorithm + "\",";
             }
             if(auts != null && !auts.equals(""))
             {
-                header += "auts=\"" + auts + "\", ";
+                header += "auts=\"" + auts + "\",";
             }
             
             
-            header = removeLastChar(header);
+   //         header = removeLastChar(header);
             header = removeLastChar(header);
      //       header = removeLastChar(header);
            // header = header - ",";
