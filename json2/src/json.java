@@ -740,16 +740,40 @@ public class json
       
       try 
       {
+          HashMap<String, Object> content = new HashMap<String, Object>();
+          HashMap<String, Object> authorization2 = new HashMap<String, Object>();
 
+            if(data.containsKey("WWW-Authenticate"))
+            {
+
+                HashMap<String, Object> wwwauthenticate = new HashMap<String, Object>();
+
+           
+                wwwauthenticate.put( "type", "digest" );  
+
+                wwwauthenticate.put( "challenge", 
+                        (HashMap<String,Object>)data.get("WWW-Authenticate") );
+
+   //             tietoja2 = (HashMap<String,Object>)data.get("WWW-authenticate");
+                
+                authorization2.put( "www-authenticate", wwwauthenticate );
+//                content.put(null, data)
+            }
+            if(data.containsKey("Set-Cookie"))
+            {
             
-            HashMap<String, Object> wwwauthenticate = new HashMap<String, Object>();
+                authorization2.put( "Set-Cookie", 
+                        (HashMap<String,Object>)data.get("Set-Cookie") );
+//                content.put(null, data)
+            }
+            if(data.containsKey("Body"))
+            {
 
-            wwwauthenticate.put( "type", "digest" );  
-
-            wwwauthenticate.put( "challenge", data );
-
-            HashMap<String, Object> authorization2 = new HashMap<String, Object>();
-            authorization2.put( "www-authenticate", wwwauthenticate );
+             //   authorization2.put( "Body", (HashMap<String,Object>)data.get("Body") );
+                authorization2.put( "Body", data.get("Body") );
+//                content.put(null, data)
+            }
+            
             
             String palautus = createJsonString(authorization2);
   
@@ -774,15 +798,40 @@ public class json
       try 
       {
 
+          HashMap<String, Object> valiaikainen = new HashMap<String, Object>();
+          HashMap<String, Object> valiaikainen2 = new HashMap<String, Object>();
+/*
+          Map<String, Object> tietoja = new HashMap<String, Object>();
+        Map<String, Object> tietoja2 = new HashMap<String, Object>();
+        Map<String, Object> tietoja3 = new HashMap<String, Object>();
+        Map<String, Object> lopullinen = new HashMap<String, Object>();
+        tietoja = data;
+        System.out.println("tietoja mapin sisälto" + ": " + tietoja);
+        tietoja2 = (HashMap<String,Object>)tietoja.get("Authorization");
+        System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
+          */
+//        tietoja3 = (HashMap<String,Object>)tietoja2.get("challenge");
+ //       System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
+ //         JSONObject valiaikainen = new JSONObject();
+  //        JSONObject valiaikainen2 = new JSONObject();
+          if(data.containsKey("Authorization"))
+          {
+            
 
-            JSONObject valiaikainen = new JSONObject();
-            JSONObject valiaikainen2 = new JSONObject();
-
-            valiaikainen.put("digest-response", data);
+            valiaikainen.put("digest-response", 
+                    (HashMap<String,Object>)data.get("Authorization"));
 
             valiaikainen.put("type", "digest");
 
             valiaikainen2.put("authorization", valiaikainen);
+          }
+          if(data.containsKey("Cookie"))
+          {
+
+                valiaikainen2.put( "Cookie", 
+                        (HashMap<String,Object>)data.get("Cookie") );
+            //                content.put(null, data)
+          }
             String palautus = createJsonString(valiaikainen2);
 
             return palautus;
@@ -801,15 +850,28 @@ public class json
       try 
       {
 
+          HashMap<String, Object> valiaikainen = new HashMap<String, Object>();
+          HashMap<String, Object> valiaikainen2 = new HashMap<String, Object>();
 
-            JSONObject valiaikainen = new JSONObject();
-            JSONObject valiaikainen2 = new JSONObject();
+          if(data.containsKey("Authorization"))
+          {
 
-            valiaikainen.put("digest-response", data);
+              valiaikainen.put("digest-response", 
+                    (HashMap<String,Object>)data.get("Authorization"));
+
+      //      valiaikainen.put("digest-response", data);
 
             valiaikainen.put("type", "akadigest");
 
             valiaikainen2.put("authorization", valiaikainen);
+          }
+          if(data.containsKey("Cookie"))
+          {
+
+                valiaikainen2.put( "Cookie", 
+                        (HashMap<String,Object>)data.get("Cookie") );
+            //                content.put(null, data)
+          }
             String palautus = createJsonString(valiaikainen2);
 
             return palautus;

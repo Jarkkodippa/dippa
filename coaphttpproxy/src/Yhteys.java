@@ -116,10 +116,14 @@ public class Yhteys extends ResourceBase// extends LocalResource
             osoite = "http://"+osoite;
             arvot = yhteys.httpClientReq(osoite);
 
+            System.out.println("arvot " + ": " + arvot);
+            System.out.println("arvot loppu");
 
             String jsonstring = "";
-            if(arvot.containsKey("body"))
+            if(!arvot.containsKey("WWW-Authenticate") && 
+                        !arvot.containsKey("Set-Cookie") )
             {
+                System.out.println("arvot eka ");
                 //createJsonString(
                 jsonstring = arvot.get("body");
         //        jsonstring = json.createJsonString(arvot);
@@ -127,6 +131,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
             else
             {
                 jsonstring = json.writeJSONauthorization(arvot);
+                System.out.println("jsonstring :" + jsonstring);
             }
 
             content = jsonstring;
@@ -173,6 +178,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
 
         //Save the payload
         content = exchange.getRequest().getPayloadString();
+        System.out.println("sisältö yhteys :" +content);
 
         String paluu = "";
         String kokouri = request.getURI();
@@ -188,9 +194,13 @@ public class Yhteys extends ResourceBase// extends LocalResource
             {
       //          arvot = json.readJSON(content);
                 arvot = yhteys.httpbtClientAut(arvot, osoite);
-                if(arvot.containsKey("body"))
+                
+                 System.out.println("arvot " + ": " + arvot);
+            //    if(arvot.containsKey("body"))
+                if(!arvot.containsKey("WWW-Authenticate") && 
+                        !arvot.containsKey("Set-Cookie") )
                 {
-                    paluu = (String) arvot.get("body");
+                    paluu = (String) arvot.get("Body");
                 }
                 else
                 {

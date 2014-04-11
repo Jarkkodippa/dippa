@@ -300,6 +300,7 @@ public class startCoap
       
        Map<String, Object> authmap = new HashMap<String,Object>();
        Map<String, Object> authheader = new HashMap<String,Object>();
+       Map<String, Object> content = new HashMap<String,Object>();
 
        /*
        IMPI: tut.test1@p133.piuha.net
@@ -351,7 +352,7 @@ key: 41434443524f58594f5552534f583031
         
           System.out.println("authheader " + ": " + authheader);
         
-        
+        content.put("Authorization", authheader);
        
         try
         {
@@ -360,7 +361,10 @@ key: 41434443524f58594f5552534f583031
             args[0] = "PUT";
 
             args[1] = osoiten;
-            String palautus2 = json.writeJSONauthentication(authheader);
+            System.out.println("content " + ": " + content);
+    //        String palautus2 = json.writeJSONauthentication(authheader);
+            String palautus2 = json.writeJSONauthentication(content);
+            System.out.println("palautus2 " + ": " + palautus2);
 
             args[2] = palautus2;
 
@@ -372,7 +376,7 @@ key: 41434443524f58594f5552534f583031
             System.err.println("virhe2");
         }
         
-        
+        content.clear();
         ///////////tästä AKA digest
         
  //       Map authheader = setAuthorizationHeaderMap(authmap, "/bsf/bootstrap", "tut.test1@p133.piuha.net", "41434443524f58594f5552534f583031");
@@ -382,7 +386,7 @@ key: 41434443524f58594f5552534f583031
         
         System.out.println("authheader " + ": " + authheader);
         
-        
+        content.put("Authorization", authheader);
        
         try
         {
@@ -391,15 +395,20 @@ key: 41434443524f58594f5552534f583031
             args[0] = "PUT";
 
             args[1] = akaosoiten;
-            String palautus2 = json.writeJSONbtauthentication(authheader);
+          //  String palautus2 = json.writeJSONbtauthentication(authheader);
+            String palautus2 = json.writeJSONbtauthentication(content);
 
             args[2] = palautus2;
 
+            System.out.println("palautus2 " + ": " + palautus2);
             String Servuvastaus = coap.runCoap(args);
+            content.clear();
             System.out.println("vastaus " + ": " + Servuvastaus);
             if(Servuvastaus.contains("www-authenticate"))
             {
                 authmap = json.readJSON(Servuvastaus);
+                content.put("Cookie", 
+                        (HashMap<String,Object>)authmap.get("Set-Cookie"));
             }
             
         }
@@ -417,7 +426,8 @@ key: 41434443524f58594f5552534f583031
         
         System.out.println("authheader " + ": " + authheader);
         
-        
+        content.put("Authorization", authheader);
+        System.out.println("content " + ": " + content);
        
         try
         {
@@ -426,7 +436,8 @@ key: 41434443524f58594f5552534f583031
             args[0] = "PUT";
 
             args[1] = akaosoiten;
-            String palautus2 = json.writeJSONbtauthentication(authheader);
+    //        String palautus2 = json.writeJSONbtauthentication(authheader);
+            String palautus2 = json.writeJSONbtauthentication(content);
 
             args[2] = palautus2;
 
