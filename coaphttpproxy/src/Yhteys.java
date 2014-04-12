@@ -5,6 +5,7 @@
 //import ch.ethz.inf.vs.californium.coap.LinkFormat;
 //import ch.ethz.inf.vs.californium.coap.Option;
 
+import ch.ethz.inf.vs.californium.coap.CoAP;
 import ch.ethz.inf.vs.californium.coap.Request;
 import ch.ethz.inf.vs.californium.coap.Response;
 //import ch.ethz.inf.vs.californium.coap.CoAP.ResponseCode;
@@ -23,6 +24,7 @@ import java.util.Map;
 //import java.util.LinkedList;
 
 import ch.ethz.inf.vs.californium.coap.CoAP.ResponseCode;
+import ch.ethz.inf.vs.californium.coap.MediaTypeRegistry;
 
 /*
  * Yhteys luokka. 
@@ -105,7 +107,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
         System.out.println("osoite :" +osoite);
   //      System.out.println("payload " + ": " + payload);
         
-        
+        Response response = new Response(ResponseCode.CREATED);
 
             
         json json = new json();
@@ -126,12 +128,16 @@ public class Yhteys extends ResourceBase// extends LocalResource
                 System.out.println("arvot eka ");
                 //createJsonString(
                 jsonstring = arvot.get("body");
+                response.getOptions().setContentFormat(
+                        MediaTypeRegistry.TEXT_HTML);
         //        jsonstring = json.createJsonString(arvot);
             }
             else
             {
                 jsonstring = json.writeJSONauthorization(arvot);
                 System.out.println("jsonstring :" + jsonstring);
+                response.getOptions().setContentFormat(
+                        MediaTypeRegistry.APPLICATION_JSON);
             }
 
             content = jsonstring;
@@ -144,7 +150,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
         }
 
 
-        Response response = new Response(ResponseCode.CREATED);
+  //      Response response = new Response(ResponseCode.CREATED);
         response.setPayload(content);
         exchange.respond(response);
 
@@ -158,14 +164,98 @@ public class Yhteys extends ResourceBase// extends LocalResource
     public void handlePUT(Exchange exchange) 
     {
 
-        String paluu = storeAnswer(exchange);
+    //    String paluu = storeAnswer(exchange);
+        
+        //Read coap client message
+        Request request = exchange.getRequest();
 
+        Map<String, Object> arvot = new HashMap<String,Object>();
+
+        json json = new json();
+
+        //Save the payload
+        content = exchange.getRequest().getPayloadString();
+        System.out.println("sisältö yhteys :" +content);
+
+        String paluu = "";
+        String kokouri = request.getURI();
+        uriShortener(kokouri);
         Response response = new Response(ResponseCode.CHANGED);
+        try
+        {
+ 
+            osoite = "http://"+osoite;
+            //Json content to map
+            arvot = json.readJSON(content);
+            
+            if(content.contains("akadigest"))
+            {
+      //          arvot = json.readJSON(content);
+                arvot = yhteys.httpbtClientAut(arvot, osoite);
+                
+                 System.out.println("arvot " + ": " + arvot);
+            //    if(arvot.containsKey("body"))
+                if(!arvot.containsKey("WWW-Authenticate") && 
+                        !arvot.containsKey("Set-Cookie") )
+                {
+                    paluu = (String) arvot.get("Body");
+                }
+                else
+                {
+                    String jsonstring = json.writeJSONauthorization(arvot);
+                    paluu = jsonstring;
+                    response.getOptions().setContentFormat(
+                        MediaTypeRegistry.APPLICATION_JSON);
+                }
+            }
+            else if(content.contains("digest"))
+            {
+        //        arvot = json.readJSON(content);
+                paluu = yhteys.httpClientAut2(arvot, osoite);
+                response.getOptions().setContentFormat(
+                        MediaTypeRegistry.TEXT_HTML);
+            }
+            else
+            {
+                yhteys.httpPostClient(osoite, arvot);
+            }
+            //httpPostClient(String osoite, Map tiedot)
+   //         System.out.println("arvot mapin sisältä " + ": " + arvot);
+   //         System.out.println("osoite " + ": " + osoite);
+            //Content to http client
+    //        paluu = yhteys.httpClientAut2(arvot, osoite);
+    
+            /*
+            if(arvot.containsKey("body"))
+            {
+                content = (String) arvot.get("body");
+            }
+            else
+            {
+                String jsonstring = json.writeJSONauthorization(arvot);
+                content = jsonstring;
+            }
+            */
+    
+        }
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+        
+
+        changed();
+
+        
+ //       CoAP.MessageFormat.
+   //     response.setType(CoAP.Type.CON);
+        
+        
         response.setPayload(paluu);
         respond(exchange, response);
 
     }
-    
+    /*
     private String storeAnswer(Exchange exchange) 
     {
 
@@ -222,6 +312,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
    //         System.out.println("osoite " + ": " + osoite);
             //Content to http client
     //        paluu = yhteys.httpClientAut2(arvot, osoite);
+    */
             /*
             if(arvot.containsKey("body"))
             {
@@ -233,6 +324,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
                 content = jsonstring;
             }
             */
+    /*
         }
         catch (Exception e) 
         {
@@ -243,7 +335,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
         changed();
         return paluu;
     }
-    
+    */
      private String uriShortener(String kokouri) 
     {
 
@@ -286,6 +378,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
         content = exchange.getRequest().getPayloadString();
         
         arvot = json.readJSON(content);
+        Response response = new Response(ResponseCode.CREATED);
             
         json json = new json();
         try
@@ -300,17 +393,23 @@ public class Yhteys extends ResourceBase// extends LocalResource
                 if(arvot.containsKey("body"))
                 {
                     paluu = (String) arvot.get("body");
+                    response.getOptions().setContentFormat(
+                        MediaTypeRegistry.TEXT_HTML);
                 }
                 else
                 {
                     String jsonstring = json.writeJSONauthorization(arvot);
                     paluu = jsonstring;
+                    response.getOptions().setContentFormat(
+                        MediaTypeRegistry.APPLICATION_JSON);
                 }
             }
             else if(content.contains("digest"))
             {
         //        arvot = json.readJSON(content);
                 paluu = yhteys.httpClientAut2(arvot, osoite);
+                response.getOptions().setContentFormat(
+                        MediaTypeRegistry.TEXT_HTML);
             }
             //!digest.equals("")
             else if(!content.equals(""))
@@ -324,12 +423,16 @@ public class Yhteys extends ResourceBase// extends LocalResource
                 {
                     //createJsonString(
                     paluu = arvot.get("body");
+                    response.getOptions().setContentFormat(
+                        MediaTypeRegistry.TEXT_HTML);
             //        jsonstring = json.createJsonString(arvot);
                 }
                 else
                 {
 
                     paluu = json.writeJSONauthorization(arvot);
+                    response.getOptions().setContentFormat(
+                        MediaTypeRegistry.APPLICATION_JSON);
                 }
             }
 
@@ -359,7 +462,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
         }
 
 
-        Response response = new Response(ResponseCode.CREATED);
+        
         response.setPayload(content);
         exchange.respond(response);
 

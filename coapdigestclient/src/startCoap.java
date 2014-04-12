@@ -26,6 +26,7 @@ import org.apache.commons.codec.binary.Base64;
 
 // Application specific API. HTTP Digest in this case
 import net.ericsson.labs.gba.client.GbaHttpDigestMD5;
+import static net.java.sip.communicator.sip.security.AKADigest.xorArray;
 import static net.java.sip.communicator.sip.security.Milenage.computeOpC;
 import org.apache.commons.codec.binary.Hex;
 //säätöpäättyy
@@ -65,6 +66,7 @@ public class startCoap
             byte[] arraysrand = Arrays.copyOfRange(opennonce, 0, 16);
             byte[] arraysautn = Arrays.copyOfRange(opennonce, 16, 32);
 
+   //         boolean testi = networkAuthenticated(arraysrand, arraysautn);
             //SQN on 48bit
             byte[] sqn = Arrays.copyOfRange(arraysautn, 0, 6);
             //amf on 16bit
@@ -82,7 +84,8 @@ public class startCoap
             byte[] IKSadamen =  muuttaja.f4(passwordbyte, arraysrand, OPc);
             byte[] AKSadamen =  muuttaja.f5(passwordbyte, arraysrand, OPc);
 
-            sqn = xorWithKey(sqn, AKSadamen);
+   //         sqn = xorWithKey(sqn, AKSadamen);
+            sqn = xorArray(sqn, AKSadamen);
             byte[] f1adamen =  muuttaja.f1(passwordbyte, arraysrand, OPc, sqn, amf);
 // TODO: Poista tarpeettomat
         
@@ -129,6 +132,7 @@ public class startCoap
         return "";
     }
     
+    /*
     private static byte[] xorWithKey(byte[] a, byte[] key) 
     {
         byte[] out = new byte[a.length];
@@ -139,7 +143,7 @@ public class startCoap
         return out;
     }
     
-
+*/
      private static Map setAuthorizationHeaderMap(Map tiedot, String uri, 
              String username, String password)
     {
@@ -182,9 +186,10 @@ public class startCoap
             {
 
                 String res = calculateAKARES(nonce, password);
+     //           String A1 = DigestUtils.md5Hex(username + ":" + realm1 + ":" + Hex.encodeHexString(res.getBytes()) );
                 String A1 = DigestUtils.md5Hex(username + ":" + realm1 + ":" + res);
                 String A2 = DigestUtils.md5Hex("GET" + ":" + uri + ":"+ DigestUtils.md5Hex(""));
-                
+        //        String A2 = DigestUtils.md5Hex("GET" + ":" + uri);
                 String responseSeed = A1 + ":" + nonce + ":" + nc + ":" + cnonce + ":" + qop + ":" + A2;
                 response = DigestUtils.md5Hex(responseSeed);
     //            response = res;
@@ -356,7 +361,7 @@ key: 41434443524f58594f5552534f583031
        
         try
         {
-            args = new String[3];
+            args = new String[4];
         
             args[0] = "PUT";
 
@@ -367,6 +372,8 @@ key: 41434443524f58594f5552534f583031
             System.out.println("palautus2 " + ": " + palautus2);
 
             args[2] = palautus2;
+            
+            args[3] = "50";
 
             String Servuvastaus = coap.runCoap(args);
             System.out.println("vastaus " + ": " + Servuvastaus);
@@ -390,7 +397,7 @@ key: 41434443524f58594f5552534f583031
        
         try
         {
-            args = new String[3];
+            args = new String[4];
         
             args[0] = "PUT";
 
@@ -399,6 +406,8 @@ key: 41434443524f58594f5552534f583031
             String palautus2 = json.writeJSONbtauthentication(content);
 
             args[2] = palautus2;
+            
+            args[3] = "50";
 
             System.out.println("palautus2 " + ": " + palautus2);
             String Servuvastaus = coap.runCoap(args);
@@ -431,7 +440,7 @@ key: 41434443524f58594f5552534f583031
        
         try
         {
-            args = new String[3];
+            args = new String[4];
         
             args[0] = "PUT";
 
@@ -440,6 +449,8 @@ key: 41434443524f58594f5552534f583031
             String palautus2 = json.writeJSONbtauthentication(content);
 
             args[2] = palautus2;
+            
+            args[3] = "50";
 
             String Servuvastaus = coap.runCoap(args);
             System.out.println("vastaus " + ": " + Servuvastaus);

@@ -41,6 +41,7 @@ public class coaptoteutus
     private static final int IDX_METHOD          = 0;
     private static final int IDX_URI             = 1;
     private static final int IDX_PAYLOAD         = 2;
+    private static final int IDX_CONTENT_TYPE    = 3;
     // exit codes for runtime errors
     private static final int ERR_MISSING_METHOD  = 1;
     private static final int ERR_UNKNOWN_METHOD  = 2;
@@ -58,6 +59,7 @@ public class coaptoteutus
         URI uri = null;
         String payload = "";
         boolean loop = false;
+        int contentType = 0;
         
         // display help if no parameters specified
         if (args.length == 0) 
@@ -105,6 +107,9 @@ public class coaptoteutus
                         break;
                 case IDX_PAYLOAD:
                         payload = arg;
+                        break;
+                case IDX_CONTENT_TYPE:
+                        contentType = Integer.parseInt(arg);
                         break;
                 default:
                         System.out.println("Unexpected argument: " + arg);
@@ -157,8 +162,11 @@ public class coaptoteutus
         request.setURI(uri);
 
         request.setPayload(payload);
+        
+        request.getOptions().setContentFormat(
+                        contentType);
 
-        request.getOptions().setContentFormat(MediaTypeRegistry.TEXT_PLAIN);
+   //     request.getOptions().setContentFormat(MediaTypeRegistry.TEXT_PLAIN);
 
         System.out.println( request.getDestination().toString() );
         System.out.println( request.getDestinationPort() );
