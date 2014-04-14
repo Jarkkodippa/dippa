@@ -127,7 +127,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
             {
                 System.out.println("arvot eka ");
                 //createJsonString(
-                jsonstring = arvot.get("body");
+                jsonstring = arvot.get("Body");
                 response.getOptions().setContentFormat(
                         MediaTypeRegistry.TEXT_HTML);
         //        jsonstring = json.createJsonString(arvot);

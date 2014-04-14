@@ -184,6 +184,7 @@ public class startCoap
             
             try
             {
+                
 
                 String res = calculateAKARES(nonce, password);
      //           String A1 = DigestUtils.md5Hex(username + ":" + realm1 + ":" + Hex.encodeHexString(res.getBytes()) );
@@ -193,6 +194,64 @@ public class startCoap
                 String responseSeed = A1 + ":" + nonce + ":" + nc + ":" + cnonce + ":" + qop + ":" + A2;
                 response = DigestUtils.md5Hex(responseSeed);
     //            response = res;
+                
+                System.out.println("Response : "+ response);
+                
+                response = MessageDigestAlgorithm.calculateResponse(algorithm,
+                                    username,
+                                    realm1,
+                                    password,
+                                    nonce,
+                                    nc,
+                                    cnonce,
+                                    "GET",
+                                    uri,
+                                    "",
+                                    qop);
+                
+                System.out.println("Response : "+ response);
+                
+                response = MessageDigestAlgorithm.calculateResponse(algorithm,
+                                    username,
+                                    realm1,
+                                    res,
+                                    nonce,
+                                    nc,
+                                    cnonce,
+                                    "GET",
+                                    uri,
+                                    "",
+                                    qop);
+                
+                System.out.println("Response : "+ response);
+                
+                response = MessageDigestAlgorithm.calculateResponse(algorithm,
+                                    username,
+                                    realm1,
+                                    res.getBytes("UTF-8"),
+                                    nonce,
+                                    nc,
+                                    cnonce,
+                                    "GET",
+                                    uri,
+                                    "",
+                                    qop);
+                
+                System.out.println("Response : "+ response);
+                
+                response = MessageDigestAlgorithm.calculateResponse(algorithm,
+                                    username,
+                                    realm1,
+                                    res.getBytes(),
+                                    nonce,
+                                    nc,
+                                    cnonce,
+                                    "GET",
+                                    uri,
+                                    "",
+                                    qop);
+                
+                System.out.println("Response : "+ response);
                 
             }
             catch(Exception e)
