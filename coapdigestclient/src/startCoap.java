@@ -50,6 +50,77 @@ public class startCoap
         return DigestUtils.md5Hex(fmtDate + randomInt.toString());
     }
     
+    public static byte[] calculateAKARES1(String nonce, String password)
+    {
+        Milenage muuttaja = new Milenage();
+
+        String OP = "00000000000000000000000000000000";
+
+        byte[] sres = "paljon kaikkee alustettavaa".getBytes();
+
+        try
+        {
+            byte[] opennonce = Base64.decodeBase64(nonce);
+
+
+            int arraylength = opennonce.length;
+            byte[] arraysrand = Arrays.copyOfRange(opennonce, 0, 16);
+            byte[] arraysautn = Arrays.copyOfRange(opennonce, 16, 32);
+
+   //         boolean testi = networkAuthenticated(arraysrand, arraysautn);
+            //SQN on 48bit
+            byte[] sqn = Arrays.copyOfRange(arraysautn, 0, 6);
+            //amf on 16bit
+            byte[] amf = Arrays.copyOfRange(arraysautn, 6, 8);
+
+            byte[] passwordbyte = Hex.decodeHex(password.toCharArray());
+            //password.getBytes("UTF-8");
+
+            byte[] OPbyte = Hex.decodeHex(OP.toCharArray());               
+            byte[] OPc = computeOpC(passwordbyte, OPbyte);
+            
+            byte[] RESadamen =  muuttaja.f2(passwordbyte, arraysrand, OPc);
+            
+            int reslength = RESadamen.length;
+            
+            byte[] CKadamen =  muuttaja.f3(passwordbyte, arraysrand, OPc);
+            byte[] IKSadamen =  muuttaja.f4(passwordbyte, arraysrand, OPc);
+            byte[] AKSadamen =  muuttaja.f5(passwordbyte, arraysrand, OPc);
+            
+            
+
+   //         sqn = xorWithKey(sqn, AKSadamen);
+            
+            byte[] f1adamen =  muuttaja.f1(passwordbyte, arraysrand, OPc, sqn, amf);
+// TODO: Poista tarpeettomat
+        
+            String resstring = Hex.encodeHexString(RESadamen); 
+            
+            sres = Hex.decodeHex(resstring.toCharArray());
+
+
+            int sreslength = sres.length;
+            
+            
+            byte[] sres1 = Arrays.copyOfRange(RESadamen, 0, 4);
+            
+            byte[] sres2 = Arrays.copyOfRange(RESadamen, 4, 8);
+            
+            sres = xorArray(sres1, sres2);
+     //       return RESadamen;
+            
+            
+  //          return resstring;
+     //       return new String(RESadamen2, "UTF-8");
+        }
+        catch(Exception e)
+        {
+            System.out.println("KD virhe2 ");
+        }
+        return sres;
+ //       return [];
+    }
+    
     public static String calculateAKARES(String nonce, String password)
     {
         Milenage muuttaja = new Milenage();
@@ -80,19 +151,35 @@ public class startCoap
             
             byte[] RESadamen =  muuttaja.f2(passwordbyte, arraysrand, OPc);
             
+            int reslength = RESadamen.length;
+            
             byte[] CKadamen =  muuttaja.f3(passwordbyte, arraysrand, OPc);
             byte[] IKSadamen =  muuttaja.f4(passwordbyte, arraysrand, OPc);
             byte[] AKSadamen =  muuttaja.f5(passwordbyte, arraysrand, OPc);
 
    //         sqn = xorWithKey(sqn, AKSadamen);
-            sqn = xorArray(sqn, AKSadamen);
+            
             byte[] f1adamen =  muuttaja.f1(passwordbyte, arraysrand, OPc, sqn, amf);
 // TODO: Poista tarpeettomat
         
             String resstring = Hex.encodeHexString(RESadamen); 
             
+            byte[] sres = Hex.decodeHex(resstring.toCharArray());
+
+
+            int sreslength = sres.length;
+            
+            
+            byte[] sres1 = Arrays.copyOfRange(RESadamen, 0, 4);
+            
+            byte[] sres2 = Arrays.copyOfRange(RESadamen, 4, 8);
+            
+            sres = xorArray(sres1, sres2);
+            
+            
             byte[] f1adamen2 = Hex.encodeHexString( f1adamen ).getBytes("UTF-8");
             byte[] RESadamen2 =  Hex.encodeHexString( RESadamen ).getBytes("UTF-8");
+            byte[] sres3 =  Hex.encodeHexString( sres ).getBytes("UTF-8");
             byte[] CKadamen2 = Hex.encodeHexString( CKadamen ).getBytes("UTF-8");    
             byte[] IKSadamen2 = Hex.encodeHexString( IKSadamen ).getBytes("UTF-8");
             byte[] AKSadamen2 = Hex.encodeHexString( AKSadamen ).getBytes("UTF-8");
@@ -106,10 +193,13 @@ public class startCoap
             
 
             System.out.println("opennonce arvo: "+ arraylength );
+            System.out.println("sres pituus: "+ sreslength );
+            System.out.println("res pituus: "+ reslength );
             System.out.println("rand lengt: "+ arraysrand.length );
             System.out.println("autn lengt: "+ arraysautn.length );
             System.out.println("nonce arvo: "+ nonce );
             System.out.println("opennonce arvo: "+ new String(opennonce2, "UTF-8") );
+            System.out.println("srespitkä arvo: "+ new String(sres3, "UTF-8") );
             System.out.println("password arvo: "+ new String(passwordbyte, "UTF-8") );
             System.out.println("arraysrand arvo: "+ new String(arraysrand2, "UTF-8") );
             System.out.println("arraysautn arvo: "+ new String(arraysautn2, "UTF-8") );
@@ -121,12 +211,14 @@ public class startCoap
             System.out.println("AKSadamen arvo: "+ new String(AKSadamen2, "UTF-8") );
             System.out.println("f1adamen arvo: "+ new String(f1adamen2, "UTF-8") );
             System.out.println("amf arvo: "+ new String(amf2, "UTF-8") );
+            
+   //         resstring = Hex.encodeHexString(sres);
             return resstring;
      //       return new String(RESadamen2, "UTF-8");
         }
         catch(Exception e)
         {
-            System.out.println("KD virhe ");
+            System.out.println("KD virhe 1");
         }
         
         return "";
@@ -184,7 +276,7 @@ public class startCoap
             
             try
             {
-                
+                byte[] sres = calculateAKARES1(nonce, password);
 
                 String res = calculateAKARES(nonce, password);
      //           String A1 = DigestUtils.md5Hex(username + ":" + realm1 + ":" + Hex.encodeHexString(res.getBytes()) );
@@ -211,6 +303,7 @@ public class startCoap
                 
                 System.out.println("Response : "+ response);
                 
+                
                 response = MessageDigestAlgorithm.calculateResponse(algorithm,
                                     username,
                                     realm1,
@@ -228,7 +321,21 @@ public class startCoap
                 response = MessageDigestAlgorithm.calculateResponse(algorithm,
                                     username,
                                     realm1,
-                                    res.getBytes("UTF-8"),
+                                    sres,
+                                    nonce,
+                                    nc,
+                                    cnonce,
+                                    "GET",
+                                    uri,
+                                    "",
+                                    qop);
+                
+                System.out.println("Response : "+ response);
+                
+                response = MessageDigestAlgorithm.calculateResponse(algorithm,
+                                    username,
+                                    realm1,
+                                    sres.toString(),
                                     nonce,
                                     nc,
                                     cnonce,
