@@ -3,6 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.sun.org.apache.xerces.internal.parsers.DOMParser;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -20,6 +23,9 @@ import net.java.sip.communicator.sip.security.Milenage;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+//import javax.swing.text.Document;
 // The GBA client API itself
 
 import org.apache.commons.codec.binary.Base64;
@@ -29,6 +35,10 @@ import net.ericsson.labs.gba.client.GbaHttpDigestMD5;
 import static net.java.sip.communicator.sip.security.AKADigest.xorArray;
 import static net.java.sip.communicator.sip.security.Milenage.computeOpC;
 import org.apache.commons.codec.binary.Hex;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 //säätöpäättyy
 
 //import org.snmp4j.smi.OctetString;
@@ -39,7 +49,10 @@ import org.apache.commons.codec.binary.Hex;
  */
 public class startCoap 
 {
+    static byte[] Ks = "871fe57f89d78485f941d1e6cdee5d8c5286423ced5900005958cc1bfed20bec".getBytes();
 
+    static String randkdf = "";
+    
     public static String calculateNonce()
     {
         Date d = new Date();
@@ -50,6 +63,62 @@ public class startCoap
         return DigestUtils.md5Hex(fmtDate + randomInt.toString());
     }
     
+    public static String kdfEncode1(String Ks, String key, String randk, String impi, String nafid)
+    {
+
+       final byte[] FC = {(byte) 0x01};
+       
+
+     //  String gbadigest = "gba-digest";
+       
+
+       String RES = "";
+
+       try
+       {
+           byte[] bgbadigest = Ks.getBytes("UTF-8");
+           
+           byte[] P0 = key.getBytes("UTF-8");
+           byte[] P1 = randk.getBytes("UTF-8");
+           byte[] P2 = impi.getBytes("UTF-8");
+           byte[] P3 = nafid.getBytes("UTF-8");
+
+           int L0 = P0.length;
+           int L1 = P1.length;
+           int L2 = P2.length;
+           int L3 = P3.length;
+   
+           String S = Hex.encodeHexString( FC ) +
+                   ""+ Hex.encodeHexString( P0 ) +
+                   ""+ Integer.toHexString(L0) +
+                   ""+ Hex.encodeHexString(P1) +
+                   ""+ Integer.toHexString(L1) +
+                   ""+ Hex.encodeHexString(P2) +
+                   ""+ Integer.toHexString(L2) +
+                   ""+ Hex.encodeHexString(P3) +
+                   ""+ Integer.toHexString(L3);
+           System.out.println("jatkoa: "+ S );
+
+           byte[] BS = S.getBytes("UTF-8");
+
+           Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+           SecretKeySpec secret_key = new SecretKeySpec(key.getBytes(), "HmacSHA256");
+           sha256_HMAC.init(secret_key);
+
+           byte[] KDF = sha256_HMAC.doFinal(BS);
+           RES = Base64.encodeBase64String(KDF);
+       
+       }
+       catch(Exception e)
+       {
+           return "";
+       }
+
+
+       return RES;
+
+    }
+    
     public static byte[] calculateAKARES1(String nonce, String password)
     {
         Milenage muuttaja = new Milenage();
@@ -57,6 +126,7 @@ public class startCoap
         String OP = "00000000000000000000000000000000";
 
         byte[] sres = "paljon kaikkee alustettavaa".getBytes();
+        
 
         try
         {
@@ -155,6 +225,9 @@ public class startCoap
             
             byte[] CKadamen =  muuttaja.f3(passwordbyte, arraysrand, OPc);
             byte[] IKSadamen =  muuttaja.f4(passwordbyte, arraysrand, OPc);
+            Ks = new byte[CKadamen.length + IKSadamen.length];
+            System.arraycopy(CKadamen, 0, Ks, 0, CKadamen.length);
+            System.arraycopy(IKSadamen, 0, Ks, CKadamen.length, IKSadamen.length);
             byte[] AKSadamen =  muuttaja.f5(passwordbyte, arraysrand, OPc);
 
    //         sqn = xorWithKey(sqn, AKSadamen);
@@ -190,7 +263,7 @@ public class startCoap
             byte[] opennonce2 = Hex.encodeHexString( opennonce ).getBytes("UTF-8");
             byte[] amf2 = Hex.encodeHexString( amf ).getBytes("UTF-8");
 
-            
+            randkdf = new String(arraysrand2, "UTF-8");
 
             System.out.println("opennonce arvo: "+ arraylength );
             System.out.println("sres pituus: "+ sreslength );
@@ -276,9 +349,11 @@ public class startCoap
             
             try
             {
-                byte[] sres = calculateAKARES1(nonce, password);
+          //      byte[] sres = calculateAKARES1(nonce, password);
 
                 String res = calculateAKARES(nonce, password);
+                
+                /*
      //           String A1 = DigestUtils.md5Hex(username + ":" + realm1 + ":" + Hex.encodeHexString(res.getBytes()) );
                 String A1 = DigestUtils.md5Hex(username + ":" + realm1 + ":" + res);
                 String A2 = DigestUtils.md5Hex("GET" + ":" + uri + ":"+ DigestUtils.md5Hex(""));
@@ -289,10 +364,11 @@ public class startCoap
                 
                 System.out.println("Response : "+ response);
                 
+                
                 response = MessageDigestAlgorithm.calculateResponse(algorithm,
                                     username,
                                     realm1,
-                                    password,
+                                    MessageDigestAlgorithm.decode(password),
                                     nonce,
                                     nc,
                                     cnonce,
@@ -302,12 +378,12 @@ public class startCoap
                                     qop);
                 
                 System.out.println("Response : "+ response);
-                
+                */
                 
                 response = MessageDigestAlgorithm.calculateResponse(algorithm,
                                     username,
                                     realm1,
-                                    res,
+                                    MessageDigestAlgorithm.decode(res),
                                     nonce,
                                     nc,
                                     cnonce,
@@ -317,7 +393,7 @@ public class startCoap
                                     qop);
                 
                 System.out.println("Response : "+ response);
-                
+                /*
                 response = MessageDigestAlgorithm.calculateResponse(algorithm,
                                     username,
                                     realm1,
@@ -359,7 +435,7 @@ public class startCoap
                                     qop);
                 
                 System.out.println("Response : "+ response);
-                
+                */
             }
             catch(Exception e)
             {
@@ -489,6 +565,8 @@ key: 41434443524f58594f5552534f583031
 //        String tarkenne = "192.168.0.112/priv/index.html";
         String tarkenne = "94.237.64.168:804/priv/index.html";
         String tarkenne1 = "p133.piuha.net:8080/bsf/bootstrap";
+        
+        String nafresource = "coap://localhost/Yhteys/p133.piuha.net/resource/naf";
        
         args = new String[2];
 
@@ -603,6 +681,7 @@ key: 41434443524f58594f5552534f583031
         
         content.put("Authorization", authheader);
         System.out.println("content " + ": " + content);
+        String Servuvastaus = "";
        
         try
         {
@@ -618,12 +697,81 @@ key: 41434443524f58594f5552534f583031
             
             args[3] = "50";
 
-            String Servuvastaus = coap.runCoap(args);
+            Servuvastaus = coap.runCoap(args);
+            
             System.out.println("vastaus " + ": " + Servuvastaus);
             if(Servuvastaus.contains("www-authenticate"))
             {
                 authmap = json.readJSON(Servuvastaus);
             }
+            
+        }
+        catch (Exception e)
+        {
+            System.err.println("virhe2");
+        }
+        
+    //    Servuvastaus.
+   
+        String btid = "";
+        DOMParser parser = new DOMParser();
+        try 
+        {
+            StringReader kokeilu = new StringReader(Servuvastaus);
+            
+            parser.parse(new InputSource( kokeilu ));
+            
+            Document doc = parser.getDocument();
+       
+            
+            btid = doc.getDocumentElement().getFirstChild().getTextContent();
+            System.out.println(btid);
+            
+            
+        } 
+        catch (SAXException e) 
+        {
+            System.out.println("virtahe1");
+            // handle SAXException 
+        } 
+        catch (IOException e) 
+        {
+            System.out.println("virtahje2");
+            // handle IOException 
+        }
+        
+        content.clear();
+        
+        final byte[] ua = {(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00};
+        String nafid = "http://p133.piuha.net:8080/bsf/"+Hex.encodeHexString( ua );
+        String Ks_naf = kdfEncode1(Hex.encodeHexString( Ks ), "gba-me", randkdf, "tut.test1@p133.piuha.net", nafid);
+        
+        content.put("UserName", btid);
+        
+        Servuvastaus = "";
+       
+        try
+        {
+            args = new String[4];
+        
+            args[0] = "POST";
+
+            args[1] = nafresource;
+    //        String palautus2 = json.writeJSONbtauthentication(authheader);
+  //          String palautus2 = json.writeJSONbtauthentication(content);
+
+            args[2] = json.createJsonString(content);
+            
+            args[3] = "50";
+
+            Servuvastaus = coap.runCoap(args);
+            
+            System.out.println("vastaus " + ": " + Servuvastaus);
+            if(Servuvastaus.contains("www-authenticate"))
+            {
+                authmap = json.readJSON(Servuvastaus);
+            }
+            
         }
         catch (Exception e)
         {

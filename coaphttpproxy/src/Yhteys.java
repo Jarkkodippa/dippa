@@ -411,6 +411,26 @@ public class Yhteys extends ResourceBase// extends LocalResource
                 response.getOptions().setContentFormat(
                         MediaTypeRegistry.TEXT_HTML);
             }
+            else if(content.contains("UserName"))
+            {
+            //    arvot = yhteys.httpClientReq(osoite);
+                arvot = yhteys.httpbtClientAut(arvot, osoite);
+                if(arvot.containsKey("body"))
+                {
+                    //createJsonString(
+                    paluu = arvot.get("body");
+                    response.getOptions().setContentFormat(
+                        MediaTypeRegistry.TEXT_HTML);
+            //        jsonstring = json.createJsonString(arvot);
+                }
+                else
+                {
+
+                    paluu = json.writeJSONauthorization(arvot);
+                    response.getOptions().setContentFormat(
+                        MediaTypeRegistry.APPLICATION_JSON);
+                }
+            }
             //!digest.equals("")
             else if(!content.equals(""))
             {

@@ -182,6 +182,87 @@ public class HTTP
         return map;
     }
     
+     //HTTP client luo http pyynnön
+    //Ottaa vastaa WWW-autenticate headerin ja palauttaa sen Mappina.
+    public Map httpClientReq(String osoite, String otsikko) throws Exception
+    {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        HashMap<String, String> mapdi = new HashMap<String, String>();
+        HashMap<String, String> mapco = new HashMap<String, String>();
+        HashMap<String, String> mapbo = new HashMap<String, String>();
+
+        try 
+        {
+
+            client = new HttpClient();
+
+            urlStr = osoite;
+            System.out.println("osoite: " + osoite);
+            System.out.println("osoite2: " + urlStr);
+
+
+            getMethod = new GetMethod(urlStr);
+            
+            System.out.println("getMethod luotu");
+            
+            getMethod.setRequestHeader("UserName", otsikko);
+
+            status = client.executeMethod(getMethod);
+            System.out.println("status: " + status);
+            responseBody = getMethod.getResponseBodyAsString();
+            System.out.println("responseBody: " + responseBody);
+
+            Header wwAuthHeader = getMethod.getResponseHeader("WWW-Authenticate");
+            Header headersession = getMethod.getResponseHeader("Set-Cookie");
+            if(wwAuthHeader != null)
+            {
+                for (HeaderElement element : wwAuthHeader.getElements()) 
+                {
+                    if(element.getName().contains("Digest")) 
+                    {
+                        String elementname = element.getName();
+                        
+                        elementname = elementname.replaceAll("Digest ", "");
+                        element.setName(elementname);
+                    }
+                    System.out.println(element.getName() + ": " + element.getValue());
+                    mapdi.put( element.getName(), element.getValue() ); 
+                }
+                map.put("WWW-Authenticate", mapdi);
+            }
+            
+            if(headersession != null)
+            {
+                for (HeaderElement element : headersession.getElements())
+                {
+                    
+                    System.out.println(element.getName() + ": " + element.getValue());
+                    mapco.put( element.getName(), element.getValue() );
+                }
+                map.put("Set-Cookie", mapco);
+            }
+            
+       //     else
+   //         {
+                if(responseBody != null || responseBody != "")
+                {
+   //                 mapbo.put( "body", responseBody );
+                    map.put("Body", responseBody);
+                }
+            /*
+            if(responseBody != null || responseBody != "")
+            {
+                map.put( "body", responseBody );
+            }
+            */
+        }
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+        return map;
+    }
+    
     /*
     //Lähettää http Authorizationin.
     //Palauttaa palvelimelta saadun vastauksen.
@@ -275,23 +356,36 @@ public class HTTP
      //       HttpClient client2 = new HttpClient();
         urlStr = osoite;
         
+        System.out.println("osoite : "+ urlStr);
+        
         getMethod = new GetMethod(urlStr);
         String otsikkotieto = setReguestHeaderf(tiedot);
         //setReguestHeadercookie(Map tiedot)
         String otsikkotietoco = "";
         otsikkotietoco = setReguestHeadercookie(tiedot);
+        
+        String otsikkotietouser = "";
+        otsikkotietouser = setReguestHeaderusername(tiedot);
 
         try 
         {
      
     //        getMethod.
-            getMethod.setRequestHeader("Authorization", otsikkotieto);
-            if(!otsikkotietoco.equals(""))
+            
+            if(otsikkotieto != null && !otsikkotieto.equals(""))
+            {
+                getMethod.setRequestHeader("Authorization", otsikkotieto);
+            }
+            if(otsikkotietoco != null && !otsikkotietoco.equals(""))
             {
                 getMethod.setRequestHeader("Cookie", otsikkotietoco);
             }
+            if(otsikkotietouser != null && !otsikkotietouser.equals(""))
+            {
+                getMethod.setRequestHeader("UserName", otsikkotietoco);
+            }
             
-            System.out.println("getmethod sisältääaut" + ": " + getMethod.getQueryString());
+    //        System.out.println("getmethod sisältääaut" + ": " + getMethod.);
             
 
             status = client.executeMethod(getMethod);
@@ -413,12 +507,12 @@ public class HTTP
             
             
             
-            if(tietoja2.get("type").equals("akadigest") )
+            if(tietoja2 != null && tietoja2.get("type").equals("akadigest") )
             {
                 System.out.println("jee");
                 header = setReguestHeaderbt(tietoja);
             }
-            else
+            else if(tietoja2 != null && tietoja2.get("type").equals("digest"))
             {
                 tietoja3 = (HashMap<String,Object>)tietoja2.get("digest-response");
                 System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
@@ -628,9 +722,6 @@ public class HTTP
             System.out.println("tietoja mapin sisälto" + ": " + tietoja);
             tietoja2 = (HashMap<String,Object>)tietoja.get("Cookie");
             System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
- //           tietoja3 = (HashMap<String,Object>)tietoja2.get("digest-response");
- //           System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
-            
 
             String Nimi = "";
             String Arvo = "";
@@ -649,20 +740,35 @@ public class HTTP
     
             }
             
-       
-            
-            
-          //  header = removeLastChar(header);
-          //  header = removeLastChar(header);
-     //       header = removeLastChar(header);
-           // header = header - ",";
+
             
             System.out.println("header tiedosto" + ": " + header);
 
             return header;
         }
         
-        
+            //Luodaan header tiedosto digest arvoista.
+        private String setReguestHeaderusername(Map tiedot)
+        {
+
+            String header = "";
+
+  //          Map<String, Object> tietoja = tiedot;
+            Map<String, Object> tietoja = new HashMap<String, Object>();
+      //      Map<String, Object> tietoja2 = new HashMap<String, Object>();
+   //         Map<String, Object> tietoja3 = new HashMap<String, Object>();
+            tietoja = tiedot;
+            System.out.println("tietoja mapin sisälto" + ": " + tietoja);
+      
+            if(tietoja != null && !tietoja.isEmpty())
+            {
+                header = (String)tietoja.get("UserName");
+            }
+            
+            System.out.println("header tiedosto" + ": " + header);
+
+            return header;
+        }
 
 public String removeLastChar(String s) {
     if (s == null || s.length() == 0) {
