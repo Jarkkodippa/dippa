@@ -63,6 +63,65 @@ public class startCoap
         return DigestUtils.md5Hex(fmtDate + randomInt.toString());
     }
     
+    public static byte[] kdfEncode(String Ks, String key, String randk, String impi, String nafid)
+    {
+
+       final byte[] FC = {(byte) 0x01};
+       
+
+     //  String gbadigest = "gba-digest";
+       
+
+       String RES = "";
+
+       try
+       {
+           byte[] bgbadigest = Ks.getBytes("UTF-8");
+           
+           byte[] P0 = key.getBytes("UTF-8");
+           byte[] P1 = randk.getBytes("UTF-8");
+           byte[] P2 = impi.getBytes("UTF-8");
+           byte[] P3 = nafid.getBytes("UTF-8");
+
+           int L0 = P0.length;
+           int L1 = P1.length;
+           int L2 = P2.length;
+           int L3 = P3.length;
+   
+           String S = Hex.encodeHexString( FC ) +
+                   ""+ Hex.encodeHexString( P0 ) +
+                   ""+ Integer.toHexString(L0) +
+                   ""+ Hex.encodeHexString(P1) +
+                   ""+ Integer.toHexString(L1) +
+                   ""+ Hex.encodeHexString(P2) +
+                   ""+ Integer.toHexString(L2) +
+                   ""+ Hex.encodeHexString(P3) +
+                   ""+ Integer.toHexString(L3);
+           System.out.println("jatkoa: "+ S );
+
+           byte[] BS = S.getBytes("UTF-8");
+
+           Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+           SecretKeySpec secret_key = new SecretKeySpec(key.getBytes(), "HmacSHA256");
+           sha256_HMAC.init(secret_key);
+
+           byte[] KDF = sha256_HMAC.doFinal(BS);
+         //  RES = Base64.encodeBase64String(KDF);
+           return KDF;
+       }
+       catch(Exception e)
+       {
+           System.err.println("virhe: " );
+   //        return "";
+       }
+
+       byte[] paluu = {(byte) 0x00};
+       return paluu;
+
+   //    return RES;
+
+    }
+    
     public static String kdfEncode1(String Ks, String key, String randk, String impi, String nafid)
     {
 
@@ -504,21 +563,28 @@ public class startCoap
         return lopullinen;
     }
      
-     
+   
+             
      private static boolean runUaHttpDigest( String nafUrl, 
             String btid, byte[] ksNaf)  throws Exception
     {
 
         // First GET over Ua
+        System.out.println("aloitetaan yhteys naffiin ");
         URL httpUrl = new URL(nafUrl);
+        System.out.println("aloitetaan yhteys naffiin2 ");
         HttpURLConnection http = (HttpURLConnection) httpUrl.openConnection();
+        System.out.println("aloitetaan yhteys naffiin 3");
         http.setRequestMethod("GET");
+        System.out.println("aloitetaan yhteys naffiin 4");
         http.connect();
+        System.out.println("aloitetaan yhteys naffiin 5");
         if (http.getResponseCode() != 401) 
         {
             throw new Exception("Unexpected HTTP response");
         }
 
+        System.out.println("HTTP yhteys luotu ");
         //Create a helper class for HttpDigest
         GbaHttpDigestMD5 httpDigest = new GbaHttpDigestMD5(nafUrl, btid, ksNaf);
         //Respond with Authorization header
@@ -555,18 +621,20 @@ IMPU: sip:tut.test1@p133.piuha.net
 key: 41434443524f58594f5552534f583031
        BSF palvelu: http://p133.piuha.net:8080/bsf/bootstrap
        */
- //       String osoiten = "coap://192.168.0.70/Yhteys/";
+        String osoiten = "coap://192.168.0.70/Yhteys/";
 //        String akaosoiten = "coap://192.168.0.70/Btyhteys/";
 //        String akaosoiten = "coap://localhost/Btyhteys/";
-       String akaosoiten = "coap://localhost/Yhteys/";
+ //      String akaosoiten = "coap://localhost/Yhteys/";
+       String akaosoiten = osoiten;
   //      String osoiten = "http://p133.piuha.net:8080/bsf/bootstrap";
-        String osoiten = "coap://localhost/Yhteys/";
+ //       String osoiten = "coap://localhost/Yhteys/";
 
 //        String tarkenne = "192.168.0.112/priv/index.html";
         String tarkenne = "94.237.64.168:804/priv/index.html";
         String tarkenne1 = "p133.piuha.net:8080/bsf/bootstrap";
+        String nafurl = "p133.piuha.net:8080/naf/resource";
         
-        String nafresource = "coap://localhost/Yhteys/p133.piuha.net/resource/naf";
+        String nafresource = osoiten+nafurl;
        
         args = new String[2];
 
@@ -747,7 +815,17 @@ key: 41434443524f58594f5552534f583031
         String Ks_naf = kdfEncode1(Hex.encodeHexString( Ks ), "gba-me", randkdf, "tut.test1@p133.piuha.net", nafid);
         
         content.put("UserName", btid);
-        
+     /*   
+        try
+        {
+            runUaHttpDigest( "http://" +nafurl, btid, Ks_naf.getBytes("utf-8"));
+        }
+        catch (Exception e)
+        {
+            System.err.println("virhe http digest");
+        }
+        */
+            
         Servuvastaus = "";
        
         try
@@ -770,6 +848,7 @@ key: 41434443524f58594f5552534f583031
             if(Servuvastaus.contains("www-authenticate"))
             {
                 authmap = json.readJSON(Servuvastaus);
+                
             }
             
         }
@@ -778,6 +857,61 @@ key: 41434443524f58594f5552534f583031
             System.err.println("virhe2");
         }
         
+        content.clear();
+        
+        content.put("Cookie", 
+                        (HashMap<String,Object>)authmap.get("Set-Cookie"));
+        
+        authheader = setAuthorizationHeaderMap(authmap, "/naf/resource", btid, Ks_naf);
+        
+          System.out.println("authheader " + ": " + authheader);
+        
+        content.put("Authorization", authheader);
+       
+        try
+        {
+            args = new String[4];
+        
+            args[0] = "PUT";
+
+            args[1] = nafresource;
+            System.out.println("content " + ": " + content);
+    //        String palautus2 = json.writeJSONauthentication(authheader);
+            String palautus2 = json.writeJSONauthentication(content);
+            System.out.println("palautus2 " + ": " + palautus2);
+
+            args[2] = palautus2;
+            
+            args[3] = "50";
+
+            Servuvastaus = coap.runCoap(args);
+            System.out.println("vastaus " + ": " + Servuvastaus);
+        }
+        catch (Exception e)
+        {
+            System.err.println("virhe2");
+        }
+        
+        content.clear();
+        
+        
+        /*
+        
+        //Create a helper class for HttpDigest
+        GbaHttpDigestMD5 httpDigest = new GbaHttpDigestMD5(nafurl, btid, ksNaf);
+        
+        URL httpUrl = new URL(nafurl);
+        HttpURLConnection http = (HttpURLConnection) httpUrl.openConnection();
+
+    //    http.
+
+//Respond with Authorization header
+        System.out.println(http.getHeaderField("WWW-Authenticate"));
+        httpDigest.computeDigestResponse(
+                http.getHeaderField("WWW-Authenticate"));
+        String authorizationHeader = httpDigest.generateAuthorizationHeader();
+        System.out.println("Authorization: " + authorizationHeader);
+        */
         ////säätöö
         /*
         // Insert your own IMPI and (AKA) key for your applications
@@ -862,5 +996,7 @@ BSF palvelu: http://p133.piuha.net:8080/bsf/bootstrap
  
    }
    */
+        
+        
    }
 }
