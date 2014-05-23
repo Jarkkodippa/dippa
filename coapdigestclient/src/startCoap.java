@@ -6,6 +6,7 @@
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigInteger;
 import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -50,7 +51,7 @@ import org.xml.sax.SAXException;
 public class startCoap 
 {
     static byte[] Ks = "871fe57f89d78485f941d1e6cdee5d8c5286423ced5900005958cc1bfed20bec".getBytes();
-
+    static String KsS = "";
     static String randkdf = "";
     
     public static String calculateNonce()
@@ -122,11 +123,12 @@ public class startCoap
 
     }
     
-    public static String kdfEncode1(String Ks, String key, String randk, String impi, String nafid)
+    public static String kdfEncode1(String Ks, String rand, String impi, String nafid, String gbatype)
     {
 
        final byte[] FC = {(byte) 0x01};
        
+       final byte[] nollat = {(byte) 0x00};
 
      //  String gbadigest = "gba-digest";
        
@@ -137,39 +139,62 @@ public class startCoap
        {
            byte[] bgbadigest = Ks.getBytes("UTF-8");
            
-           byte[] P0 = key.getBytes("UTF-8");
-           byte[] P1 = randk.getBytes("UTF-8");
+           byte[] P0 = gbatype.getBytes("UTF-8");
+           byte[] P1 = rand.getBytes("UTF-8");
            byte[] P2 = impi.getBytes("UTF-8");
            byte[] P3 = nafid.getBytes("UTF-8");
 
            int L0 = P0.length;
            int L1 = P1.length;
            int L2 = P2.length;
-           int L3 = P3.length;
+           int L3 = P3.length+5;
+           
+           
+           byte[] ua = {(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00};
+           
+           byte[] L0x = BigInteger.valueOf(L0).toByteArray();
+           System.out.println("l0x: "+ Hex.encodeHexString( L0x ) );
+           byte[] L1x = BigInteger.valueOf(L1).toByteArray();
+           System.out.println("l1x: "+ Hex.encodeHexString( L1x ) );
+           byte[] L2x = BigInteger.valueOf(L2).toByteArray();
+           System.out.println("l2x: "+ Hex.encodeHexString( L2x ) );
+           byte[] L3x = BigInteger.valueOf(L3).toByteArray();
+           System.out.println("l3x: "+ Hex.encodeHexString( L3x ) );
    
            String S = Hex.encodeHexString( FC ) +
                    ""+ Hex.encodeHexString( P0 ) +
-                   ""+ Integer.toHexString(L0) +
+                   ""+ Hex.encodeHexString(nollat) +
+                   ""+ Hex.encodeHexString( L0x ) +
                    ""+ Hex.encodeHexString(P1) +
-                   ""+ Integer.toHexString(L1) +
+                   ""+ Hex.encodeHexString(nollat) +
+                   ""+ Hex.encodeHexString( L1x ) +
                    ""+ Hex.encodeHexString(P2) +
-                   ""+ Integer.toHexString(L2) +
+                   ""+ Hex.encodeHexString(nollat) +
+                   ""+ Hex.encodeHexString( L2x ) +
                    ""+ Hex.encodeHexString(P3) +
-                   ""+ Integer.toHexString(L3);
+                   ""+ Hex.encodeHexString(ua) +
+                   ""+ Hex.encodeHexString(nollat) +
+                   ""+ Hex.encodeHexString( L3x );
            System.out.println("jatkoa: "+ S );
 
            byte[] BS = S.getBytes("UTF-8");
+           byte[] BSx = Hex.decodeHex(S.toCharArray());
 
+           System.out.println("BS arvo: "+ new String(BS, "UTF-8") );
+           System.out.println("BSx arvo: "+ new String(BSx, "UTF-8") );
            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-           SecretKeySpec secret_key = new SecretKeySpec(key.getBytes(), "HmacSHA256");
+           SecretKeySpec secret_key = new SecretKeySpec(Ks.getBytes("UTF-8"), "HmacSHA256");
            sha256_HMAC.init(secret_key);
 
            byte[] KDF = sha256_HMAC.doFinal(BS);
+           System.out.println("KDF arvo: "+ new String(KDF, "UTF-8")  );
            RES = Base64.encodeBase64String(KDF);
+           System.out.println("RES arvo: "+ RES );
        
        }
        catch(Exception e)
        {
+           System.err.println("virhe1");
            return "";
        }
 
@@ -284,9 +309,10 @@ public class startCoap
             
             byte[] CKadamen =  muuttaja.f3(passwordbyte, arraysrand, OPc);
             byte[] IKSadamen =  muuttaja.f4(passwordbyte, arraysrand, OPc);
-            Ks = new byte[CKadamen.length + IKSadamen.length];
-            System.arraycopy(CKadamen, 0, Ks, 0, CKadamen.length);
-            System.arraycopy(IKSadamen, 0, Ks, CKadamen.length, IKSadamen.length);
+            //       Ks = new byte[CKadamen.length + IKSadamen.length];
+     //       System.arraycopy(CKadamen, 0, Ks, 0, CKadamen.length);
+     //       System.arraycopy(IKSadamen, 0, Ks, CKadamen.length, IKSadamen.length);
+            KsS = Hex.encodeHexString( CKadamen )+Hex.encodeHexString( IKSadamen );
             byte[] AKSadamen =  muuttaja.f5(passwordbyte, arraysrand, OPc);
 
    //         sqn = xorWithKey(sqn, AKSadamen);
@@ -323,13 +349,20 @@ public class startCoap
             byte[] amf2 = Hex.encodeHexString( amf ).getBytes("UTF-8");
 
             randkdf = new String(arraysrand2, "UTF-8");
+            System.out.println("nonce arvo: "+ randkdf );
+            randkdf = Hex.encodeHexString( arraysrand );
 
+            System.out.println("nonce arvo: "+ randkdf );
             System.out.println("opennonce arvo: "+ arraylength );
             System.out.println("sres pituus: "+ sreslength );
             System.out.println("res pituus: "+ reslength );
             System.out.println("rand lengt: "+ arraysrand.length );
             System.out.println("autn lengt: "+ arraysautn.length );
             System.out.println("nonce arvo: "+ nonce );
+            System.out.println("kss arvo: "+ KsS );
+            
+            System.out.println("ik arvo: "+ Hex.encodeHexString( IKSadamen ) );
+            System.out.println("ck arvo: "+ Hex.encodeHexString( CKadamen ) );
             System.out.println("opennonce arvo: "+ new String(opennonce2, "UTF-8") );
             System.out.println("srespitkä arvo: "+ new String(sres3, "UTF-8") );
             System.out.println("password arvo: "+ new String(passwordbyte, "UTF-8") );
@@ -625,10 +658,11 @@ key: 41434443524f58594f5552534f583031
 //        String akaosoiten = "coap://192.168.0.70/Btyhteys/";
 //        String akaosoiten = "coap://localhost/Btyhteys/";
  //      String akaosoiten = "coap://localhost/Yhteys/";
-       String akaosoiten = osoiten;
+       
   //      String osoiten = "http://p133.piuha.net:8080/bsf/bootstrap";
- //       String osoiten = "coap://localhost/Yhteys/";
+  //      String osoiten = "coap://localhost/Yhteys/";
 
+        String akaosoiten = osoiten;
 //        String tarkenne = "192.168.0.112/priv/index.html";
         String tarkenne = "94.237.64.168:804/priv/index.html";
         String tarkenne1 = "p133.piuha.net:8080/bsf/bootstrap";
@@ -804,17 +838,25 @@ key: 41434443524f58594f5552534f583031
         } 
         catch (IOException e) 
         {
-            System.out.println("virtahje2");
+            System.err.println("virtahje2");
             // handle IOException 
         }
         
         content.clear();
         
-        final byte[] ua = {(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00};
-        String nafid = "http://p133.piuha.net:8080/bsf/"+Hex.encodeHexString( ua );
-        String Ks_naf = kdfEncode1(Hex.encodeHexString( Ks ), "gba-me", randkdf, "tut.test1@p133.piuha.net", nafid);
+ //       final byte[] ua = {(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00};
+  //      String nafid = "http://p133.piuha.net:8080/bsf/"+Hex.encodeHexString( ua );
+        String nafid = "http://p133.piuha.net:8080/bsf/";
+        //kdfEncode1(String Ks, String rand, String impi, String nafid, String gbatype)
+        String Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-me");
+        System.out.println("ksnaf1 " + ": " + Ks_naf);
         
-        content.put("UserName", btid);
+        Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-u");
+        System.out.println("ksnaf2 " + ": " + Ks_naf);
+        
+        Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-digest");
+        System.out.println("ksnaf3 " + ": " + Ks_naf);
+ //       content.put("UserName", btid);
      /*   
         try
         {
@@ -825,14 +867,15 @@ key: 41434443524f58594f5552534f583031
             System.err.println("virhe http digest");
         }
         */
-            
+           /* 
         Servuvastaus = "";
        
         try
         {
             args = new String[4];
         
-            args[0] = "POST";
+         //   args[0] = "POST";
+            args[0] = "PUT";
 
             args[1] = nafresource;
     //        String palautus2 = json.writeJSONbtauthentication(authheader);
@@ -894,7 +937,7 @@ key: 41434443524f58594f5552534f583031
         
         content.clear();
         
-        
+        */
         /*
         
         //Create a helper class for HttpDigest
