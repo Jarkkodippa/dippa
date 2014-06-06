@@ -5,7 +5,7 @@
 //import ch.ethz.inf.vs.californium.coap.LinkFormat;
 //import ch.ethz.inf.vs.californium.coap.Option;
 
-import ch.ethz.inf.vs.californium.coap.CoAP;
+//import ch.ethz.inf.vs.californium.coap.CoAP;
 import ch.ethz.inf.vs.californium.coap.Request;
 import ch.ethz.inf.vs.californium.coap.Response;
 //import ch.ethz.inf.vs.californium.coap.CoAP.ResponseCode;
@@ -36,7 +36,7 @@ Putilla voidaan vastata annettuun viestiin.
 public class Yhteys extends ResourceBase// extends LocalResource 
 {
 
-    private HTTP yhteys;
+    private HTTPClass yhteys;
     //private byte[] data; 
     private String content;
     private String osoite;
@@ -60,7 +60,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
 
         getAttributes().addResourceType("reverse proxy");
 
-        yhteys = new HTTP();
+        yhteys = new HTTPClass();
         osoite = "";
 
     }
@@ -377,7 +377,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
 
         content = exchange.getRequest().getPayloadString();
         
-        arvot = json.readJSON(content);
+        
         Response response = new Response(ResponseCode.CREATED);
             
         json json = new json();
@@ -388,6 +388,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
             osoite = "http://"+osoite;
             if(content.contains("akadigest"))
             {
+                arvot = json.readJSON(content);
       //          arvot = json.readJSON(content);
                 arvot = yhteys.httpbtClientAut(arvot, osoite);
                 if(arvot.containsKey("body"))
@@ -406,6 +407,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
             }
             else if(content.contains("digest"))
             {
+                arvot = json.readJSON(content);
         //        arvot = json.readJSON(content);
                 paluu = yhteys.httpClientAut2(arvot, osoite);
                 response.getOptions().setContentFormat(
@@ -413,6 +415,7 @@ public class Yhteys extends ResourceBase// extends LocalResource
             }
             else if(content.contains("UserName"))
             {
+                arvot = json.readJSON(content);
             //    arvot = yhteys.httpClientReq(osoite);
                 arvot = yhteys.httpbtClientAut(arvot, osoite);
                 if(arvot.containsKey("body"))
@@ -434,7 +437,8 @@ public class Yhteys extends ResourceBase// extends LocalResource
             //!digest.equals("")
             else if(!content.equals(""))
             {
-                paluu = yhteys.httpPostClient(osoite, arvot);
+     //           arvot = json.readJSON(content);
+                paluu = yhteys.httpPostClient(osoite, content);
             }
             else
             {

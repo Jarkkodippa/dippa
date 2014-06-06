@@ -13,7 +13,7 @@ public class starthttp
     
    public static void main(String[] args) 
    {
-      HTTP http = new HTTP();
+      HTTPClass http = new HTTPClass();
 
    }
 }

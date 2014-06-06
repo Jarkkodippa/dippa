@@ -63,7 +63,8 @@ public class startCoap
         Integer randomInt = rand.nextInt();
         return DigestUtils.md5Hex(fmtDate + randomInt.toString());
     }
-    
+   
+    /*
     public static byte[] kdfEncode(String Ks, String key, String randk, String impi, String nafid)
     {
 
@@ -122,7 +123,7 @@ public class startCoap
    //    return RES;
 
     }
-    
+    */
     public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];
@@ -194,23 +195,27 @@ public class startCoap
                    ""+ Hex.encodeHexString( L3x );
            System.out.println("jatkoa: "+ S );
 
-           byte[] BS = S.getBytes("UTF-8");
+  //         byte[] BS = S.;
            byte[] BSx = Hex.decodeHex(S.toCharArray());
+           byte[] KSx = Hex.decodeHex(Ks.toCharArray());
 
-           System.out.println("BS arvo: "+ new String(BS, "UTF-8") );
+  //         System.out.println("BS arvo: "+ new String(BS, "UTF-8") );
            System.out.println("BSx arvo: "+ new String(BSx, "UTF-8") );
            
            System.out.println("secret key: "+ Ks );
            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-           SecretKeySpec secret_key = new SecretKeySpec(Ks.getBytes("UTF-8"), "HmacSHA256");
+     //      SecretKeySpec secret_key = new SecretKeySpec(Ks.getBytes("UTF-8"), "HmacSHA256");
+           SecretKeySpec secret_key = new SecretKeySpec(KSx, "HmacSHA256");
            sha256_HMAC.init(secret_key);
 
-           byte[] KDF = sha256_HMAC.doFinal(BS);
+     //      byte[] KDF = sha256_HMAC.doFinal(BS);
+           byte[] KDF = sha256_HMAC.doFinal(BSx);
            String KDFS = Hex.encodeHexString( KDF );
            System.out.println("kdfs arvo: "+ KDFS );
    //        System.out.println("KDF: "+ Hex.encodeHexString( KDF ) );
     //       System.out.println("KDF arvo: "+ new String(KDF, "UTF-8")  );
-           RES = Base64.encodeBase64String(KDFS.getBytes("UTF-8"));
+           RES = Base64.encodeBase64String(KDF);
+           //RES = Base64.encodeBase64String(KDFS.getBytes("UTF-8"));
     //       RES = KDFS.
            System.out.println("RES arvo: "+ RES );
            
@@ -231,6 +236,7 @@ public class startCoap
 
     }
     
+    /*
     public static byte[] calculateAKARES1(String nonce, String password)
     {
         Milenage muuttaja = new Milenage();
@@ -302,7 +308,7 @@ public class startCoap
         return sres;
  //       return [];
     }
-    
+    */
     public static String calculateAKARES(String nonce, String password)
     {
         Milenage muuttaja = new Milenage();
@@ -426,19 +432,7 @@ public class startCoap
         
         return "";
     }
-    
-    /*
-    private static byte[] xorWithKey(byte[] a, byte[] key) 
-    {
-        byte[] out = new byte[a.length];
-        for (int i = 0; i < a.length; i++) 
-        {
-            out[i] = (byte) (a[i] ^ key[i%key.length]);
-        }
-        return out;
-    }
-    
-*/
+
      private static Map setAuthorizationHeaderMap(Map tiedot, String uri, 
              String username, String password)
     {
@@ -494,20 +488,7 @@ public class startCoap
                 
                 System.out.println("Response : "+ response);
                 
-                
-                response = MessageDigestAlgorithm.calculateResponse(algorithm,
-                                    username,
-                                    realm1,
-                                    MessageDigestAlgorithm.decode(password),
-                                    nonce,
-                                    nc,
-                                    cnonce,
-                                    "GET",
-                                    uri,
-                                    "",
-                                    qop);
-                
-                System.out.println("Response : "+ response);
+              
                 */
                 
                 response = MessageDigestAlgorithm.calculateResponse(algorithm,
@@ -523,49 +504,7 @@ public class startCoap
                                     qop);
                 
                 System.out.println("Response : "+ response);
-                /*
-                response = MessageDigestAlgorithm.calculateResponse(algorithm,
-                                    username,
-                                    realm1,
-                                    sres,
-                                    nonce,
-                                    nc,
-                                    cnonce,
-                                    "GET",
-                                    uri,
-                                    "",
-                                    qop);
-                
-                System.out.println("Response : "+ response);
-                
-                response = MessageDigestAlgorithm.calculateResponse(algorithm,
-                                    username,
-                                    realm1,
-                                    sres.toString(),
-                                    nonce,
-                                    nc,
-                                    cnonce,
-                                    "GET",
-                                    uri,
-                                    "",
-                                    qop);
-                
-                System.out.println("Response : "+ response);
-                
-                response = MessageDigestAlgorithm.calculateResponse(algorithm,
-                                    username,
-                                    realm1,
-                                    res.getBytes(),
-                                    nonce,
-                                    nc,
-                                    cnonce,
-                                    "GET",
-                                    uri,
-                                    "",
-                                    qop);
-                
-                System.out.println("Response : "+ response);
-                */
+              
             }
             catch(Exception e)
             {
@@ -692,26 +631,26 @@ IMPU: sip:tut.test1@p133.piuha.net
 key: 41434443524f58594f5552534f583031
        BSF palvelu: http://p133.piuha.net:8080/bsf/bootstrap
        */
-        String osoiten = "coap://192.168.0.70/Yhteys/";
+        String osoite = "coap://192.168.0.70/Yhteys/";
 //        String akaosoiten = "coap://192.168.0.70/Btyhteys/";
 //        String akaosoiten = "coap://localhost/Btyhteys/";
  //      String akaosoiten = "coap://localhost/Yhteys/";
        
   //      String osoiten = "http://p133.piuha.net:8080/bsf/bootstrap";
-  //      String osoiten = "coap://localhost/Yhteys/";
+ //       String osoiten = "coap://localhost/Yhteys/";
 
-        String akaosoiten = osoiten;
+        String akaosoiten = osoite;
 //        String tarkenne = "192.168.0.112/priv/index.html";
         String tarkenne = "94.237.64.168:804/priv/index.html";
         String tarkenne1 = "p133.piuha.net:8080/bsf/bootstrap";
         String nafurl = "p133.piuha.net:8080/naf/resource";
         
-        String nafresource = osoiten+nafurl;
+        String nafresource = osoite+nafurl;
        
         args = new String[2];
 
         coaptoteutus coap = new coaptoteutus();
-        osoiten = osoiten + tarkenne;
+        String osoiten = osoite + tarkenne;
         akaosoiten = akaosoiten + tarkenne1;
         
         try
@@ -888,14 +827,7 @@ key: 41434443524f58594f5552534f583031
         String nafid = "";
          try
        {
-           System.out.println("Kokeil: "+ Hex.encodeHexString("naf.labs.ericsson.net".getBytes("UTF-8") ));
-           byte[] kokeilu = Base64.decodeBase64("QAAAAA=");
-          System.out.println("Kokeilu: "+ Hex.encodeHexString( kokeilu ) );
           
-          byte[] kokeilu2 = Base64.decodeBase64("bmFmLmxhYnMuZXJpY3Nzb24ubmV0AQAAAAA=");
-          System.out.println("Kokeilu2: "+ Hex.encodeHexString( kokeilu2 ) );
-          System.out.println("Kokeilu2: "+ new String(kokeilu2, "UTF-8") );
-           
             byte[] ua = {(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00};
             nafid = "p133.piuha.net" + new String(ua, "UTF-8");
             
@@ -911,60 +843,42 @@ key: 41434443524f58594f5552534f583031
             String Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-me");
             System.out.println("ksnaf1 " + ": " + Ks_naf);
 
-            Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-u");
-            System.out.println("ksnaf2 " + ": " + Ks_naf);
-
-            Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-digest");
-            System.out.println("ksnaf3 " + ": " + Ks_naf);
-            
-            
-            
-            byte[] ua1 = {(byte) 0x01,(byte) 0x00,(byte) 0x00,(byte) 0x00,(byte) 0x00};
-            nafid = "p133.piuha.net" + new String(ua1, "UTF-8");
-            
-            nafidpal = nafid;
-           System.out.println("nafidpal: "+ nafidpal  );
-           
-           System.out.println("nafidpalbas: "+ Base64.encodeBase64String(nafidpal.getBytes("UTF-8")));
-           byte[] kokeilu9 = Base64.decodeBase64(Base64.encodeBase64String(nafidpal.getBytes("UTF-8")));
-           System.out.println("Kokeipalbas: "+ Hex.encodeHexString(kokeilu9  ) );
-           System.out.println("nafidpal: "+ new String(kokeilu9, "UTF-8") );
-           
-             
-            Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-me");
-            System.out.println("ksnaf1 " + ": " + Ks_naf);
-
-            Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-u");
-            System.out.println("ksnaf2 " + ": " + Ks_naf);
-
-            Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-digest");
-            System.out.println("ksnaf3 " + ": " + Ks_naf);
-            
-            nafid = "p133.piuha.net";
-            
-            nafidpal = nafid;
-           System.out.println("nafidpal: "+ nafidpal  );
-           
-           System.out.println("nafidpalbas: "+ Base64.encodeBase64String(nafidpal.getBytes("UTF-8")));
-           byte[] kokeilu10 = Base64.decodeBase64(Base64.encodeBase64String(nafidpal.getBytes("UTF-8")));
-           System.out.println("Kokeipalbas: "+ Hex.encodeHexString(kokeilu10  ) );
-           System.out.println("nafidpal: "+ new String(kokeilu10, "UTF-8") );
-           
-             
-            Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-me");
-            System.out.println("ksnaf1 " + ": " + Ks_naf);
-
-            Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-u");
-            System.out.println("ksnaf2 " + ": " + Ks_naf);
-
-            Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-digest");
-            System.out.println("ksnaf3 " + ": " + Ks_naf);
        }
        catch(Exception e)
        {
            System.err.println("virhe1");
            
        }   
+         
+       try
+        {
+ //           tarkenne = URLEncoder.encode(tarkenne, "UTF-8");
+            
+
+            args[0] = "POST";
+      //      args[0] = "DISCOVER";
+      //      args[0] = "OBSERVE";
+      //      args[0] = "GET";
+      //      args[0] = "PUT";
+            //args[1] = osoite+"192.168.0.70:8002/test"; //"coap://localhost";
+            args[1] = osoite+"192.168.0.100:8002/test"; //"coap://localhost";
+
+   //         Map<String, Object> lopullinen = new HashMap<String, Object>();
+   //         lopullinen.put("btid", btid);
+            System.out.println("ooite " + ": " + args[1]);
+
+    //        String palautus2 = json.createJsonString(lopullinen);
+              args[2] = btid;
+        //    args[2] = palautus2;
+            
+            Servuvastaus = coap.runCoap(args);
+            System.out.println("vastaus " + ": " + Servuvastaus);
+     //       authmap = json.readJSON(Servuvastaus);
+        }
+        catch (Exception e)
+        {
+            System.err.println("virhe1");
+        }  
         //kdfEncode1(String Ks, String rand, String impi, String nafid, String gbatype)
         
  //       content.put("UserName", btid);
