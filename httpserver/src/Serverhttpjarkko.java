@@ -35,13 +35,14 @@ public class Serverhttpjarkko implements HttpHandler
         
         InputStream btid = t.getRequestBody();
         String btidpyynto;
-        btidpyynto = IOUtils.toString(btid, "UTF-8");
-        System.out.println("btidpyynto: "+ btidpyynto);
+        String viesti = IOUtils.toString(btid, "UTF-8");
+        System.out.println("btidpyynto: "+ viesti);
 
         String key = "";
     //    btidpyynto = "";
-        if(btidpyynto != null && !btidpyynto.equals(""))
+        if(viesti != null && !viesti.equals(""))
         {
+            btidpyynto = json.retrunSignJWTbtid(viesti); 
             Map<String, String> header = new HashMap<String, String>();
             header.put("X-EricssonLabs-APIKEY", "snakeoilapikey");
             header.put("Content-Type", "text/xml");
@@ -72,7 +73,10 @@ public class Serverhttpjarkko implements HttpHandler
                     key = doc.getDocumentElement().getChildNodes().item(1).getTextContent();
                   //  key = doc.getDocumentElement().getFirstChild().getTextContent();
                     System.out.println(key);
+                    response = json.openSignJWT(viesti, key);
 
+                    response =  new StringBuilder(response).reverse().toString();
+                    response = json.signJWT(response, key);
 
                 } 
                 catch (SAXException e) 
@@ -94,6 +98,7 @@ public class Serverhttpjarkko implements HttpHandler
         
         t.sendResponseHeaders(200, response.length());
         OutputStream os = t.getResponseBody();
+        
         os.write(response.getBytes());
         os.close();
         

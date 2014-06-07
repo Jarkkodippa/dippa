@@ -825,6 +825,7 @@ key: 41434443524f58594f5552534f583031
   //      String nafid = "http://p133.piuha.net:8080/bsf/"+Hex.encodeHexString( ua );
        // String nafid = "http://p133.piuha.net:8080/bsf/";
         String nafid = "";
+        String Ks_naf = "";
          try
        {
           
@@ -840,7 +841,7 @@ key: 41434443524f58594f5552534f583031
            System.out.println("nafidpal: "+ new String(kokeilu8, "UTF-8") );
            
              
-            String Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-me");
+            Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-me");
             System.out.println("ksnaf1 " + ": " + Ks_naf);
 
        }
@@ -867,11 +868,13 @@ key: 41434443524f58594f5552534f583031
    //         lopullinen.put("btid", btid);
             System.out.println("ooite " + ": " + args[1]);
 
+            args[2] = json.signJWT("jee", Ks_naf, btid);
     //        String palautus2 = json.createJsonString(lopullinen);
-              args[2] = btid;
+           //   args[2] = btid;
         //    args[2] = palautus2;
             
             Servuvastaus = coap.runCoap(args);
+            Servuvastaus = json.openSignJWT(Servuvastaus, Ks_naf);
             System.out.println("vastaus " + ": " + Servuvastaus);
      //       authmap = json.readJSON(Servuvastaus);
         }
