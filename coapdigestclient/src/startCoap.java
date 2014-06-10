@@ -3,6 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEHeader;
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 import java.io.IOException;
 import java.io.StringReader;
@@ -215,6 +218,7 @@ public class startCoap
    //        System.out.println("KDF: "+ Hex.encodeHexString( KDF ) );
     //       System.out.println("KDF arvo: "+ new String(KDF, "UTF-8")  );
            RES = Base64.encodeBase64String(KDF);
+    //       String res2 = Base64.
            //RES = Base64.encodeBase64String(KDFS.getBytes("UTF-8"));
     //       RES = KDFS.
            System.out.println("RES arvo: "+ RES );
@@ -850,7 +854,8 @@ key: 41434443524f58594f5552534f583031
            System.err.println("virhe1");
            
        }   
-         
+         ///jws testi
+         /*
        try
         {
  //           tarkenne = URLEncoder.encode(tarkenne, "UTF-8");
@@ -882,6 +887,49 @@ key: 41434443524f58594f5552534f583031
         {
             System.err.println("virhe1");
         }  
+         */
+         
+            ///jwe testi
+         
+       try
+        {
+ //           tarkenne = URLEncoder.encode(tarkenne, "UTF-8");
+            
+
+            args[0] = "POST";
+      //      args[0] = "DISCOVER";
+      //      args[0] = "OBSERVE";
+      //      args[0] = "GET";
+      //      args[0] = "PUT";
+            //args[1] = osoite+"192.168.0.70:8002/test"; //"coap://localhost";
+            args[1] = osoite+"192.168.0.100:8002/test"; //"coap://localhost";
+
+   //         Map<String, Object> lopullinen = new HashMap<String, Object>();
+   //         lopullinen.put("btid", btid);
+            System.out.println("ooite " + ": " + args[1]);
+           // Base64.decodeBase64(btid)
+            byte[] testah = Base64.decodeBase64(Ks_naf);
+            //Hex.encodeHexString
+            Ks_naf = Hex.encodeHexString(testah);
+       //     System.out.println("testiäää" + ": " + testiäää);
+
+    //        JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A128CBC_HS256);
+            args[2] = json.encryptJWT1("testiä", Ks_naf, btid); 
+      //      args[2] = json.signJWT("jee", Base64.encodeBase64String(Ks_naf.getBytes("UTF-8")) , btid);
+    //        String palautus2 = json.createJsonString(lopullinen);
+           //   args[2] = btid;
+        //    args[2] = palautus2;
+            
+            Servuvastaus = coap.runCoap(args);
+            Servuvastaus = json.uncryptJWE1(Servuvastaus, Ks_naf);
+            System.out.println("vastaus " + ": " + Servuvastaus);
+     //       authmap = json.readJSON(Servuvastaus);
+        }
+        catch (Exception e)
+        {
+            System.err.println("virhe1");
+        }  
+         
         //kdfEncode1(String Ks, String rand, String impi, String nafid, String gbatype)
         
  //       content.put("UserName", btid);

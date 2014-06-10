@@ -52,6 +52,10 @@ import java.util.Date;
 import java.util.UUID;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 //import java.security.spec.RSAPrivateKeySpec;
 //import java.security.spec.RSAPublicKeySpec;
 
@@ -205,12 +209,9 @@ public class json
    public String encryptJWT(String message, String sharedKey) 
    {
 
-
-       
-        JWEHeader header = new JWEHeader(JWEAlgorithm.A256KW,EncryptionMethod.A128CBC_HS256);
-
+        JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A128CBC_HS256);
         String s = cryptJWE1(message, sharedKey, header);
-        
+  /*      
         System.out.println("crypted: "+ s);
         String serialized = "";
 
@@ -218,9 +219,12 @@ public class json
         try
          {
              EncryptedJWT  t = EncryptedJWT.parse(s);
+             Base64URL firstPart = header.toBase64URL();
+             
+             
   //          SignedJWT  t = SignedJWT.parse(s);
 
-            Base64URL firstPart = header.toBase64URL();
+            
             System.out.println("eka osa: "+ firstPart);
             Base64URL secondPart = Base64URL.encode(sharedKey);
             
@@ -244,6 +248,7 @@ public class json
                  System.err.println("Couldn't parse JWS object2: ");
                  return "";
          }
+        */
         /*
         catch (JOSEException e)
          {
@@ -253,7 +258,67 @@ public class json
          }
 */
 
-        return serialized;
+        return s;
+       // return serialized;
+        
+    }
+   
+    //Make encrypted JSON Web Token.
+   // Return serialized token.
+   public static String encryptJWT1(String message, String sharedKey, String btid) 
+   {
+
+        JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A128CBC_HS256);
+        header.setCustomParameter("btid", btid);
+        String s = cryptJWE1(message, sharedKey, header);
+        
+        System.out.println("crypted: "+ s);
+        String serialized = "";
+
+
+        try
+         {
+             EncryptedJWT  t = EncryptedJWT.parse(s);
+             Base64URL firstPart = header.toBase64URL();
+             /*
+             
+  //          SignedJWT  t = SignedJWT.parse(s);
+
+            
+            System.out.println("eka osa: "+ firstPart);
+            Base64URL secondPart = Base64URL.encode(sharedKey);
+            
+            System.out.println("toka osa: "+ secondPart);
+            System.out.println("toka osa takaisin: "+ secondPart.toJSONString());
+            System.out.println("toka osa takaisin2: "+ secondPart.decodeToString());
+//            Base64URL thirdPart = t.getSignature();
+  //          System.out.println("kolmas osa: "+ thirdPart);
+
+            Base64URL fourthPart = Base64URL.encode(s);
+  //          SignedJWT signedJWT = new SignedJWT(firstPart, secondPart, thirdPart);
+            
+  //          serialized = signedJWT.serialize();
+   //         signedJWT = SignedJWT.parse(serialized);
+    //        System.out.println("signed jwt: "+ signedJWT.getParsedString());
+          */
+         } 
+        catch (ParseException e)
+         {
+
+                 System.err.println("Couldn't parse JWS object2: ");
+                 return "";
+         }
+        /*
+        catch (JOSEException e)
+         {
+
+                 System.err.println("Couldn't sign JWS object: ");
+                 return "";
+         }
+*/
+
+        return s;
+//        return serialized;
         
     }
    
@@ -356,6 +421,7 @@ public class json
             
             headerpart = firstPart.decodeToString();
             headermap = readJSON(headerpart);
+            System.out.println("headermap : "+ headermap);
             return (String)headermap.get("btid");
     
          } 
@@ -363,6 +429,48 @@ public class json
          {
 
                  System.err.println("Couldn't parse JWS object: ");
+                 return "";
+         }
+ 
+        
+    }
+   
+    //Open signed JSON Web Token.
+   // Return open string.
+   public static String retrunencryptJWTbtid(String message) 
+   {
+
+   //     JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
+        JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A128CBC_HS256);
+
+        System.out.println("viesti : "+ message);
+
+        Map<String, Object> headermap = new HashMap<String,Object>();
+        String headerpart = "";
+        try
+         {
+             EncryptedJWT EncryptedJWT = new EncryptedJWT(header.toBase64URL(), 
+                Base64URL.encode("secondPart"), Base64URL.encode("thirdPart"),
+             Base64URL.encode("rourthPart"), Base64URL.encode("fifthPart"));
+ 
+            EncryptedJWT = EncryptedJWT.parse(message);
+
+       //     signedJWT.
+            Base64URL[] Parts = EncryptedJWT.getParsedParts();
+            Base64URL firstPart = Parts[0];
+            Base64URL secondPart = Parts[1];
+            Base64URL thirdPart = Parts[2];
+            
+            headerpart = firstPart.decodeToString();
+            headermap = readJSON(headerpart);
+            System.out.println("headermap : "+ headermap);
+            return (String)headermap.get("btid");
+    
+         } 
+        catch (ParseException e)
+         {
+
+                 System.err.println("Couldn't parse JWE object: ");
                  return "";
          }
  
@@ -557,32 +665,41 @@ public class json
    
    //Cryptaa Stringin JVS 
     //Palauttaa cryptatun JWT:n.
-   public String cryptJWE1(String message, String sharedKey, JWEHeader header) 
+   public static String cryptJWE1(String message, String sharedKey, JWEHeader header) 
    {
 
        Payload payload = new Payload(message);
        header.setContentType("text/plain");
        
        JWEObject jweObject = new JWEObject(header, payload);
-       
 
-        System.out.println("Shared key: " + sharedKey);
-        
+       try 
+       {
+           byte[] sharedKeybyte = Hex.decodeHex(sharedKey.toCharArray());
+           System.out.println("Shared key: " + sharedKey);
+ //       byte[16] key = { ... };
 //        JWSSigner signer = new MACSigner(sharedKey.getBytes());
 //        JWEEncrypter Encrypter = new AESEncrypter(sharedKey.getBytes());
         
-        try
-        {
-      //          jweObject.;
-            DirectEncrypter encrypter = new DirectEncrypter(sharedKey.getBytes());
+            try
+            {
+          //          jweObject.;
+                DirectEncrypter encrypter = new DirectEncrypter(sharedKeybyte);
                 jweObject.encrypt(encrypter);
-                
-        } catch (JOSEException e)
-        {
-        
-                System.err.println("Couldn't encrypt JWE object: " + e.getMessage());
-                return "";
-        }
+
+            } catch (JOSEException e)
+            {
+
+                    System.err.println("Couldn't encrypt JWE object: " + e.getMessage());
+                    return "";
+            }
+
+       } 
+       catch (DecoderException ex) 
+       {
+           Logger.getLogger(json.class.getName()).log(Level.SEVERE, null, ex);
+       }
+
         
         
         // Serialise JWS object to compact format
@@ -597,7 +714,7 @@ public class json
    
    //purkaa JWE.
    //Palauttaa puretun viestin Stringinä.
-   public String uncryptJWE1(String message, String sharedKey) 
+   public static String uncryptJWE1(String message, String sharedKey) 
    {
 
         
@@ -623,11 +740,17 @@ public class json
         
         try 
         {
-                DirectDecrypter decrypter = new DirectDecrypter(sharedKey.getBytes());
-                jweObject.decrypt(decrypter);
+            byte[] sharedKeybyte = Hex.decodeHex(sharedKey.toCharArray());
+            DirectDecrypter decrypter = new DirectDecrypter(sharedKeybyte);
+            jweObject.decrypt(decrypter);
                 
         } 
         catch (JOSEException e) 
+        {
+        
+                System.err.println("Couldn't decrypt message: " + e.getMessage());
+        }
+        catch (DecoderException e) 
         {
         
                 System.err.println("Couldn't decrypt message: " + e.getMessage());
@@ -1125,12 +1248,42 @@ public class json
    public void suoritaPaasilmukkaa() 
    {
  
+       String kdfsarvo = "4300c02e081e5a267b40470f4a759aa9df88a58eb3c8789f1fe10fb5054857cb";
+       String RESarvo = "QwDALggeWiZ7QEcPSnWaqd+IpY6zyHifH+EPtQVIV8s=";
+       String avain = "27ab05d20a775e7a1309534be410a955";
    
+       byte[] kdfsarvobyte;
+       try 
+       {
+           kdfsarvobyte = Hex.decodeHex(kdfsarvo.toCharArray());
+           System.out.println("pituus: "+avain.getBytes().length);
+            System.out.println("pituuskdf: "+kdfsarvo.getBytes().length);
+            System.out.println("pituuskdf: "+kdfsarvobyte.length);
+            System.out.println("pituusres: "+RESarvo.getBytes().length);
+            String jwts = signJWT("testiä", "sharedKey");
+            System.out.println("ekajws: "+ jwts);
+            System.out.println("tokajws: "+  openSignJWT(jwts, "sharedKey"));
+        //    EncryptionMethod kaytetaan = new EncryptionMethod(EncryptionMethod.A128CBC_HS256.getName(), null, 256);
+           JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A128CBC_HS256);
+      //      JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A128CBC_HS256);
+     //      JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A256CBC_HS512);
+      //      JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,kaytetaan);
+            //alla oleva toimii
+          //  JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A256GCM);
+            String jwet = cryptJWE1("testiä", kdfsarvo, header); 
+       //     String jwet = cryptJWE1("testiä", kdfsarvo, header); 
+            System.out.println("ekajwe: "+ jwet);
+            jwet = uncryptJWE1(jwet, kdfsarvo); 
+       //     jwet = uncryptJWE1(jwet, kdfsarvo);
+            System.out.println("tokajwe: "+ jwet);
+       } 
+       catch (DecoderException ex) 
+       {
+           Logger.getLogger(json.class.getName()).log(Level.SEVERE, null, ex);
+       }
+       
      // String s = cryptJVS("testataam", "sharedKey2");
    //   uncryptJVS(cryptJVS("testataam", "sharedKey2"), "sharedKey2");
-       String jwts = signJWT("testiä", "sharedKey");
-       System.out.println("eka: "+ jwts);
-       System.out.println("toka: "+  openSignJWT(jwts, "sharedKey"));
        
      /* 
        try
