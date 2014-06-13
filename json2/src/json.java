@@ -30,11 +30,7 @@ import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.SignedJWT;
-//import com.nimbusds.jwt;
 
-//import net.minidev.json.JSONAware;
-//import javax.mail.internet.ParameterList;
-//import org.apache.commons.codec.binary.Base64;
 
 import org.json.JSONObject;
 //import org.json.JSONArray;
@@ -46,10 +42,7 @@ import java.io.Writer;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
-import java.util.UUID;
+
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.logging.Level;
@@ -114,13 +107,7 @@ public class json
             serialized = signedJWT.serialize();
             signedJWT = SignedJWT.parse(serialized);
             System.out.println("signed jwt: "+ signedJWT.getParsedString());
-            /*
-            Base64URL sigInput = Base64URL.encode(signedJWT.getSigningInput());
 
-            JWSSigner signer = new MACSigner(sharedKey);
-
-            signedJWT.sign(signer);
-*/
          } 
         catch (ParseException e)
          {
@@ -128,14 +115,6 @@ public class json
                  System.err.println("Couldn't parse JWS object2: ");
                  return "";
          }
-        /*
-        catch (JOSEException e)
-         {
-
-                 System.err.println("Couldn't sign JWS object: ");
-                 return "";
-         }
-*/
 
         return serialized;
         
@@ -176,13 +155,7 @@ public class json
             serialized = signedJWT.serialize();
             signedJWT = SignedJWT.parse(serialized);
             System.out.println("signed jwt: "+ signedJWT.getParsedString());
-            /*
-            Base64URL sigInput = Base64URL.encode(signedJWT.getSigningInput());
 
-            JWSSigner signer = new MACSigner(sharedKey);
-
-            signedJWT.sign(signer);
-*/
          } 
         catch (ParseException e)
          {
@@ -190,14 +163,6 @@ public class json
                  System.err.println("Couldn't parse JWS object2: ");
                  return "";
          }
-        /*
-        catch (JOSEException e)
-         {
-
-                 System.err.println("Couldn't sign JWS object: ");
-                 return "";
-         }
-*/
 
         return serialized;
         
@@ -211,52 +176,6 @@ public class json
 
         JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A128CBC_HS256);
         String s = cryptJWE1(message, sharedKey, header);
-  /*      
-        System.out.println("crypted: "+ s);
-        String serialized = "";
-
-
-        try
-         {
-             EncryptedJWT  t = EncryptedJWT.parse(s);
-             Base64URL firstPart = header.toBase64URL();
-             
-             
-  //          SignedJWT  t = SignedJWT.parse(s);
-
-            
-            System.out.println("eka osa: "+ firstPart);
-            Base64URL secondPart = Base64URL.encode(sharedKey);
-            
-            System.out.println("toka osa: "+ secondPart);
-            System.out.println("toka osa takaisin: "+ secondPart.toJSONString());
-            System.out.println("toka osa takaisin2: "+ secondPart.decodeToString());
-//            Base64URL thirdPart = t.getSignature();
-  //          System.out.println("kolmas osa: "+ thirdPart);
-
-            Base64URL fourthPart = Base64URL.encode(s);
-  //          SignedJWT signedJWT = new SignedJWT(firstPart, secondPart, thirdPart);
-            
-  //          serialized = signedJWT.serialize();
-   //         signedJWT = SignedJWT.parse(serialized);
-    //        System.out.println("signed jwt: "+ signedJWT.getParsedString());
-          
-         } 
-        catch (ParseException e)
-         {
-
-                 System.err.println("Couldn't parse JWS object2: ");
-                 return "";
-         }
-        */
-        /*
-        catch (JOSEException e)
-         {
-
-                 System.err.println("Couldn't sign JWS object: ");
-                 return "";
-         }
-*/
 
         return s;
        // return serialized;
@@ -280,27 +199,7 @@ public class json
          {
              EncryptedJWT  t = EncryptedJWT.parse(s);
              Base64URL firstPart = header.toBase64URL();
-             /*
-             
-  //          SignedJWT  t = SignedJWT.parse(s);
 
-            
-            System.out.println("eka osa: "+ firstPart);
-            Base64URL secondPart = Base64URL.encode(sharedKey);
-            
-            System.out.println("toka osa: "+ secondPart);
-            System.out.println("toka osa takaisin: "+ secondPart.toJSONString());
-            System.out.println("toka osa takaisin2: "+ secondPart.decodeToString());
-//            Base64URL thirdPart = t.getSignature();
-  //          System.out.println("kolmas osa: "+ thirdPart);
-
-            Base64URL fourthPart = Base64URL.encode(s);
-  //          SignedJWT signedJWT = new SignedJWT(firstPart, secondPart, thirdPart);
-            
-  //          serialized = signedJWT.serialize();
-   //         signedJWT = SignedJWT.parse(serialized);
-    //        System.out.println("signed jwt: "+ signedJWT.getParsedString());
-          */
          } 
         catch (ParseException e)
          {
@@ -308,14 +207,6 @@ public class json
                  System.err.println("Couldn't parse JWS object2: ");
                  return "";
          }
-        /*
-        catch (JOSEException e)
-         {
-
-                 System.err.println("Couldn't sign JWS object: ");
-                 return "";
-         }
-*/
 
         return s;
 //        return serialized;
@@ -331,13 +222,6 @@ public class json
        
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
-   //     String s = cryptJVS(message, sharedKey, header);
-   //     String oo = "oo";
- //       Base64URL Part = oo.
-        
-     //   String serialized = "";
-        
-
 
         System.out.println("viesti : "+ message);
 //        SignedJWT te = new SignedJWT();
@@ -345,15 +229,10 @@ public class json
          {
              SignedJWT signedJWT = new SignedJWT(header.toBase64URL(), 
                 Base64URL.encode("secondPart"), Base64URL.encode("thirdPart"));
-      //      String serialized = signedJWT.serialize();
-     //       serialized = signedJWT.serialize();
-    //        signedJWT = SignedJWT.parse(serialized);
-             
+
              
             signedJWT = SignedJWT.parse(message);
-      //      t.getSignature();
-            //      String signature = s.
-            
+
             Base64URL[] Parts = signedJWT.getParsedParts();
             Base64URL firstPart = Parts[0];
             Base64URL secondPart = Parts[1];
@@ -363,18 +242,7 @@ public class json
             
             return uncryptJWS(message, sharedKey);
 
-            /*
-            SignedJWT signedJWT = new SignedJWT(firstPart, secondPart, thirdPart);
-            
-            serialized = signedJWT.serialize();
-            */
-            /*
-            Base64URL sigInput = Base64URL.encode(signedJWT.getSigningInput());
 
-            JWSSigner signer = new MACSigner(sharedKey);
-
-            signedJWT.sign(signer);
-*/
          } 
         catch (ParseException e)
          {
@@ -382,16 +250,7 @@ public class json
                  System.err.println("Couldn't parse JWS object: ");
                  return "";
          }
-        /*
-        catch (JOSEException e)
-         {
 
-                 System.err.println("Couldn't sign JWS object: ");
-                 return "";
-         }
-*/
-
-    //    return "";
         
     }
    
@@ -586,82 +445,6 @@ public class json
     }
    
    
-   //Cryptaa Stringin JVS 
-    //Palauttaa cryptatun JVS:n.
-   public String cryptJWE(String message, 
-           RSAPublicKey publicKey, RSAPrivateKey privateKey) 
-   {
-
-       // Compose the JWT claims set
-
-        JWTClaimsSet jwtClaims = new JWTClaimsSet();
-
-        String iss = "https://openid.net";
-
-        jwtClaims.setIssuer(iss);
-
-        String sub = "alice";
-
-        jwtClaims.setSubject(sub);
-
-        List<String> aud = new ArrayList<String>();
-
-        aud.add("https://app-one.com");
-
-        aud.add("https://app-two.com");
-
-        jwtClaims.setAudience(aud);
-
-        // Set expiration in 10 minutes
-
-        Date exp = new Date(new Date().getTime() + 1000*60*10);
-
-        jwtClaims.setExpirationTime(exp);
-
-
-        Date nbf = new Date();
-
-        jwtClaims.setNotBeforeTime(nbf);
-
-
-        Date iat = new Date();
-
-        jwtClaims.setIssueTime(iat);
-
-        String jti = UUID.randomUUID().toString();
-
-        jwtClaims.setJWTID(jti);
-
-
-        // Request JWT encrypted with RSA-OAEP and 128-bit AES/GCM
-
-        JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM);
-
-        // Create the encrypted JWT object
-
-        EncryptedJWT jwt = new EncryptedJWT(header, jwtClaims);
-
-        // Create an encrypter with the specified public RSA key
-
-      	try 
-        {
-            RSAEncrypter encrypter = new RSAEncrypter(publicKey);
-
-        // Do the actual encryption
-
-            jwt.encrypt(encrypter);
-        }
-        catch (JOSEException e) 
-        {
-        
-                System.err.println("Couldn't verify signature: " + e.getMessage());
-        }
-        // Serialise to JWT compact form
-
-        String jwtString = jwt.serialize();
-        return jwtString;
-        
-    }
    
    //Cryptaa Stringin JVS 
     //Palauttaa cryptatun JWT:n.
@@ -817,137 +600,7 @@ public class json
         
         return vali;
     }
-   
-   public void testEncryptAndDecrypt(RSAPublicKey publicKey, RSAPrivateKey privateKey)
 
-	throws Exception 
-   {
-
-        // Compose the JWT claims set
-
-        JWTClaimsSet jwtClaims = new JWTClaimsSet();
-
-        String iss = "https://openid.net";
-
-        jwtClaims.setIssuer(iss);
-
-        String sub = "alice";
-
-        jwtClaims.setSubject(sub);
-
-        List<String> aud = new ArrayList<String>();
-
-        aud.add("https://app-one.com");
-
-        aud.add("https://app-two.com");
-
-        jwtClaims.setAudience(aud);
-
-        // Set expiration in 10 minutes
-
-        Date exp = new Date(new Date().getTime() + 1000*60*10);
-
-        jwtClaims.setExpirationTime(exp);
-
-
-        Date nbf = new Date();
-
-        jwtClaims.setNotBeforeTime(nbf);
-
-
-        Date iat = new Date();
-
-        jwtClaims.setIssueTime(iat);
-
-        String jti = UUID.randomUUID().toString();
-
-        jwtClaims.setJWTID(jti);
-
-
-        // Request JWT encrypted with RSA-OAEP and 128-bit AES/GCM
-
-        JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM);
-
-        // Create the encrypted JWT object
-
-        EncryptedJWT jwt = new EncryptedJWT(header, jwtClaims);
-
-        // Create an encrypter with the specified public RSA key
-
-        RSAEncrypter encrypter = new RSAEncrypter(publicKey);
-
-        // Do the actual encryption
-
-        jwt.encrypt(encrypter);
-
-        // Serialise to JWT compact form
-
-        String jwtString = jwt.serialize();
-
-        // Parse back
-
-        jwt = EncryptedJWT.parse(jwtString);
-
-        // Create an decrypter with the specified private RSA key
-
-        RSADecrypter decrypter = new RSADecrypter(privateKey);
-
-        // Decrypt
-
-        jwt.decrypt(decrypter);
-
-
-        // Retrieve JWT claims
-
-        jwt.getJWTClaimsSet().getIssuer();
-
-        jwt.getJWTClaimsSet().getSubject();
-
-        jwt.getJWTClaimsSet().getAudience().size();
-
-        jwt.getJWTClaimsSet().getExpirationTime();
-
-        jwt.getJWTClaimsSet().getNotBeforeTime();
-
-        jwt.getJWTClaimsSet().getIssueTime();
-
-        jwt.getJWTClaimsSet().getJWTID();
-
-    }
-
-
-        
-              /*
-   }
-{
-    "www-authenticate" : {
-        "type": "digest",
-        "challenge": {
-            "realm": "ismo@laitela.com",
-            "qop": "auth, auth-int",
-            "nonce": "dcd98b7102dd2f0e8b11d0f600bfb0c093",
-            "opaque": "5ccc069c403ebaf9f0171e9517f40e41"
-        }
-    }
-}
-
-{"authorization": {
-    "type": "digest",
-    "digest-response" :
-    {
-        "username": "IsmoTaalasmaa",
-        "realm" : "pihlajakatu@talotaikurit.com",
-        "nonce": "dcd98b7102dd2f0e8b11d0f600bfb0c093",
-        "uri": "/dir/index.html",
-        "qop": "auth",
-        "nc:00000001,
-        "cnonce":"0a4f113b",
-        "response":"6629fae49393a05397450978507c4ef1",
-        "opaque":"5ccc069c403ebaf9f0171e9517f40e41"
-    }
-}
-}
-   */
            /**
   * Method to convert map into json format
   * @param map with data to be converted into json
@@ -1161,20 +814,7 @@ public class json
 
           HashMap<String, Object> valiaikainen = new HashMap<String, Object>();
           HashMap<String, Object> valiaikainen2 = new HashMap<String, Object>();
-/*
-          Map<String, Object> tietoja = new HashMap<String, Object>();
-        Map<String, Object> tietoja2 = new HashMap<String, Object>();
-        Map<String, Object> tietoja3 = new HashMap<String, Object>();
-        Map<String, Object> lopullinen = new HashMap<String, Object>();
-        tietoja = data;
-        System.out.println("tietoja mapin sisälto" + ": " + tietoja);
-        tietoja2 = (HashMap<String,Object>)tietoja.get("Authorization");
-        System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
-          */
-//        tietoja3 = (HashMap<String,Object>)tietoja2.get("challenge");
- //       System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
- //         JSONObject valiaikainen = new JSONObject();
-  //        JSONObject valiaikainen2 = new JSONObject();
+
           if(data.containsKey("Authorization"))
           {
             

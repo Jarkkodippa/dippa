@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.util.Scanner;
 
 
 
@@ -29,9 +30,23 @@ public class Starthttpserverr
         {
         */
         System.out.println("servu käynnistetty");
+        String inputString = "";
         server = HttpServer.create(new InetSocketAddress(8002), 0);
+        Scanner input = new Scanner(System.in);
+        String sisalto = "jeeee";
+        System.out.print("Oletuksena käynnistyy salaus, jos allekirjoitus, kirjoita \"alle\": ");
+        inputString = input.nextLine();
+        if(inputString.equals(""))
+        {
+            server.createContext("/test", new Serverhttpjarkko());
+        }
+        if(inputString.equals("alle"))
+        {
+            server.createContext("/test", new Serverhttpjarkkosign());
+        }
+        
  //       server.createContext("/test", new MyHandler());
-        server.createContext("/test", new Serverhttpjarkko());
+        
 //        server.setExecutor(null); // creates a default executor
 
         //      HTTP.httpPostClient("http://p133.piuha.net:8080/bsf/requestBootstrappingInfo", tiedot);

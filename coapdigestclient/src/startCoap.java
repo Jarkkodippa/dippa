@@ -3,9 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWEHeader;
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,6 +24,9 @@ import net.java.sip.communicator.sip.security.Milenage;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 //import javax.swing.text.Document;
@@ -67,66 +67,7 @@ public class startCoap
         return DigestUtils.md5Hex(fmtDate + randomInt.toString());
     }
    
-    /*
-    public static byte[] kdfEncode(String Ks, String key, String randk, String impi, String nafid)
-    {
-
-       final byte[] FC = {(byte) 0x01};
-       
-
-     //  String gbadigest = "gba-digest";
-       
-
-       String RES = "";
-
-       try
-       {
-           byte[] bgbadigest = Ks.getBytes("UTF-8");
-           
-           byte[] P0 = key.getBytes("UTF-8");
-           byte[] P1 = randk.getBytes("UTF-8");
-           byte[] P2 = impi.getBytes("UTF-8");
-           byte[] P3 = nafid.getBytes("UTF-8");
-
-           int L0 = P0.length;
-           int L1 = P1.length;
-           int L2 = P2.length;
-           int L3 = P3.length;
-   
-           String S = Hex.encodeHexString( FC ) +
-                   ""+ Hex.encodeHexString( P0 ) +
-                   ""+ Integer.toHexString(L0) +
-                   ""+ Hex.encodeHexString(P1) +
-                   ""+ Integer.toHexString(L1) +
-                   ""+ Hex.encodeHexString(P2) +
-                   ""+ Integer.toHexString(L2) +
-                   ""+ Hex.encodeHexString(P3) +
-                   ""+ Integer.toHexString(L3);
-           System.out.println("jatkoa: "+ S );
-
-           byte[] BS = S.getBytes("UTF-8");
-
-           Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-           SecretKeySpec secret_key = new SecretKeySpec(key.getBytes(), "HmacSHA256");
-           sha256_HMAC.init(secret_key);
-
-           byte[] KDF = sha256_HMAC.doFinal(BS);
-         //  RES = Base64.encodeBase64String(KDF);
-           return KDF;
-       }
-       catch(Exception e)
-       {
-           System.err.println("virhe: " );
-   //        return "";
-       }
-
-       byte[] paluu = {(byte) 0x00};
-       return paluu;
-
-   //    return RES;
-
-    }
-    */
+  
     public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];
@@ -240,79 +181,7 @@ public class startCoap
 
     }
     
-    /*
-    public static byte[] calculateAKARES1(String nonce, String password)
-    {
-        Milenage muuttaja = new Milenage();
-
-        String OP = "00000000000000000000000000000000";
-
-        byte[] sres = "paljon kaikkee alustettavaa".getBytes();
-        
-
-        try
-        {
-            byte[] opennonce = Base64.decodeBase64(nonce);
-
-
-            int arraylength = opennonce.length;
-            byte[] arraysrand = Arrays.copyOfRange(opennonce, 0, 16);
-            byte[] arraysautn = Arrays.copyOfRange(opennonce, 16, 32);
-
-   //         boolean testi = networkAuthenticated(arraysrand, arraysautn);
-            //SQN on 48bit
-            byte[] sqn = Arrays.copyOfRange(arraysautn, 0, 6);
-            //amf on 16bit
-            byte[] amf = Arrays.copyOfRange(arraysautn, 6, 8);
-
-            byte[] passwordbyte = Hex.decodeHex(password.toCharArray());
-            //password.getBytes("UTF-8");
-
-            byte[] OPbyte = Hex.decodeHex(OP.toCharArray());               
-            byte[] OPc = computeOpC(passwordbyte, OPbyte);
-            
-            byte[] RESadamen =  muuttaja.f2(passwordbyte, arraysrand, OPc);
-            
-            int reslength = RESadamen.length;
-            
-            byte[] CKadamen =  muuttaja.f3(passwordbyte, arraysrand, OPc);
-            byte[] IKSadamen =  muuttaja.f4(passwordbyte, arraysrand, OPc);
-            byte[] AKSadamen =  muuttaja.f5(passwordbyte, arraysrand, OPc);
-            
-            
-
-   //         sqn = xorWithKey(sqn, AKSadamen);
-            
-            byte[] f1adamen =  muuttaja.f1(passwordbyte, arraysrand, OPc, sqn, amf);
-// TODO: Poista tarpeettomat
-        
-            String resstring = Hex.encodeHexString(RESadamen); 
-            
-            sres = Hex.decodeHex(resstring.toCharArray());
-
-
-            int sreslength = sres.length;
-            
-            
-            byte[] sres1 = Arrays.copyOfRange(RESadamen, 0, 4);
-            
-            byte[] sres2 = Arrays.copyOfRange(RESadamen, 4, 8);
-            
-            sres = xorArray(sres1, sres2);
-     //       return RESadamen;
-            
-            
-  //          return resstring;
-     //       return new String(RESadamen2, "UTF-8");
-        }
-        catch(Exception e)
-        {
-            System.out.println("KD virhe2 ");
-        }
-        return sres;
- //       return [];
-    }
-    */
+   
     public static String calculateAKARES(String nonce, String password)
     {
         Milenage muuttaja = new Milenage();
@@ -477,7 +346,6 @@ public class startCoap
             
             try
             {
-          //      byte[] sres = calculateAKARES1(nonce, password);
 
                 String res = calculateAKARES(nonce, password);
                 
@@ -552,16 +420,8 @@ public class startCoap
      private static Map setbtAuthorizationHeaderMap(String uri, 
              String username, String realm)
     {
-
-
-        String realm1 = "";
-
         String nonce = "";
 
-        String qop = "";
-        String nc = "";
-
-        String opaque = "";
         String response = "";
 
       
@@ -586,13 +446,12 @@ public class startCoap
         // First GET over Ua
         System.out.println("aloitetaan yhteys naffiin ");
         URL httpUrl = new URL(nafUrl);
-        System.out.println("aloitetaan yhteys naffiin2 ");
         HttpURLConnection http = (HttpURLConnection) httpUrl.openConnection();
-        System.out.println("aloitetaan yhteys naffiin 3");
+
         http.setRequestMethod("GET");
-        System.out.println("aloitetaan yhteys naffiin 4");
+
         http.connect();
-        System.out.println("aloitetaan yhteys naffiin 5");
+
         if (http.getResponseCode() != 401) 
         {
             throw new Exception("Unexpected HTTP response");
@@ -621,52 +480,25 @@ public class startCoap
             return false;
         }
     }
- 
-   public static void main(String[] args) 
-   {
-      
-       Map<String, Object> authmap = new HashMap<String,Object>();
-       Map<String, Object> authheader = new HashMap<String,Object>();
-       Map<String, Object> content = new HashMap<String,Object>();
+     
+     private static boolean runHttpget( String url, String proxy)  throws Exception
+    {
 
-       /*
-       IMPI: tut.test1@p133.piuha.net
-IMPU: sip:tut.test1@p133.piuha.net
-key: 41434443524f58594f5552534f583031
-       BSF palvelu: http://p133.piuha.net:8080/bsf/bootstrap
-       */
-        String osoite = "coap://192.168.0.70/Yhteys/";
-//        String akaosoiten = "coap://192.168.0.70/Btyhteys/";
-//        String akaosoiten = "coap://localhost/Btyhteys/";
- //      String akaosoiten = "coap://localhost/Yhteys/";
+        Map<String, Object> authmap = new HashMap<String,Object>();
+        Map<String, Object> authheader = new HashMap<String,Object>();
+        Map<String, Object> content = new HashMap<String,Object>();
+   //     String nafresource = proxy+url;
        
-  //      String osoiten = "http://p133.piuha.net:8080/bsf/bootstrap";
- //       String osoiten = "coap://localhost/Yhteys/";
-
-        String akaosoiten = osoite;
-//        String tarkenne = "192.168.0.112/priv/index.html";
-        String tarkenne = "94.237.64.168:804/priv/index.html";
-        String tarkenne1 = "p133.piuha.net:8080/bsf/bootstrap";
-        String nafurl = "p133.piuha.net:8080/naf/resource";
-        
-        String nafresource = osoite+nafurl;
-       
-        args = new String[2];
+        String[] args = new String[2];
 
         coaptoteutus coap = new coaptoteutus();
-        String osoiten = osoite + tarkenne;
-        akaosoiten = akaosoiten + tarkenne1;
+        String osoiten = proxy+url;
+        
         
         try
         {
- //           tarkenne = URLEncoder.encode(tarkenne, "UTF-8");
-            
 
-     //       args[0] = "POST";
-      //      args[0] = "DISCOVER";
-      //      args[0] = "OBSERVE";
             args[0] = "GET";
-      //      args[0] = "PUT";
             args[1] = osoiten; //"coap://localhost";
 
             System.out.println("ooite " + ": " + args[1]);
@@ -674,45 +506,87 @@ key: 41434443524f58594f5552534f583031
             String Servuvastaus = coap.runCoap(args);
             System.out.println("vastaus " + ": " + Servuvastaus);
             authmap = json.readJSON(Servuvastaus);
+            if(Servuvastaus.contains("www-authenticate"))
+            {
+                authmap = json.readJSON(Servuvastaus);
+                if(authmap.containsKey("Set-Cookie"))
+                {
+                    authmap = json.readJSON(Servuvastaus);
+                    content.put("Cookie", 
+                            (HashMap<String,Object>)authmap.get("Set-Cookie"));
+                }
+                String inputString = "";
+                Scanner input = new Scanner(System.in);
+                String tunnus = "testi";
+                String avain = "a";
+                System.out.print("jos tunnus eri kun \""+tunnus+"\" syötä: ");
+                inputString = input.nextLine();
+                if(!inputString.equals(""))
+                {
+                    tunnus = inputString;
+                }
+                System.out.print("jos avain eri kun \""+avain+"\" syötä: ");
+                inputString = input.nextLine();
+                if(!inputString.equals(""))
+                {
+                    avain = inputString;
+                }
+                System.out.println("url " + ": " + url);
+                //"/priv/index.html"
+                String uriloppu = url.substring((url.indexOf("/")));
+                System.out.println("uriloppu " + ": " + uriloppu);
+                authheader = setAuthorizationHeaderMap(authmap, uriloppu, tunnus, avain);
+        
+                  System.out.println("authheader " + ": " + authheader);
+
+                  content.put("Authorization", authheader);
+
+                  try
+                  {
+                      args = new String[4];
+
+                      args[0] = "PUT";
+
+                      args[1] = osoiten;
+                      System.out.println("content " + ": " + content);
+              //        String palautus2 = json.writeJSONauthentication(authheader);
+                      String palautus2 = json.writeJSONauthentication(content);
+                      System.out.println("palautus2 " + ": " + palautus2);
+
+                      args[2] = palautus2;
+
+                      args[3] = "50";
+
+                      Servuvastaus = coap.runCoap(args);
+                      System.out.println("vastaus " + ": " + Servuvastaus);
+                  }
+                  catch (Exception e)
+                  {
+                      System.err.println("virhe2");
+                  }
+            }
         }
         catch (Exception e)
         {
             System.err.println("virhe1");
         }
         
-        authheader = setAuthorizationHeaderMap(authmap, "/priv/index.html", "testi", "a");
         
-          System.out.println("authheader " + ": " + authheader);
-        
-        content.put("Authorization", authheader);
-       
-        try
-        {
-            args = new String[4];
-        
-            args[0] = "PUT";
-
-            args[1] = osoiten;
-            System.out.println("content " + ": " + content);
-    //        String palautus2 = json.writeJSONauthentication(authheader);
-            String palautus2 = json.writeJSONauthentication(content);
-            System.out.println("palautus2 " + ": " + palautus2);
-
-            args[2] = palautus2;
-            
-            args[3] = "50";
-
-            String Servuvastaus = coap.runCoap(args);
-            System.out.println("vastaus " + ": " + Servuvastaus);
-        }
-        catch (Exception e)
-        {
-            System.err.println("virhe2");
-        }
         
         content.clear();
-        ///////////tästä AKA digest
         
+        return true;
+    }
+     
+     private static String runaka( String url, String proxy)  throws Exception
+    {
+
+        Map<String, Object> authmap = new HashMap<String,Object>();
+        Map<String, Object> authheader = new HashMap<String,Object>();
+        Map<String, Object> content = new HashMap<String,Object>();
+        coaptoteutus coap = new coaptoteutus();
+        String[] args = new String[2];
+        String akaosoiten = proxy+url;
  //       Map authheader = setAuthorizationHeaderMap(authmap, "/bsf/bootstrap", "tut.test1@p133.piuha.net", "41434443524f58594f5552534f583031");
   //      authheader = setbtAuthorizationHeaderMap("/bsf/bootstrap", "tut.test1@p133.piuha.net", "ims.ericsson.com");
         authheader = setbtAuthorizationHeaderMap("/bsf/bootstrap", "tut.test1@p133.piuha.net", "p133.piuha.net");
@@ -825,10 +699,102 @@ key: 41434443524f58594f5552534f583031
         
         content.clear();
         
+        return btid;
+    }
+     
+      private static String runakasign( String url, String proxy, 
+                                String Ks_naf, String btid)  throws Exception
+    {
+        String Servuvastaus = "";
         
-  //      String nafid = "http://p133.piuha.net:8080/bsf/"+Hex.encodeHexString( ua );
-       // String nafid = "http://p133.piuha.net:8080/bsf/";
-        String nafid = "";
+        coaptoteutus coap = new coaptoteutus();
+        String[] args = new String[3];
+        String osoiten = proxy+url;
+
+        try
+        {
+
+            args[0] = "POST";
+
+    //        args[1] = osoite+"192.168.0.100:8002/test"; //"coap://localhost";
+
+            args[1] = osoiten;
+            System.out.println("ooite " + ": " + args[1]);
+
+            String inputString = "";
+            Scanner input = new Scanner(System.in);
+            String sisalto = "jeeee";
+            System.out.print("Syötä sisältöä, oletuksena \""+sisalto+"\": ");
+            inputString = input.nextLine();
+            if(!inputString.equals(""))
+            {
+                sisalto = inputString;
+            }
+            args[2] = json.signJWT(sisalto, Ks_naf, btid);
+
+            
+            Servuvastaus = coap.runCoap(args);
+            Servuvastaus = json.openSignJWT(Servuvastaus, Ks_naf);
+            System.out.println("vastaus " + ": " + Servuvastaus);
+     //       authmap = json.readJSON(Servuvastaus);
+        }
+        catch (Exception e)
+        {
+            System.err.println("virhe1");
+        }  
+        
+        return Servuvastaus;
+    }
+      
+    private static String runakaEncrypt( String url, String proxy, 
+                                String Ks_naf, String btid)  throws Exception
+    {
+        String Servuvastaus = "";
+        
+        coaptoteutus coap = new coaptoteutus();
+        String[] args = new String[3];
+        String osoiten = proxy+url;
+
+        try
+        {
+            args[0] = "POST";
+     
+            args[1] = osoiten;
+            System.out.println("ooite " + ": " + args[1]);
+           // Base64.decodeBase64(btid)
+            byte[] testah = Base64.decodeBase64(Ks_naf);
+            //Hex.encodeHexString
+            Ks_naf = Hex.encodeHexString(testah);
+            
+            String inputString = "";
+            Scanner input = new Scanner(System.in);
+            String sisalto = "jeeee";
+            System.out.print("Syötä sisältöä, oletuksena \""+sisalto+"\": ");
+            inputString = input.nextLine();
+            if(!inputString.equals(""))
+            {
+                sisalto = inputString;
+            }
+    
+            args[2] = json.encryptJWT1(sisalto, Ks_naf, btid); 
+
+            
+            Servuvastaus = coap.runCoap(args);
+            Servuvastaus = json.uncryptJWE1(Servuvastaus, Ks_naf);
+            System.out.println("vastaus " + ": " + Servuvastaus);
+
+        }
+        catch (Exception e)
+        {
+            System.err.println("virhe1");
+        }    
+        
+        return Servuvastaus;
+    }
+    
+    private static String calculateKsnaf( String nafid, 
+            String impi)  throws Exception
+    {
         String Ks_naf = "";
          try
        {
@@ -844,8 +810,8 @@ key: 41434443524f58594f5552534f583031
            System.out.println("Kokeipalbas: "+ Hex.encodeHexString(kokeilu8  ) );
            System.out.println("nafidpal: "+ new String(kokeilu8, "UTF-8") );
            
-             
-            Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-me");
+            //Ks_naf = kdfEncode1(KsS, randkdf, "tut.test1@p133.piuha.net", nafid, "gba-me");
+            Ks_naf = kdfEncode1(KsS, randkdf, impi, nafid, "gba-me");
             System.out.println("ksnaf1 " + ": " + Ks_naf);
 
        }
@@ -853,195 +819,170 @@ key: 41434443524f58594f5552534f583031
        {
            System.err.println("virhe1");
            
-       }   
-         ///jws testi
-         /*
-       try
-        {
- //           tarkenne = URLEncoder.encode(tarkenne, "UTF-8");
-            
-
-            args[0] = "POST";
-      //      args[0] = "DISCOVER";
-      //      args[0] = "OBSERVE";
-      //      args[0] = "GET";
-      //      args[0] = "PUT";
-            //args[1] = osoite+"192.168.0.70:8002/test"; //"coap://localhost";
-            args[1] = osoite+"192.168.0.100:8002/test"; //"coap://localhost";
-
-   //         Map<String, Object> lopullinen = new HashMap<String, Object>();
-   //         lopullinen.put("btid", btid);
-            System.out.println("ooite " + ": " + args[1]);
-
-            args[2] = json.signJWT("jee", Ks_naf, btid);
-    //        String palautus2 = json.createJsonString(lopullinen);
-           //   args[2] = btid;
-        //    args[2] = palautus2;
-            
-            Servuvastaus = coap.runCoap(args);
-            Servuvastaus = json.openSignJWT(Servuvastaus, Ks_naf);
-            System.out.println("vastaus " + ": " + Servuvastaus);
-     //       authmap = json.readJSON(Servuvastaus);
-        }
-        catch (Exception e)
-        {
-            System.err.println("virhe1");
-        }  
-         */
-         
-            ///jwe testi
-         
-       try
-        {
- //           tarkenne = URLEncoder.encode(tarkenne, "UTF-8");
-            
-
-            args[0] = "POST";
-      //      args[0] = "DISCOVER";
-      //      args[0] = "OBSERVE";
-      //      args[0] = "GET";
-      //      args[0] = "PUT";
-            //args[1] = osoite+"192.168.0.70:8002/test"; //"coap://localhost";
-            args[1] = osoite+"192.168.0.100:8002/test"; //"coap://localhost";
-
-   //         Map<String, Object> lopullinen = new HashMap<String, Object>();
-   //         lopullinen.put("btid", btid);
-            System.out.println("ooite " + ": " + args[1]);
-           // Base64.decodeBase64(btid)
-            byte[] testah = Base64.decodeBase64(Ks_naf);
-            //Hex.encodeHexString
-            Ks_naf = Hex.encodeHexString(testah);
-       //     System.out.println("testiäää" + ": " + testiäää);
-
-    //        JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A128CBC_HS256);
-            args[2] = json.encryptJWT1("testiä", Ks_naf, btid); 
-      //      args[2] = json.signJWT("jee", Base64.encodeBase64String(Ks_naf.getBytes("UTF-8")) , btid);
-    //        String palautus2 = json.createJsonString(lopullinen);
-           //   args[2] = btid;
-        //    args[2] = palautus2;
-            
-            Servuvastaus = coap.runCoap(args);
-            Servuvastaus = json.uncryptJWE1(Servuvastaus, Ks_naf);
-            System.out.println("vastaus " + ": " + Servuvastaus);
-     //       authmap = json.readJSON(Servuvastaus);
-        }
-        catch (Exception e)
-        {
-            System.err.println("virhe1");
-        }  
-         
-        //kdfEncode1(String Ks, String rand, String impi, String nafid, String gbatype)
+       }    
         
- //       content.put("UserName", btid);
-     /*   
-        try
-        {
-            runUaHttpDigest( "http://" +nafurl, btid, Ks_naf.getBytes("utf-8"));
-        }
-        catch (Exception e)
-        {
-            System.err.println("virhe http digest");
-        }
-        */
-           /* 
-        Servuvastaus = "";
-       
-        try
-        {
-            args = new String[4];
-        
-         //   args[0] = "POST";
-            args[0] = "PUT";
+        return Ks_naf;
+    }
+ 
+   public static void main(String[] args) 
+   {
+      
+       while(true)
+       {
+           Map<String, Object> authmap = new HashMap<String,Object>();
+            Map<String, Object> authheader = new HashMap<String,Object>();
+            Map<String, Object> content = new HashMap<String,Object>();
 
-            args[1] = nafresource;
-    //        String palautus2 = json.writeJSONbtauthentication(authheader);
-  //          String palautus2 = json.writeJSONbtauthentication(content);
+            /*
+            IMPI: tut.test1@p133.piuha.net
+     IMPU: sip:tut.test1@p133.piuha.net
+     key: 41434443524f58594f5552534f583031
+            BSF palvelu: http://p133.piuha.net:8080/bsf/bootstrap
+            */
+             String osoite = "coap://192.168.0.70/Yhteys/";
+     //        String akaosoiten = "coap://192.168.0.70/Btyhteys/";
+     //        String akaosoiten = "coap://localhost/Btyhteys/";
+      //      String akaosoiten = "coap://localhost/Yhteys/";
 
-            args[2] = json.createJsonString(content);
-            
-            args[3] = "50";
+       //      String osoiten = "http://p133.piuha.net:8080/bsf/bootstrap";
+      //       String osoiten = "coap://localhost/Yhteys/";
 
-            Servuvastaus = coap.runCoap(args);
-            
-            System.out.println("vastaus " + ": " + Servuvastaus);
-            if(Servuvastaus.contains("www-authenticate"))
+             String akaosoiten = osoite;
+     //        String tarkenne = "192.168.0.112/priv/index.html";
+             String tarkenne = "94.237.64.168:804/priv/index.html";
+             String tarkenne1 = "p133.piuha.net:8080/bsf/bootstrap";
+             String nafurl = "p133.piuha.net:8080/naf/resource";
+
+             String nafresource = osoite+nafurl;
+             String inputString = "";
+
+             Scanner input = new Scanner(System.in);
+             System.out.print("Kirjoita k, jos yhdyskäytävä on \""+osoite+"\". Muuten syötä osoite: ");
+            inputString = input.nextLine();
+            if(!inputString.equals("k"))
             {
-                authmap = json.readJSON(Servuvastaus);
-                
+                osoite = inputString;
             }
             
-        }
-        catch (Exception e)
-        {
-            System.err.println("virhe2");
-        }
-        
-        content.clear();
-        
-        content.put("Cookie", 
-                        (HashMap<String,Object>)authmap.get("Set-Cookie"));
-        
-        authheader = setAuthorizationHeaderMap(authmap, "/naf/resource", btid, Ks_naf);
-        
-          System.out.println("authheader " + ": " + authheader);
-        
-        content.put("Authorization", authheader);
-       
-        try
-        {
-            args = new String[4];
-        
-            args[0] = "PUT";
-
-            args[1] = nafresource;
-            System.out.println("content " + ": " + content);
-    //        String palautus2 = json.writeJSONauthentication(authheader);
-            String palautus2 = json.writeJSONauthentication(content);
-            System.out.println("palautus2 " + ": " + palautus2);
-
-            args[2] = palautus2;
+             System.out.print("Kirjoita Get, Aka, Vapaa tai Poistu: ");
+             inputString = input.nextLine();
+             System.out.println(inputString);
             
-            args[3] = "50";
+             if(inputString.equals("Get"))
+             {
+                try 
+                {
+                    
+                    System.out.print("jos osoite eri kun "+tarkenne+" syötä: ");
+                    inputString = input.nextLine();
+                    if(!inputString.equals(""))
+                    {
+                        tarkenne = inputString;
+                    }
+                    runHttpget(tarkenne, osoite);
+                } 
+                catch (Exception ex) 
+                {
+                    Logger.getLogger(startCoap.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+             if(inputString.equals("Vapaa"))
+             {
+                try 
+                {
+                    coaptoteutus coap = new coaptoteutus();
+                    
+                    int maara = 0;
+                    System.out.print("Anna aensin attribuuttien lukumäärä ja syötä mahdolliset yhteystapa, osoite ja sisalto enter väliin painaen. ");
+                    inputString = input.nextLine();
+                    if(!inputString.equals(""))
+                    {
+                        maara = Integer.parseInt(inputString);
+                 //       maara++;
+                    }
+                    args = new String[maara];
+                    inputString = input.nextLine();
+                    if(!inputString.equals(""))
+                    {
+                        args[0] = inputString;
+             //           maara++;
+                    }
+                    inputString = input.nextLine();
+                    if(!inputString.equals(""))
+                    {
+                        args[1] = osoite+inputString;
+            //            maara++;
+                    }
+                    inputString = input.nextLine();
+                    if(!inputString.equals(""))
+                    {
+                        args[2] = inputString;
+            //            maara++;
+                    }
+                    
+                    String Servuvastaus = coap.runCoap(args);
+                    System.out.println("vastaus " + ": " + Servuvastaus);
+                } 
+                catch (Exception ex) 
+                {
+                    Logger.getLogger(startCoap.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if(inputString.equals("Aka"))
+            {
 
-            Servuvastaus = coap.runCoap(args);
-            System.out.println("vastaus " + ": " + Servuvastaus);
-        }
-        catch (Exception e)
-        {
-            System.err.println("virhe2");
-        }
-        
-        content.clear();
-        
-        */
-        /*
-        
-        //Create a helper class for HttpDigest
-        GbaHttpDigestMD5 httpDigest = new GbaHttpDigestMD5(nafurl, btid, ksNaf);
-        
-        URL httpUrl = new URL(nafurl);
-        HttpURLConnection http = (HttpURLConnection) httpUrl.openConnection();
-
-    //    http.
-
-//Respond with Authorization header
-        System.out.println(http.getHeaderField("WWW-Authenticate"));
-        httpDigest.computeDigestResponse(
-                http.getHeaderField("WWW-Authenticate"));
-        String authorizationHeader = httpDigest.generateAuthorizationHeader();
-        System.out.println("Authorization: " + authorizationHeader);
-        */
-        ////säätöö
-        /*
-        // Insert your own IMPI and (AKA) key for your applications
-        String myImpi = "test.user@labs.ericsson.net";
-        String myKey = "93ab7cdf014401d44f0b673e11790ad5";
-
-        // Use your NAF application FQDN and listening port
-        String myNafFqdn = "naf.labs.ericsson.net";
-        String nafUrl = "http://" +myNafFqdn+ ":8080/gbanaf/";
-*/
-       /*
+                try 
+                {
+                    
+                    System.out.print("BSF osoite, jos eri kun "+tarkenne1+" syötä: ");
+                    inputString = input.nextLine();
+                    if(!inputString.equals(""))
+                    {
+                        tarkenne1 = inputString;
+                    }
+                    String btid = runaka(tarkenne1, osoite);
+                    String impi = "tut.test1@p133.piuha.net";
+                    String nafid = "p133.piuha.net";
+                    System.out.print("NAF id, jos eri kun "+nafid+" syötä: ");
+                    inputString = input.nextLine();
+                    if(!inputString.equals(""))
+                    {
+                        nafid = inputString;
+                    }
+                    String Ks_naf = calculateKsnaf( nafid, impi);
+                    String url = "192.168.0.100:8002/test";
+                    System.out.print("NAF osoite, jos eri kun \""+url+"\" syötä: ");
+                    inputString = input.nextLine();
+                    if(!inputString.equals(""))
+                    {
+                        url = inputString;
+                    }
+                    System.out.print("oletuksena salaus, muuten kirjoita allekirjoitus: ");
+                    inputString = input.nextLine();
+                    if(inputString.equals(""))
+                    {
+                        runakaEncrypt( url, osoite, 
+                                Ks_naf, btid);
+                    }
+                    if(inputString.equals("allekirjoitus"))
+                    {
+                        runakasign( url, osoite, 
+                                Ks_naf, btid);
+                    }
+                } 
+                catch (Exception ex) 
+                {
+                    Logger.getLogger(startCoap.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if(inputString.equals("Poistu"))
+            {
+                break;
+            }
+       }
+       
+      
+  /*
        Tässä nämä
 
 IMPI: tut.test1@p133.piuha.net
@@ -1054,68 +995,7 @@ key: 41434443524f58594f5552534f583032
 
 BSF palvelu: http://p133.piuha.net:8080/bsf/bootstrap
        
-       */
-       /*
-       // Insert your own IMPI and (AKA) key for your applications
-        String myImpi = "tut.test1@p133.piuha.net";
-        String myKey = "41434443524f58594f5552534f583031";
-
-        // Use your NAF application FQDN and listening port
-  //      String myNafFqdn = "http://p133.piuha.net:8080/bsf/bootstrap";
-        String myNafFqdn = "naf.labs.ericsson.net";
-        String nafUrl = "http://p133.piuha.net:8080/bsf/bootstrap";
-        try {
-   //         Sim sim = new (myImpi, myKey);
-            // Create an GbaClient instance
-            GbaClient gbaclient = new GbaClient(myImpi, myKey);
-  //          GbaClient gbaclient1 = new GbaClient(sim);
-       //     gbaclient.
-
-            System.out.println("asiakas luotu ");
-      //      String btidn = gbaclient.getCurrentBTID();
- //           System.out.println("btid "+ btidn);
-            //Bootstrap and keep its context ID in btid
-            String btid = gbaclient.bootstrap();
-   //         gbaclient.getKsNaf(myNafFqdn)
-            System.out.println(gbaclient.printBootstrapContext());
-
-            System.out.println("btid luotu ");
-            //Get application secret key ksNaf 
-            byte[] ksNaf = gbaclient.getKsNaf(myNafFqdn);
-
-            //Run HTTP Digest Authentication with the KsNaf and btid
- //           boolean authResult = runUaHttpDigest(nafUrl, btid, ksNaf);
-   //         System.out.println("HTTP Digest Auth result: " + authResult);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-         */     
-        ////////säätöpäättyy
-        /*
-        args = new String[2];
-        
-        args[0] = "DISCOVER";
- 
-        args[1] = "coap://192.168.0.70/";
-
-       
-        
-        System.out.println("url " + ": " + args[1]);
-
-        
-        try
-        {
-
-            coap.runCoap(args);
-        }
-        catch (Exception e)
-        {
-            System.err.println("virhe3");
-        }
- 
-   }
    */
-        
         
    }
 }
