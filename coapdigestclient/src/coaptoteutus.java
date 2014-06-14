@@ -23,11 +23,6 @@ import java.net.URISyntaxException;
 
 import java.net.InetSocketAddress;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
@@ -66,11 +61,8 @@ public class coaptoteutus
         {
                 printInfo();
                 return "";
-             //   return false;
         }
 
-     //   Log.setLevel(Level.ALL);
-     //   Log.init();
         
         // input parameters
         int idx = 0;
@@ -140,7 +132,6 @@ public class coaptoteutus
         
         if (method.equals("OBSERVE")) 
         {
-//                request.setOption(new Option(0, OptionNumberRegistry.OBSERVE));
                 loop = true;
         }
 
@@ -158,15 +149,12 @@ public class coaptoteutus
                 System.exit(ERR_BAD_URI);
             }
         }
-  //      System.out.println("jeeeeeuri :" + uri);
         request.setURI(uri);
 
         request.setPayload(payload);
         
         request.getOptions().setContentFormat(
                         contentType);
-
-   //     request.getOptions().setContentFormat(MediaTypeRegistry.TEXT_PLAIN);
 
         System.out.println( request.getDestination().toString() );
         System.out.println( request.getDestinationPort() );
@@ -194,7 +182,6 @@ public class coaptoteutus
                 try 
                 {
                     response = request.waitForResponse();
-                 //       response = request.receiveResponse();
                 } 
                 catch (InterruptedException e) 
                 {
@@ -206,7 +193,6 @@ public class coaptoteutus
                 if (response != null) 
                 {
 
-     //               response.prettyPrint();
                     System.out.println(Utils.prettyPrint(response));
                     System.out.println("Time elapsed (ms): " + response.getRTT());
                     
@@ -223,7 +209,6 @@ public class coaptoteutus
                             System.out.println("\nDiscovered resources:");
                             System.out.println(linkFormat);
 
-                //            return linkFormat;
                     } 
                     else 
                     {
@@ -317,7 +302,6 @@ public class coaptoteutus
                 {
 			Request request = Request.newGet();
 			request.setObserve();
-//			loop = true;
 			return request;
 		} 
                 else 

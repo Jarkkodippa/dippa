@@ -14,7 +14,6 @@ import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 
-//import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
@@ -27,13 +26,11 @@ import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 
 import com.nimbusds.jose.crypto.RSADecrypter;
-import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.SignedJWT;
 
 
 import org.json.JSONObject;
-//import org.json.JSONArray;
 
 
 import java.io.IOException;
@@ -49,14 +46,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-//import java.security.spec.RSAPrivateKeySpec;
-//import java.security.spec.RSAPublicKeySpec;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
@@ -66,13 +55,14 @@ public class json
 {
    static JSONObject lopullinen;
 
+   
    public json() 
    {
 
        JSONObject lopullinen = new JSONObject(); 
    }
    
-      //Make signed JSON Web Token.
+   //Make signed JSON Web Token.
    // Return serialized token.
    public static String signJWT(String message, String sharedKey) 
    {
@@ -85,14 +75,15 @@ public class json
         String s = cryptJWS(message, sharedKey, header);
         
         System.out.println("crypted: "+ s);
+        
         String serialized = "";
 
 
         try
          {
+             
             SignedJWT  t = SignedJWT.parse(s);
-      //      t.getSignature();
-            //      String signature = s.
+
             Base64URL firstPart = header.toBase64URL();
             System.out.println("eka osa: "+ firstPart);
             Base64URL secondPart = Base64URL.encode(s);
@@ -120,9 +111,10 @@ public class json
         
     }
    
-      //Make signed JSON Web Token.
+   //Make signed JSON Web Token.
    // Return serialized token.
-   public static String signJWT(String message, String sharedKey, String btid) 
+   public static String signJWT(String message, String sharedKey, 
+                                    String btid) 
    {
 
 
@@ -131,7 +123,6 @@ public class json
         header.setCustomParameter("btid", btid);
 
         String s = cryptJWS(message, sharedKey, header);
- //       header.setCustomParameter("btid", btid);
         System.out.println("crypted: "+ s);
         String serialized = "";
 
@@ -139,8 +130,7 @@ public class json
         try
          {
             SignedJWT  t = SignedJWT.parse(s);
-      //      t.getSignature();
-            //      String signature = s.
+
             Base64URL firstPart = header.toBase64URL();
             System.out.println("eka osa: "+ firstPart);
             Base64URL secondPart = Base64URL.encode(s);
@@ -178,7 +168,6 @@ public class json
         String s = cryptJWE1(message, sharedKey, header);
 
         return s;
-       // return serialized;
         
     }
    
@@ -192,43 +181,22 @@ public class json
         String s = cryptJWE1(message, sharedKey, header);
         
         System.out.println("crypted: "+ s);
-        String serialized = "";
-
-
-        try
-         {
-             EncryptedJWT  t = EncryptedJWT.parse(s);
-             Base64URL firstPart = header.toBase64URL();
-
-         } 
-        catch (ParseException e)
-         {
-
-                 System.err.println("Couldn't parse JWS object2: ");
-                 return "";
-         }
-
-        return s;
-//        return serialized;
         
+        return s;
     }
    
     //Open signed JSON Web Token.
    // Return open string.
    public static String openSignJWT(String message, String sharedKey) 
-   {
-
-
-       
+   {    
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
 
         System.out.println("viesti : "+ message);
-//        SignedJWT te = new SignedJWT();
         try
          {
-             SignedJWT signedJWT = new SignedJWT(header.toBase64URL(), 
-                Base64URL.encode("secondPart"), Base64URL.encode("thirdPart"));
+            SignedJWT signedJWT = new SignedJWT(header.toBase64URL(), 
+            Base64URL.encode("secondPart"), Base64URL.encode("thirdPart"));
 
              
             signedJWT = SignedJWT.parse(message);
@@ -255,7 +223,7 @@ public class json
     }
    
     //Open signed JSON Web Token.
-   // Return open string.
+   // Return btid value on string.
    public static String retrunSignJWTbtid(String message) 
    {
 
@@ -267,12 +235,11 @@ public class json
         String headerpart = "";
         try
          {
-             SignedJWT signedJWT = new SignedJWT(header.toBase64URL(), 
-                Base64URL.encode("secondPart"), Base64URL.encode("thirdPart"));
+            SignedJWT signedJWT = new SignedJWT(header.toBase64URL(), 
+            Base64URL.encode("secondPart"), Base64URL.encode("thirdPart"));
  
             signedJWT = SignedJWT.parse(message);
 
-       //     signedJWT.
             Base64URL[] Parts = signedJWT.getParsedParts();
             Base64URL firstPart = Parts[0];
             Base64URL secondPart = Parts[1];
@@ -280,7 +247,6 @@ public class json
             
             headerpart = firstPart.decodeToString();
             headermap = readJSON(headerpart);
-            System.out.println("headermap : "+ headermap);
             return (String)headermap.get("btid");
     
          } 
@@ -294,12 +260,10 @@ public class json
         
     }
    
-    //Open signed JSON Web Token.
-   // Return open string.
+    //Open encrypted JSON Web Token.
+   // Return btid value on string.
    public static String retrunencryptJWTbtid(String message) 
    {
-
-   //     JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
         JWEHeader header = new JWEHeader(JWEAlgorithm.DIR,EncryptionMethod.A128CBC_HS256);
 
         System.out.println("viesti : "+ message);
@@ -308,13 +272,12 @@ public class json
         String headerpart = "";
         try
          {
-             EncryptedJWT EncryptedJWT = new EncryptedJWT(header.toBase64URL(), 
-                Base64URL.encode("secondPart"), Base64URL.encode("thirdPart"),
-             Base64URL.encode("rourthPart"), Base64URL.encode("fifthPart"));
+            EncryptedJWT EncryptedJWT = new EncryptedJWT(header.toBase64URL(), 
+            Base64URL.encode("secondPart"), Base64URL.encode("thirdPart"),
+            Base64URL.encode("rourthPart"), Base64URL.encode("fifthPart"));
  
             EncryptedJWT = EncryptedJWT.parse(message);
 
-       //     signedJWT.
             Base64URL[] Parts = EncryptedJWT.getParsedParts();
             Base64URL firstPart = Parts[0];
             Base64URL secondPart = Parts[1];
@@ -322,7 +285,6 @@ public class json
             
             headerpart = firstPart.decodeToString();
             headermap = readJSON(headerpart);
-            System.out.println("headermap : "+ headermap);
             return (String)headermap.get("btid");
     
          } 
@@ -340,17 +302,10 @@ public class json
     //Palauttaa cryptatun JVS:n.
    public static String cryptJWS(String message, String sharedKey, JWSHeader header) 
    {
-
-
-        
         Payload payload = new Payload(message);
         
         System.out.println("JWS payload message: " + message);
-        
-        
-        // Create JWS header with HS256 algorithm
-  //      JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
-        System.out.println("Jeee");
+
         header.setContentType("text/plain");
 
         System.out.println("JWS header: " + header.toString());
@@ -389,15 +344,11 @@ public class json
    
  
 	
-   //purkaa JVS.
+   //purkaa JWS.
    //Palauttaa puretun viestin Stringinä.
    public static String uncryptJWS(String message, String sharedKey) 
    {
-
-        
-        
         JWSObject jwsObject;
-        // Parse back and check signature
         
         try 
         {
@@ -446,7 +397,7 @@ public class json
    
    
    
-   //Cryptaa Stringin JVS 
+   //Cryptaa JWE:n 
     //Palauttaa cryptatun JWT:n.
    public static String cryptJWE1(String message, String sharedKey, JWEHeader header) 
    {
@@ -460,13 +411,9 @@ public class json
        {
            byte[] sharedKeybyte = Hex.decodeHex(sharedKey.toCharArray());
            System.out.println("Shared key: " + sharedKey);
- //       byte[16] key = { ... };
-//        JWSSigner signer = new MACSigner(sharedKey.getBytes());
-//        JWEEncrypter Encrypter = new AESEncrypter(sharedKey.getBytes());
-        
+
             try
             {
-          //          jweObject.;
                 DirectEncrypter encrypter = new DirectEncrypter(sharedKeybyte);
                 jweObject.encrypt(encrypter);
 
@@ -499,12 +446,8 @@ public class json
    //Palauttaa puretun viestin Stringinä.
    public static String uncryptJWE1(String message, String sharedKey) 
    {
-
-        
-        
         JWEObject jweObject;
-        // Parse back and check signature
-        
+
         try 
         {
                 jweObject = JWEObject.parse(message);
@@ -591,21 +534,13 @@ public class json
         
                 System.err.println("purku epäonnistu");
         }
-        
-
-
-        // Retrieve JWT claims
-
-        
-        
+    
         return vali;
     }
 
-           /**
-  * Method to convert map into json format
-  * @param map with data to be converted into json
-  * @return json string
-  */
+         
+   //Ottaa vastaan JSON objectin.
+   //Palauttaa Json Stringin.
  public static String createJsonString(JSONObject json) throws IOException 
  {
 
@@ -617,6 +552,8 @@ public class json
     return palautus;
  }
  
+ //Ottaa vastaan MAP rakenteen.
+ //Palauttaa Json Stringin.
   public static String createJsonString(Map jsonMap) throws IOException 
  {
 
@@ -633,8 +570,8 @@ public class json
     return palautus;
  }
 
- //Lukee json tiedoston mappiin.
- //palauttaa mapin.
+ //Lukee json sisältävän String merkkijonon.
+ //Palauttaa merkkijonosta luodun MAP rakenteen.
    public static Map readJSON(String data) 
    {
 
@@ -675,16 +612,13 @@ public class json
             challenge.put( "qop", qop );  
             challenge.put( "nonce", nonce );  
             challenge.put( "opaque", opaque );  
-    //        String jsoneka = createJsonString(challenge);
-            
+ 
             HashMap<String, Object> wwwauthenticate = new HashMap<String, Object>();
 
             wwwauthenticate.put( "type", "digest" );  
 
             wwwauthenticate.put( "challenge", challenge );
-  //          wwwauthenticate.put( "challenge", jsoneka );
-//            String jsontoka = createJsonString(wwwauthenticate);
-            
+
             HashMap<String, Object> authorization2 = new HashMap<String, Object>();
             authorization2.put( "www-authenticate", wwwauthenticate );
             
@@ -727,17 +661,14 @@ public class json
             digestresponse.put( "cnonce", cnonce );  
             digestresponse.put( "response", response );  
             digestresponse.put( "opaque", opaque );
-            
-         
-//            addMapJsonArray("testi",digestresponse);
+
             valiaikainen.put("digest-response", digestresponse);
 
             valiaikainen.put("type", "digest");
 
             valiaikainen2.put("authorization", valiaikainen);
             String palautus = createJsonString(valiaikainen2);
-   //         System.out.println( palautus );
-  
+
             return palautus;
         
       }
@@ -748,7 +679,10 @@ public class json
       }
    }
    
-   
+   //Ottaa vastaan MAP rakenteen.
+   //Map rakenteesta metodi siirtää WWW-Authenticate, Set-Cookie ja Body
+   //osiot JSON String tiedostoon.
+   //Palauttaa JSON String tiedoston.
    public static String writeJSONauthorization(Map data) 
    {
       
@@ -767,25 +701,22 @@ public class json
 
                 wwwauthenticate.put( "challenge", 
                         (HashMap<String,Object>)data.get("WWW-Authenticate") );
-
-   //             tietoja2 = (HashMap<String,Object>)data.get("WWW-authenticate");
-                
+ 
                 authorization2.put( "www-authenticate", wwwauthenticate );
-//                content.put(null, data)
+
             }
             if(data.containsKey("Set-Cookie"))
             {
             
                 authorization2.put( "Set-Cookie", 
                         (HashMap<String,Object>)data.get("Set-Cookie") );
-//                content.put(null, data)
+
             }
             if(data.containsKey("Body"))
             {
 
-             //   authorization2.put( "Body", (HashMap<String,Object>)data.get("Body") );
                 authorization2.put( "Body", data.get("Body") );
-//                content.put(null, data)
+
             }
             
             
@@ -803,11 +734,14 @@ public class json
    }
    
 
-   
-
-   public static String writeJSONauthentication(Map data) 
+    //Ottaa vastaan MAP rakenteen.
+   //Map rakenteesta metodi siirtää Authorization ja Set-Cookie
+   //osiot JSON String tiedostoon. 
+   //Authorization kentän tyypiksi asettaa digest
+   //Palauttaa JSON String tiedoston.
+    public static String writeJSONauthentication(Map data) 
                                                 throws IOException
-   {
+    {
       
       try 
       {
@@ -831,7 +765,7 @@ public class json
 
                 valiaikainen2.put( "Cookie", 
                         (HashMap<String,Object>)data.get("Cookie") );
-            //                content.put(null, data)
+
           }
             String palautus = createJsonString(valiaikainen2);
 
@@ -844,6 +778,11 @@ public class json
       }
    }
    
+   //Ottaa vastaan MAP rakenteen.
+   //Map rakenteesta metodi siirtää Authorization ja Set-Cookie
+   //osiot JSON String tiedostoon. 
+   //Authorization kentän tyypiksi asettaa akadigest
+   //Palauttaa JSON String tiedoston.
    public static String writeJSONbtauthentication(Map data) 
                                                 throws IOException
    {
@@ -860,8 +799,6 @@ public class json
               valiaikainen.put("digest-response", 
                     (HashMap<String,Object>)data.get("Authorization"));
 
-      //      valiaikainen.put("digest-response", data);
-
             valiaikainen.put("type", "akadigest");
 
             valiaikainen2.put("authorization", valiaikainen);
@@ -871,7 +808,7 @@ public class json
 
                 valiaikainen2.put( "Cookie", 
                         (HashMap<String,Object>)data.get("Cookie") );
-            //                content.put(null, data)
+
           }
             String palautus = createJsonString(valiaikainen2);
 
@@ -883,7 +820,7 @@ public class json
           return "";
       }
    }
-    /** Suoritetaan p��silmukkaa niin kauan kuin k�ytt�j� haluaa.
+    /** Pääsilmukka testausta varten.
      */
    public void suoritaPaasilmukkaa() 
    {

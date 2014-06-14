@@ -10,12 +10,6 @@ import java.net.SocketException;
 import java.util.concurrent.Executors;
 
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
  * @author Jarkko
@@ -73,8 +67,7 @@ public class coaptoteutus
 
 
         /*
-     * Constructor for a new Hello-World server. Here, the resources
-     * of the server are initialized.
+     * Constructor for a server resources.
      */
         public coapHandler() throws SocketException
         {
@@ -83,13 +76,7 @@ public class coaptoteutus
             server.setExecutor(Executors.newScheduledThreadPool(4));
 
             server.add(new provResource());
-      //      server.add(new vaarinpain());
-      //      server.add(new jsonresource());
             server.add(new Yhteys());
-//            server.add(new Btyhteys());
-   //         server.add(new MirrorResource("mirror"));
-    //        server.add(new LargeResource("large"));
-
             server.start();
         }
         

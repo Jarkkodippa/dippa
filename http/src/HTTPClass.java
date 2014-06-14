@@ -2,21 +2,11 @@
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HeaderElement;
 import org.apache.commons.httpclient.HttpClient;
-//import org.apache.commons.httpclient.UsernamePasswordCredentials;
-//import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.util.HashMap;
-//import java.util.Locale;
 import java.util.Map;
-//import java.util.Scanner;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *HTTP luokka. Tekee HTTP pyynnön ja vastaanottaa siihen liittyvät arvot.
@@ -24,7 +14,6 @@ import java.util.Map;
  */
 public class HTTPClass 
 {
- //   private static final Scanner READER = initializeREADER();
     static int counter = 0;
     
     // Vakiot.
@@ -50,6 +39,9 @@ public class HTTPClass
 
    }
    
+   //Ottaa vastaan yhteysosoitteen ja map rakenteen.
+   //Tekee edellisten pohjalta POST pyynnön palvelimelle.
+   //Palauttaa saasun vastauksen String merkkijonona.
     public String httpPostClient(String osoite, Map tiedot) throws Exception
     {
     
@@ -57,11 +49,13 @@ public class HTTPClass
 	    return httpPostClient(osoite, tiedot, heatribute);
     }
     
-//HTTP post client luo http pyynnön.
+
+    //Ottaa vastaan yhteysosoitteen ja map rakenteen sisällölle ja 
+    //map rakentee Header parametreille.
+   //Tekee edellisten pohjalta POST pyynnön palvelimelle.
+   //Palauttaa saasun vastauksen String merkkijonona.
     public String httpPostClient(String osoite, Map tiedot, Map heatribute) throws Exception
     {
-    //    HashMap<String, String> map = new HashMap<String, String>();
-
         Map<String, Object> tietoja = new HashMap<String, Object>();
             
         tietoja = tiedot;
@@ -93,24 +87,14 @@ public class HTTPClass
 
             }
 
-            //getMethod = new GetMethod(urlStr);
-            
             if(!tiedot.isEmpty())
             {
                 for (Map.Entry<String, Object> entry : tietoja.entrySet())
                 {
-      //              System.out.println(entry.getKey() + "/" + entry.getValue());
-                   
-          //           header += entry.getKey() +"=" + entry.getValue() + "\", ";
-                  
-                    
                      postMethod.addParameter(entry.getKey(), (String)entry.getValue());
                     
                 }
             }
- //           postMethod.setRequestBody("jeeeee");
-//
-            
             System.out.println("getMethod luotu");
 
             status = client.executeMethod(postMethod);
@@ -128,6 +112,9 @@ public class HTTPClass
         return responseBody;
     }
     
+    //Ottaa vastaan yhteysosoitteen ja String jonon sisällölle.
+   //Tekee edellisten pohjalta POST pyynnön palvelimelle.
+   //Palauttaa saasun vastauksen String merkkijonona.
     public String httpPostClient(String osoite, String sisalto) throws Exception
     {
     
@@ -135,14 +122,14 @@ public class HTTPClass
 	    return httpPostClient(osoite, sisalto, heatribute);
     }
     
+    //Ottaa vastaan yhteysosoitteen ja String jonon sisällölle ja 
+    //map rakentee Header parametreille.
+   //Tekee edellisten pohjalta POST pyynnön palvelimelle.
+   //Palauttaa saasun vastauksen String merkkijonona.
     public String httpPostClient(String osoite, String sisalto, Map heatribute) throws Exception
     {
-    //    HashMap<String, String> map = new HashMap<String, String>();
-
         Map<String, Object> tietoja = new HashMap<String, Object>();
             
-    //    tietoja = tiedot;
-        
         Map<String, Object> heatribute1 = new HashMap<String, Object>();
             
         heatribute1 = heatribute;
@@ -170,12 +157,8 @@ public class HTTPClass
 
             }
 
-            //getMethod = new GetMethod(urlStr);
-            
-            
             postMethod.setRequestBody(sisalto);
-//
-            
+
             System.out.println("getMethod luotu");
 
             status = client.executeMethod(postMethod);
@@ -193,14 +176,14 @@ public class HTTPClass
         return responseBody;
     }
     
-    //HTTP client luo http pyynnön
-    //Ottaa vastaa WWW-autenticate headerin ja palauttaa sen Mappina.
+    //Tekee http Get pyynnön palvelimelle.
+    //Ottaa vastaa yhteysosoittee 
+    //Palauttaa vastauksena saamansa sisällön Map rakenteena.
     public Map httpClientReq(String osoite) throws Exception
     {
         HashMap<String, Object> map = new HashMap<String, Object>();
         HashMap<String, String> mapdi = new HashMap<String, String>();
         HashMap<String, String> mapco = new HashMap<String, String>();
-        HashMap<String, String> mapbo = new HashMap<String, String>();
 
         try 
         {
@@ -250,20 +233,12 @@ public class HTTPClass
                 }
                 map.put("Set-Cookie", mapco);
             }
-            
-       //     else
-   //         {
-                if(responseBody != null || responseBody != "")
-                {
-   //                 mapbo.put( "body", responseBody );
-                    map.put("Body", responseBody);
-                }
-            /*
+
             if(responseBody != null || responseBody != "")
             {
-                map.put( "body", responseBody );
+                map.put("Body", responseBody);
             }
-            */
+
         }
         catch (Exception e) 
         {
@@ -272,14 +247,14 @@ public class HTTPClass
         return map;
     }
     
-     //HTTP client luo http pyynnön
-    //Ottaa vastaa WWW-autenticate headerin ja palauttaa sen Mappina.
+    //Tekee http Get pyynnön palvelimelle.
+    //Ottaa vastaa yhteysosoitteen otsikon Header osan UserName attribuuttiin arvon.  
+    //Palauttaa vastauksena saamansa sisällön Map rakenteena.
     public Map httpClientReq(String osoite, String otsikko) throws Exception
     {
         HashMap<String, Object> map = new HashMap<String, Object>();
         HashMap<String, String> mapdi = new HashMap<String, String>();
         HashMap<String, String> mapco = new HashMap<String, String>();
-        HashMap<String, String> mapbo = new HashMap<String, String>();
 
         try 
         {
@@ -331,20 +306,12 @@ public class HTTPClass
                 }
                 map.put("Set-Cookie", mapco);
             }
-            
-       //     else
-   //         {
-                if(responseBody != null || responseBody != "")
-                {
-   //                 mapbo.put( "body", responseBody );
-                    map.put("Body", responseBody);
-                }
-            /*
+
             if(responseBody != null || responseBody != "")
             {
-                map.put( "body", responseBody );
+                map.put("Body", responseBody);
             }
-            */
+
         }
         catch (Exception e) 
         {
@@ -353,50 +320,14 @@ public class HTTPClass
         return map;
     }
     
-    /*
-    //Lähettää http Authorizationin.
-    //Palauttaa palvelimelta saadun vastauksen.
-    public String httpClientAut(Map tiedot) throws Exception
-    {
- //       HashMap<String, String> map = new HashMap<String, String>();
-        try 
-        {
-            Map<String, Object> tietoja = tiedot;
-            if(!tiedot.isEmpty())
-            {
-                userName = (String) tietoja.get("username");
-                password = (String) tietoja.get("password");
-                host = (String) tietoja.get("host");
-                port = (int) tietoja.get(port);
-                realm = (String) tietoja.get("realm");
-            }
-            
-
-            UsernamePasswordCredentials upc = new UsernamePasswordCredentials(userName, password);
-            AuthScope as = new AuthScope(host, port, realm);
-            client.getState().setCredentials(as, upc);
-            status = client.executeMethod(getMethod);
-            System.out.println("status: " + status);
-            responseBody = getMethod.getResponseBodyAsString();
-            System.out.println("responseBody: " + responseBody);
-
-            getMethod.releaseConnection();
-
-        } 
-        catch (Exception e) 
-        {
-            e.printStackTrace();
-        }
-        return responseBody;
-
-    }
-    */
-    //Lähettää http Authorizationin.
-    //Palauttaa palvelimelta saadun vastauksen.
+  
+    //Lähettää http Authorizationin Get pyynnön.
+    //Ottaaa vastaan Authorization tiedot sisältävän MAP-rakenteen ja
+    //yhteys osoitteen.
+    //Palauttaa palvelimelta saadun vastauksen String muodossa.
     public String httpClientAut2(Map tiedot, String osoite) throws Exception
     {
         client = new HttpClient();
-     //       HttpClient client2 = new HttpClient();
         urlStr = osoite;
         
         getMethod = new GetMethod(urlStr);
@@ -434,23 +365,24 @@ public class HTTPClass
 
     }
     
-    //Lähettää http Authorizationin.
-    //Palauttaa palvelimelta saadun vastauksen.
+    //Lähettää http Authorizationin Get pyynnön.
+    //Ottaaa vastaan Authorization, Cookie ja Username tiedot 
+    //sisältävän MAP-rakenteen ja yhteys osoitteen.
+    //Palauttaa palvelimelta saadun vastauksen MAP-rakenteena.
     public Map httpbtClientAut(Map tiedot, String osoite) throws Exception
     {
         HashMap<String, Object> map = new HashMap<String, Object>();
         HashMap<String, String> mapdi = new HashMap<String, String>();
         HashMap<String, String> mapco = new HashMap<String, String>();
-        HashMap<String, String> mapbo = new HashMap<String, String>();
         client = new HttpClient();
-     //       HttpClient client2 = new HttpClient();
+
         urlStr = osoite;
         
         System.out.println("osoite : "+ urlStr);
         
         getMethod = new GetMethod(urlStr);
         String otsikkotieto = setReguestHeaderf(tiedot);
-        //setReguestHeadercookie(Map tiedot)
+
         String otsikkotietoco = "";
         otsikkotietoco = setReguestHeadercookie(tiedot);
         
@@ -459,9 +391,6 @@ public class HTTPClass
 
         try 
         {
-     
-    //        getMethod.
-            
             if(otsikkotieto != null && !otsikkotieto.equals(""))
             {
                 getMethod.setRequestHeader("Authorization", otsikkotieto);
@@ -475,9 +404,6 @@ public class HTTPClass
                 getMethod.setRequestHeader("UserName", otsikkotietouser);
             }
             
-    //        System.out.println("getmethod sisältääaut" + ": " + getMethod.);
-            
-
             status = client.executeMethod(getMethod);
             System.out.println("status: " + status);
             responseBody = getMethod.getResponseBodyAsString();
@@ -513,16 +439,11 @@ public class HTTPClass
                 map.put("Set-Cookie", mapco);
             }
             
-       //     else
-   //         {
-                if(responseBody != null || responseBody != "")
-                {
-   //                 mapbo.put( "body", responseBody );
-                    map.put("Body", responseBody);
-                }
-     //       }
-            
-                
+
+            if(responseBody != null || responseBody != "")
+            {
+                map.put("Body", responseBody);
+            }
 
             getMethod.releaseConnection();
 
@@ -535,8 +456,8 @@ public class HTTPClass
 
     }
     
-      //Käynnistää HTTP yhteyden.
-    //Palauttaa palvelimelta saadun vastauksen.
+      //Käynnistää HTTP yhteyden annettuun osoitteeseen.
+    //Palauttaa palvelimelta saadun vastauksen String merkkijonona.
     public String httpconnection(String osoite) throws Exception
     {
         client = new HttpClient();
@@ -564,170 +485,57 @@ public class HTTPClass
 
     }
     
-     //Luodaan header tiedosto digest arvoista.
-        private String setReguestHeaderf(Map tiedot)
+     //Tekee header tiedosto Map rakenteessa saamista digest arvoista.
+    //Palauttaa String tiedostona Header rakenteen.
+    private String setReguestHeaderf(Map tiedot)
+    {
+        String header = "";
+
+        String username1 = "";
+        String realm1 = "";
+
+        String nonce = "";
+        String uri = "";
+        String qop = "";
+        String nc = "";
+        String cnonce = "";
+        String response = "";
+        String opaque = "";
+        String algorithm = "";
+        String digest = "";
+        String integrityprotected = "";
+        String auts = "";
+
+        Map<String, Object> tietoja = new HashMap<String, Object>();
+        Map<String, Object> tietoja2 = new HashMap<String, Object>();
+        Map<String, Object> tietoja3 = new HashMap<String, Object>();
+        tietoja = tiedot;
+        System.out.println("tietoja mapin sisälto" + ": " + tietoja);
+        tietoja2 = (HashMap<String,Object>)tietoja.get("authorization");
+        System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
+
+
+
+        if(tietoja2 != null && tietoja2.get("type").equals("akadigest") )
         {
-    //        HashMap<String, String> map = new HashMap<String, String>();
-            String header = "";
-            
-            String username1 = "";
-            String realm1 = "";
-
-            String nonce = "";
-            String uri = "";
-            String qop = "";
-            String nc = "";
-     //       int nc = 0;
-            String cnonce = "";
-            String response = "";
-            String opaque = "";
-            String algorithm = "";
-            String digest = "";
-            String integrityprotected = "";
-            String auts = "";
-
-  //          Map<String, Object> tietoja = tiedot;
-            Map<String, Object> tietoja = new HashMap<String, Object>();
-            Map<String, Object> tietoja2 = new HashMap<String, Object>();
-            Map<String, Object> tietoja3 = new HashMap<String, Object>();
-            tietoja = tiedot;
-            System.out.println("tietoja mapin sisälto" + ": " + tietoja);
-            tietoja2 = (HashMap<String,Object>)tietoja.get("authorization");
-            System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
-            
-            
-            
-            if(tietoja2 != null && tietoja2.get("type").equals("akadigest") )
-            {
-                System.out.println("jee");
-                header = setReguestHeaderbt(tietoja);
-            }
-            else if(tietoja2 != null && tietoja2.get("type").equals("digest"))
-            {
-                tietoja3 = (HashMap<String,Object>)tietoja2.get("digest-response");
-                System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
-
-
-                if(tietoja3 != null  && !tietoja3.isEmpty())
-                {
-
-
-                    username1 = (String) tietoja3.get("Digest username");
-                    realm1 = (String) tietoja3.get("realm");
-                    nonce = (String) tietoja3.get("nonce");
-                    uri = (String) tietoja3.get("uri");
-                    qop = (String) tietoja3.get("qop");
-                 //   nc = (int) tietoja3.get("nc");
-                    nc = (String) tietoja3.get("nc");
-                    cnonce = (String) tietoja3.get("cnonce");
-                    response = (String) tietoja3.get("response");
-                    opaque = (String) tietoja3.get("opaque");
-                    algorithm = (String) tietoja3.get("algorithm");
-                    digest = (String) tietoja3.get("digest");
-                    integrityprotected = (String) tietoja3.get("integrity-protected");
-                    auts = (String) tietoja3.get("auts");
-                }
-
-
-                header += "Digest username=\"" + username1 + "\", ";
-                header += "realm=\"" + realm1 + "\", ";
-
-                header += "nonce=\"" + nonce + "\", ";
-                header += "uri=\"" + uri + "\", ";
-
-                if(digest != null && !digest.equals(""))
-                {
-                    header += "digest=" + algorithm + ", ";
-                }
-                if(algorithm != null && !algorithm.equals(""))
-                {
-                    header += "algorithm=" + algorithm + ", ";
-                }
-                header += "response=\"" + response + "\", ";
-                if(integrityprotected != null && !integrityprotected.equals(""))
-                {
-                    header += "integrity-protected=\"" + integrityprotected + "\", ";
-                }
-                if(qop != null && !qop.equals(""))
-                {
-                    header += "qop=" + qop + ", ";
-                }
-                if(nc != null && !nc.equals(""))
-                {
-                    header += "nc=" + nc + ", ";
-                }
-                if(cnonce != null && !cnonce.equals(""))
-                {
-                    header += "cnonce=\"" + cnonce + "\", ";
-                }
-
-                if(opaque != null && !opaque.equals(""))
-                {
-                    header += "opaque=\"" + opaque + "\", ";
-                }
-                if(auts != null && !auts.equals(""))
-                {
-                    header += "auts=\"" + auts + "\", ";
-                }
-
-
-                header = removeLastChar(header);
-                header = removeLastChar(header);
-            }
-            
-            
-     //       header = removeLastChar(header);
-           // header = header - ",";
-            
-            System.out.println("header tiedosto" + ": " + header);
-
-            return header;
+            System.out.println("jee");
+            header = setReguestHeaderbt(tietoja);
         }
-        
-         //Luodaan header tiedosto digest arvoista.
-        private String setReguestHeaderbt(Map tiedot)
+        else if(tietoja2 != null && tietoja2.get("type").equals("digest"))
         {
-    //        HashMap<String, String> map = new HashMap<String, String>();
-            String header = "";
-            
-            String username1 = "";
-            String realm1 = "";
-
-            String nonce = "";
-            String uri = "";
-            String qop = "";
-            String nc = "";
-     //       int nc = 0;
-            String cnonce = "";
-            String response = "";
-            String opaque = "";
-            String algorithm = "";
-            String digest = "";
-            String integrityprotected = "";
-            String auts = "";
-
-  //          Map<String, Object> tietoja = tiedot;
-            Map<String, Object> tietoja = new HashMap<String, Object>();
-            Map<String, Object> tietoja2 = new HashMap<String, Object>();
-            Map<String, Object> tietoja3 = new HashMap<String, Object>();
-            tietoja = tiedot;
-            System.out.println("tietoja mapin sisälto" + ": " + tietoja);
-            tietoja2 = (HashMap<String,Object>)tietoja.get("authorization");
-            System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
             tietoja3 = (HashMap<String,Object>)tietoja2.get("digest-response");
             System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
-            
+
 
             if(tietoja3 != null  && !tietoja3.isEmpty())
             {
- 
-                
+
+
                 username1 = (String) tietoja3.get("Digest username");
                 realm1 = (String) tietoja3.get("realm");
                 nonce = (String) tietoja3.get("nonce");
                 uri = (String) tietoja3.get("uri");
                 qop = (String) tietoja3.get("qop");
-             //   nc = (int) tietoja3.get("nc");
                 nc = (String) tietoja3.get("nc");
                 cnonce = (String) tietoja3.get("cnonce");
                 response = (String) tietoja3.get("response");
@@ -737,132 +545,225 @@ public class HTTPClass
                 integrityprotected = (String) tietoja3.get("integrity-protected");
                 auts = (String) tietoja3.get("auts");
             }
-            
-            //Authorization: Digest username="test.user@labs.ericsson.net",
-            //realm="labs.ericsson.net",
-            //nonce="V4bv1hjNaWj56Ws0KJya7DDj4A5fbQAAOB+jfZeL5Yg=",
-            //uri="/bsfv2/bsf",qop="auth-int",nc=00000001,
-            //cnonce="uUjaavLHTOO43WAGPxEt3w==",
-            //response="50ce8c64f30559acf1c4422188263b2e",algorithm="AKAv1-MD5"
-            
-            header += "Digest username=\"" + username1 + "\",";
-            header += "realm=\"" + realm1 + "\",";
 
-            header += "nonce=\"" + nonce + "\",";
-            header += "uri=\"" + uri + "\",";
-       
+
+            header += "Digest username=\"" + username1 + "\", ";
+            header += "realm=\"" + realm1 + "\", ";
+
+            header += "nonce=\"" + nonce + "\", ";
+            header += "uri=\"" + uri + "\", ";
+
             if(digest != null && !digest.equals(""))
             {
-                header += "digest=" + algorithm + ",";
-            }
-            if(qop != null && !qop.equals(""))
-            {
-                header += "qop=\"" + qop + "\",";
-            }
-            
-            
-            if(integrityprotected != null && !integrityprotected.equals(""))
-            {
-                header += "integrity-protected=\"" + integrityprotected + "\",";
-            }
-            if(nc != null && !nc.equals(""))
-            {
-                header += "nc=" + nc + ",";
-            }
-            if(cnonce != null && !cnonce.equals(""))
-            {
-                header += "cnonce=\"" + cnonce + "\",";
-            }
-            header += "response=\"" + response + "\",";
-
-            if(opaque != null && !opaque.equals(""))
-            {
-                header += "opaque=\"" + opaque + "\",";
+                header += "digest=" + algorithm + ", ";
             }
             if(algorithm != null && !algorithm.equals(""))
             {
-                header += "algorithm=\"" + algorithm + "\",";
+                header += "algorithm=" + algorithm + ", ";
+            }
+            header += "response=\"" + response + "\", ";
+            if(integrityprotected != null && !integrityprotected.equals(""))
+            {
+                header += "integrity-protected=\"" + integrityprotected + "\", ";
+            }
+            if(qop != null && !qop.equals(""))
+            {
+                header += "qop=" + qop + ", ";
+            }
+            if(nc != null && !nc.equals(""))
+            {
+                header += "nc=" + nc + ", ";
+            }
+            if(cnonce != null && !cnonce.equals(""))
+            {
+                header += "cnonce=\"" + cnonce + "\", ";
+            }
+
+            if(opaque != null && !opaque.equals(""))
+            {
+                header += "opaque=\"" + opaque + "\", ";
             }
             if(auts != null && !auts.equals(""))
             {
-                header += "auts=\"" + auts + "\",";
+                header += "auts=\"" + auts + "\", ";
             }
-            
-            
-   //         header = removeLastChar(header);
+
+
             header = removeLastChar(header);
-     //       header = removeLastChar(header);
-           // header = header - ",";
-            
-            System.out.println("header tiedosto" + ": " + header);
-
-            return header;
-        }
-          //Luodaan header tiedosto digest arvoista.
-        private String setReguestHeadercookie(Map tiedot)
-        {
-
-            String header = "";
-
-  //          Map<String, Object> tietoja = tiedot;
-            Map<String, Object> tietoja = new HashMap<String, Object>();
-            Map<String, Object> tietoja2 = new HashMap<String, Object>();
-   //         Map<String, Object> tietoja3 = new HashMap<String, Object>();
-            tietoja = tiedot;
-            System.out.println("tietoja mapin sisälto" + ": " + tietoja);
-            tietoja2 = (HashMap<String,Object>)tietoja.get("Cookie");
-            System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
-
-            String Nimi = "";
-            String Arvo = "";
-            if(tietoja2 != null && !tietoja2.isEmpty())
-            {
-                
-                for (Map.Entry<String, Object> entry : tietoja2.entrySet())
-                {
-      //       
-                        header += entry.getKey() +"=" + entry.getValue();
-     
-                }
-
-            }
-            
-
-            
-            System.out.println("header tiedosto" + ": " + header);
-
-            return header;
-        }
-        
-            //Luodaan header tiedosto digest arvoista.
-        private String setReguestHeaderusername(Map tiedot)
-        {
-
-            String header = "";
-
-  //          Map<String, Object> tietoja = tiedot;
-            Map<String, Object> tietoja = new HashMap<String, Object>();
-      //      Map<String, Object> tietoja2 = new HashMap<String, Object>();
-   //         Map<String, Object> tietoja3 = new HashMap<String, Object>();
-            tietoja = tiedot;
-            System.out.println("tietoja mapin sisälto" + ": " + tietoja);
-      
-            if(tietoja != null && !tietoja.isEmpty())
-            {
-                header = (String)tietoja.get("UserName");
-            }
-            
-            System.out.println("header tiedosto" + ": " + header);
-
-            return header;
+            header = removeLastChar(header);
         }
 
-public String removeLastChar(String s) {
-    if (s == null || s.length() == 0) {
-        return s;
+        System.out.println("header tiedosto" + ": " + header);
+
+        return header;
     }
-    return s.substring(0, s.length()-1);
-}
+        
+    //Tekee AKA-Gigest Header osion MAP raketeessa saamista arvoista.
+    //Palauttaa rakenteen String merkkijonona
+    private String setReguestHeaderbt(Map tiedot)
+    {
+        String header = "";
+
+        String username1 = "";
+        String realm1 = "";
+
+        String nonce = "";
+        String uri = "";
+        String qop = "";
+        String nc = "";
+        String cnonce = "";
+        String response = "";
+        String opaque = "";
+        String algorithm = "";
+        String digest = "";
+        String integrityprotected = "";
+        String auts = "";
+
+        Map<String, Object> tietoja = new HashMap<String, Object>();
+        Map<String, Object> tietoja2 = new HashMap<String, Object>();
+        Map<String, Object> tietoja3 = new HashMap<String, Object>();
+        tietoja = tiedot;
+        System.out.println("tietoja mapin sisälto" + ": " + tietoja);
+        tietoja2 = (HashMap<String,Object>)tietoja.get("authorization");
+        System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
+        tietoja3 = (HashMap<String,Object>)tietoja2.get("digest-response");
+        System.out.println("tietoja3 mapin sisälto" + ": " + tietoja3);
+
+
+        if(tietoja3 != null  && !tietoja3.isEmpty())
+        {
+
+
+            username1 = (String) tietoja3.get("Digest username");
+            realm1 = (String) tietoja3.get("realm");
+            nonce = (String) tietoja3.get("nonce");
+            uri = (String) tietoja3.get("uri");
+            qop = (String) tietoja3.get("qop");
+            nc = (String) tietoja3.get("nc");
+            cnonce = (String) tietoja3.get("cnonce");
+            response = (String) tietoja3.get("response");
+            opaque = (String) tietoja3.get("opaque");
+            algorithm = (String) tietoja3.get("algorithm");
+            digest = (String) tietoja3.get("digest");
+            integrityprotected = (String) tietoja3.get("integrity-protected");
+            auts = (String) tietoja3.get("auts");
+        }
+
+        header += "Digest username=\"" + username1 + "\",";
+        header += "realm=\"" + realm1 + "\",";
+
+        header += "nonce=\"" + nonce + "\",";
+        header += "uri=\"" + uri + "\",";
+
+        if(digest != null && !digest.equals(""))
+        {
+            header += "digest=" + algorithm + ",";
+        }
+        if(qop != null && !qop.equals(""))
+        {
+            header += "qop=\"" + qop + "\",";
+        }
+
+
+        if(integrityprotected != null && !integrityprotected.equals(""))
+        {
+            header += "integrity-protected=\"" + integrityprotected + "\",";
+        }
+        if(nc != null && !nc.equals(""))
+        {
+            header += "nc=" + nc + ",";
+        }
+        if(cnonce != null && !cnonce.equals(""))
+        {
+            header += "cnonce=\"" + cnonce + "\",";
+        }
+        header += "response=\"" + response + "\",";
+
+        if(opaque != null && !opaque.equals(""))
+        {
+            header += "opaque=\"" + opaque + "\",";
+        }
+        if(algorithm != null && !algorithm.equals(""))
+        {
+            header += "algorithm=\"" + algorithm + "\",";
+        }
+        if(auts != null && !auts.equals(""))
+        {
+            header += "auts=\"" + auts + "\",";
+        }
+
+        header = removeLastChar(header);
+
+        System.out.println("header tiedosto" + ": " + header);
+
+        return header;
+    }
+    
+
+    //Tekee annetuista map attribuuteista Header String tiedoston.
+    //Palauttaa tiedoston String merkkijonona.
+    private String setReguestHeadercookie(Map tiedot)
+    {
+
+        String header = "";
+
+        Map<String, Object> tietoja = new HashMap<String, Object>();
+        Map<String, Object> tietoja2 = new HashMap<String, Object>();
+        tietoja = tiedot;
+        System.out.println("tietoja mapin sisälto" + ": " + tietoja);
+        tietoja2 = (HashMap<String,Object>)tietoja.get("Cookie");
+        System.out.println("tietoja2 mapin sisälto" + ": " + tietoja2);
+
+        if(tietoja2 != null && !tietoja2.isEmpty())
+        {
+
+            for (Map.Entry<String, Object> entry : tietoja2.entrySet())
+            {
+                    header += entry.getKey() +"=" + entry.getValue();
+
+            }
+
+        }
+
+
+
+        System.out.println("header tiedosto" + ": " + header);
+
+        return header;
+    }
+        
+    //Lukee annetun Map rakenteen ja 
+    //palauttaa siitä UserName kantän arvon String tiedostona.
+    private String setReguestHeaderusername(Map tiedot)
+    {
+
+        String header = "";
+
+        Map<String, Object> tietoja = new HashMap<String, Object>();
+        tietoja = tiedot;
+        System.out.println("tietoja mapin sisälto" + ": " + tietoja);
+
+        if(tietoja != null && !tietoja.isEmpty())
+        {
+            header = (String)tietoja.get("UserName");
+        }
+
+        System.out.println("header tiedosto" + ": " + header);
+
+        return header;
+    }
+
+    //Otaa vastaan String merkkijonon.
+    //Poistaa siitä viimeisen merkin.
+    //Palauttaa syntyneen merkkijonon.
+    public String removeLastChar(String s) 
+    {
+        if (s == null || s.length() == 0) 
+        {
+            return s;
+        }
+        return s.substring(0, s.length()-1);
+    }
 
 
     
